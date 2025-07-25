@@ -32,11 +32,10 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import AppNavbar from '@/components/common/AppNavbar.vue'
 import AppFooter from '@/components/common/AppFooter.vue'
 
-const router = useRouter()
+
 const surveyCode = ref('')
 
 const accessSurvey = () => {

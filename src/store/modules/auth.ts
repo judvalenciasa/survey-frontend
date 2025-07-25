@@ -10,8 +10,8 @@ export const useAuthStore = defineStore('auth', () => {
   const loading = ref(false)
   const error = ref<string | null>(null)
 
-  // Getters computados
-  const isAuthenticated = computed(() => !!token.value && !!user.value)
+  
+  const isAuthenticated = computed(() => !!token.value)
   const isAdmin = computed(() => user.value?.roles?.includes('ADMIN') || false)
 
   // Acciones

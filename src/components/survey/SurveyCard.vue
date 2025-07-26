@@ -1,13 +1,13 @@
 <template>
   <div class="survey-card">
     <div class="survey-header">
-      <h3 class="survey-title">{{ survey.title }}</h3>
+      <h3 class="survey-title">{{ survey.name }}</h3>
       <div class="survey-status">
         <span 
           class="status-badge" 
-          :class="survey.isActive ? 'status-active' : 'status-inactive'"
+          :class="getStatusClass(survey.status)"
         >
-          {{ survey.isActive ? 'Activa' : 'Inactiva' }}
+          {{ getStatusLabel(survey.status) }}
         </span>
       </div>
     </div>
@@ -15,15 +15,28 @@
     <p class="survey-description">{{ survey.description }}</p>
     
     <div class="survey-stats">
+      <!-- ✨ NUEVO: Mostrar ID de la encuesta -->
+      <div class="stat stat-id">
+        <span class="stat-icon">🔢</span>
+        <span class="stat-text">ID: {{ survey.id }}</span>
+        <button 
+          @click="copyToClipboard(survey.id)" 
+          class="copy-btn"
+          title="Copiar ID"
+        >
+          📋
+        </button>
+      </div>
+      
       <div class="stat">
         <span class="stat-icon">📝</span>
         <span class="stat-text">{{ survey.questions.length }} preguntas</span>
       </div>
       <div class="stat">
         <span class="stat-icon">📊</span>
-        <span class="stat-text">{{ survey.totalResponses }} respuestas</span>
+        <span class="stat-text">{{ survey.totalResponses || 0 }} respuestas</span>
       </div>
-      <div class="stat">
+      <div v-if="survey.code" class="stat">
         <span class="stat-icon">🔑</span>
         <span class="stat-text">{{ survey.code }}</span>
       </div>
@@ -34,11 +47,31 @@
         Creada: {{ formatDate(survey.createdAt) }}
       </p>
       <p class="date-text">
-        Actualizada: {{ formatDate(survey.updatedAt) }}
+        Actualizada: {{ formatDate(survey.modifiedAt) }}
       </p>
     </div>
 
     <div class="survey-actions">
+      <!-- Botones de estado según corresponda -->
+      <button 
+        v-if="survey.status === 'CREADA'"
+        @click="$emit('publish', survey.id)"
+        class="action-btn publish-btn"
+        title="Publicar encuesta para que sea visible al público"
+      >
+        📢 Publicar
+      </button>
+      
+      <button 
+        v-if="survey.status === 'PUBLICADA'"
+        @click="$emit('close', survey.id)"
+        class="action-btn close-btn"
+        title="Cerrar encuesta - ya no se podrán enviar más respuestas"
+      >
+        🔒 Cerrar
+      </button>
+
+      <!-- Botones de acción -->
       <button 
         @click="$emit('view', survey.id)"
         class="action-btn view-btn"
@@ -48,6 +81,7 @@
       <button 
         @click="$emit('edit', survey.id)"
         class="action-btn edit-btn"
+        :disabled="survey.status === 'FINALIZADA'"
       >
         Editar
       </button>
@@ -60,6 +94,8 @@
       <button 
         @click="$emit('delete', survey.id)"
         class="action-btn delete-btn"
+        :disabled="survey.status === 'PUBLICADA'"
+        :title="survey.status === 'PUBLICADA' ? 'No se puede eliminar una encuesta publicada' : 'Eliminar encuesta'"
       >
         Eliminar
       </button>
@@ -68,7 +104,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Survey } from '@/types/survey'
+import type { Survey, SurveyStatus } from '@/types/survey'
 
 interface Props {
   survey: Survey
@@ -81,6 +117,8 @@ defineEmits<{
   edit: [id: string]
   responses: [id: string]
   delete: [id: string]
+  publish: [id: string]
+  close: [id: string]
 }>()
 
 const formatDate = (dateString: string) => {
@@ -89,6 +127,44 @@ const formatDate = (dateString: string) => {
     month: 'short',
     day: 'numeric'
   })
+}
+
+// ✨ NUEVO: Función para copiar ID al portapapeles
+const copyToClipboard = async (text: string) => {
+  try {
+    await navigator.clipboard.writeText(text)
+    // Mostrar feedback visual (opcional)
+    console.log('ID copiado al portapapeles:', text)
+  } catch (err) {
+    console.error('Error al copiar al portapapeles:', err)
+    // Fallback para navegadores más antiguos
+    const textArea = document.createElement('textarea')
+    textArea.value = text
+    document.body.appendChild(textArea)
+    textArea.select()
+    document.execCommand('copy')
+    document.body.removeChild(textArea)
+  }
+}
+
+const getStatusLabel = (status: SurveyStatus): string => {
+  const statusLabels: Record<SurveyStatus, string> = {
+    'CREADA': 'Creada',
+    'PUBLICADA': 'Publicada',
+    'PAUSADA': 'Pausada',
+    'FINALIZADA': 'Finalizada'
+  }
+  return statusLabels[status] || status
+}
+
+const getStatusClass = (status: SurveyStatus): string => {
+  const statusClasses: Record<SurveyStatus, string> = {
+    'CREADA': 'status-created',
+    'PUBLICADA': 'status-active',
+    'PAUSADA': 'status-paused',
+    'FINALIZADA': 'status-finished'
+  }
+  return statusClasses[status] || 'status-default'
 }
 </script>
 
@@ -131,9 +207,24 @@ const formatDate = (dateString: string) => {
   text-transform: uppercase;
 }
 
+.status-created {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+}
+
 .status-active {
   background: rgba(16, 185, 129, 0.1);
   color: var(--success-color);
+}
+
+.status-paused {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
+
+.status-finished {
+  background: rgba(107, 114, 128, 0.1);
+  color: var(--text-secondary);
 }
 
 .status-inactive {
@@ -218,5 +309,124 @@ const formatDate = (dateString: string) => {
 .action-btn:hover {
   opacity: 0.8;
   transform: translateY(-1px);
+}
+
+/* ✨ NUEVOS ESTILOS PARA LOS BOTONES */
+.publish-btn {
+  background: var(--success-color, #10b981);
+  color: white;
+}
+
+.publish-btn:hover {
+  background: var(--success-hover, #059669);
+}
+
+.close-btn {
+  background: var(--warning-color, #f59e0b);
+  color: white;
+}
+
+.close-btn:hover {
+  background: var(--warning-hover, #d97706);
+}
+
+/* Estilos para botones deshabilitados */
+.action-btn:disabled {
+  background: var(--gray-300, #d1d5db);
+  color: var(--gray-500, #6b7280);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.action-btn:disabled:hover {
+  background: var(--gray-300, #d1d5db);
+}
+
+/* Actualizar colores de estado */
+.status-active {
+  background: var(--success-color, #10b981);
+  color: white;
+}
+
+.status-created {
+  background: var(--info-color, #3b82f6);
+  color: white;
+}
+
+.status-finished {
+  background: var(--gray-500, #6b7280);
+  color: white;
+}
+
+.status-paused {
+  background: var(--warning-color, #f59e0b);
+  color: white;
+}
+
+/* ✨ NUEVO: Estilos para el ID y botón de copia */
+.stat-id {
+  position: relative;
+  font-family: 'Courier New', monospace; /* Fuente monospace para el ID */
+}
+
+.stat-id .stat-text {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.copy-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 4px;
+  margin-left: 6px;
+  border-radius: 3px;
+  font-size: 0.8rem;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+}
+
+.copy-btn:hover {
+  opacity: 1;
+  background: var(--gray-100, #f5f5f5);
+}
+
+.copy-btn:active {
+  transform: scale(0.95);
+}
+
+/* Hacer que el ID sea más legible */
+.stat-id {
+  grid-column: 1 / -1; /* Ocupar todo el ancho disponible */
+  border-bottom: 1px solid var(--border-light, #e5e7eb);
+  padding-bottom: var(--spacing-xs, 4px);
+  margin-bottom: var(--spacing-xs, 4px);
+}
+
+/* Mejorar el layout de las estadísticas */
+.survey-stats {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-xs, 4px);
+  margin: var(--spacing-md, 12px) 0;
+}
+
+/* Las otras estadísticas en una fila */
+.survey-stats .stat:not(.stat-id) {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs, 4px);
+}
+
+/* Contenedor para las estadísticas que no son ID */
+.survey-stats {
+  display: block;
+}
+
+.stats-row {
+  display: flex;
+  gap: var(--spacing-md, 12px);
+  flex-wrap: wrap;
+  margin-top: var(--spacing-xs, 4px);
 }
 </style>

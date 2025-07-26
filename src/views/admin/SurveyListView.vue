@@ -49,6 +49,8 @@
         @edit="editSurvey"
         @responses="viewResponses"
         @delete="confirmDelete"
+        @publish="confirmPublish"
+        @close="confirmClose"
       />
     </div>
 
@@ -59,6 +61,24 @@
       message="¿Estás seguro de que quieres eliminar esta encuesta? Esta acción no se puede deshacer."
       @confirm="deleteSurvey"
       @cancel="showDeleteModal = false"
+    />
+
+    <!-- ✨ NUEVO: Modal de confirmación para publicar -->
+    <ConfirmModal
+      v-if="showPublishModal"
+      title="Publicar Encuesta"
+      message="¿Estás seguro de que quieres publicar esta encuesta? Una vez publicada, estará disponible para recibir respuestas."
+      @confirm="publishSurvey"
+      @cancel="showPublishModal = false"
+    />
+
+    <!-- ✨ NUEVO: Modal de confirmación para cerrar -->
+    <ConfirmModal
+      v-if="showCloseModal"
+      title="Cerrar Encuesta"
+      message="¿Estás seguro de que quieres cerrar esta encuesta? Ya no se podrán enviar más respuestas."
+      @confirm="closeSurvey"
+      @cancel="showCloseModal = false"
     />
   </div>
 </template>
@@ -75,27 +95,33 @@ const surveyStore = useSurveyStore()
 
 const searchQuery = ref('')
 const statusFilter = ref('')
+
+// Estados para modales
 const showDeleteModal = ref(false)
+const showPublishModal = ref(false)  // ✨ NUEVO
+const showCloseModal = ref(false)    // ✨ NUEVO
+
 const surveyToDelete = ref<string | null>(null)
+const surveyToPublish = ref<string | null>(null)  // ✨ NUEVO
+const surveyToClose = ref<string | null>(null)    // ✨ NUEVO
 
 const filteredSurveys = computed(() => {
   let filtered = surveyStore.surveys
 
-  // Filtrar por búsqueda
+  // Filtrar por búsqueda (corregido para usar 'name' en lugar de 'title')
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
     filtered = filtered.filter(survey => 
-      survey.title.toLowerCase().includes(query) ||
-      survey.description.toLowerCase().includes(query) ||
-      survey.code.toLowerCase().includes(query)
+      survey.name.toLowerCase().includes(query) ||
+      survey.description.toLowerCase().includes(query)
     )
   }
 
-  // Filtrar por estado
+  // Filtrar por estado (actualizado para usar 'status')
   if (statusFilter.value === 'active') {
-    filtered = filtered.filter(survey => survey.isActive)
+    filtered = filtered.filter(survey => survey.status === 'PUBLICADA')
   } else if (statusFilter.value === 'inactive') {
-    filtered = filtered.filter(survey => !survey.isActive)
+    filtered = filtered.filter(survey => survey.status !== 'PUBLICADA')
   }
 
   return filtered
@@ -126,6 +152,41 @@ const deleteSurvey = async () => {
       surveyToDelete.value = null
     } catch (error) {
       console.error('Error al eliminar encuesta:', error)
+    }
+  }
+}
+
+// ✨ NUEVOS MÉTODOS
+const confirmPublish = (id: string) => {
+  surveyToPublish.value = id
+  showPublishModal.value = true
+}
+
+const publishSurvey = async () => {
+  if (surveyToPublish.value) {
+    try {
+      await surveyStore.publishSurvey(surveyToPublish.value)
+      showPublishModal.value = false
+      surveyToPublish.value = null
+    } catch (error) {
+      console.error('Error al publicar encuesta:', error)
+    }
+  }
+}
+
+const confirmClose = (id: string) => {
+  surveyToClose.value = id
+  showCloseModal.value = true
+}
+
+const closeSurvey = async () => {
+  if (surveyToClose.value) {
+    try {
+      await surveyStore.closeSurvey(surveyToClose.value)
+      showCloseModal.value = false
+      surveyToClose.value = null
+    } catch (error) {
+      console.error('Error al cerrar encuesta:', error)
     }
   }
 }
@@ -245,5 +306,57 @@ onMounted(() => {
   .surveys-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* ✨ NUEVOS ESTILOS PARA LOS BOTONES */
+.publish-btn {
+  background: var(--success-color, #10b981);
+  color: white;
+}
+
+.publish-btn:hover {
+  background: var(--success-hover, #059669);
+}
+
+.close-btn {
+  background: var(--warning-color, #f59e0b);
+  color: white;
+}
+
+.close-btn:hover {
+  background: var(--warning-hover, #d97706);
+}
+
+/* Estilos para botones deshabilitados */
+.action-btn:disabled {
+  background: var(--gray-300, #d1d5db);
+  color: var(--gray-500, #6b7280);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.action-btn:disabled:hover {
+  background: var(--gray-300, #d1d5db);
+}
+
+/* Actualizar colores de estado */
+.status-active {
+  background: var(--success-color, #10b981);
+  color: white;
+}
+
+.status-created {
+  background: var(--info-color, #3b82f6);
+  color: white;
+}
+
+.status-finished {
+  background: var(--gray-500, #6b7280);
+  color: white;
+}
+
+.status-paused {
+  background: var(--warning-color, #f59e0b);
+  color: white;
 }
 </style>

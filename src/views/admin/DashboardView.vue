@@ -41,7 +41,7 @@ const surveyStore = useSurveyStore()
 
 const recentSurveys = computed(() =>
   surveyStore.surveys
-    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+    .sort((a, b) => new Date(b.modifiedAt).getTime() - new Date(a.modifiedAt).getTime())
     .slice(0, 3)
 )
 
@@ -66,7 +66,7 @@ onMounted(() => {
 
 <style scoped>
 .dashboard {
-  padding: 0px var(--spacing-lg) var(--spacing-lg) var(--spacing-lg);
+  padding: 10px var(--spacing-lg) var(--spacing-lg) var(--spacing-lg);
   max-width: 1200px;
   margin:0px auto auto auto;
   width: 100%;
@@ -95,11 +95,6 @@ onMounted(() => {
   justify-content: center;
 }
 
-.dashboard-stats>* {
-  flex: 1 1 250px;
-  min-width: 220px;
-  max-width: 280px;
-}
 
 .dashboard-actions {
   display: flex;
@@ -131,7 +126,7 @@ onMounted(() => {
 }
 
 .action-button.secondary {
-  background: var(--secondary-color);
+  background: var(--primary-color);
   color: white;
 }
 

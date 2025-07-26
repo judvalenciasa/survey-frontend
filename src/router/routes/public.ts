@@ -15,10 +15,21 @@ const publicRoutes: RouteRecordRaw[] = [
         path: 'survey-presentation',
         name: 'SurveyPresentation',
         component: () => import('@/views/public/SurveyPublicView.vue')
+      },
+      // ✨ ACTUALIZADO: Usar ID en lugar de code
+      {
+        path: 'survey/:id',
+        name: 'SurveyResponse',
+        component: () => import('@/views/public/SurveyResponseView.vue'),
+        props: true
+      },
+      {
+        path: 'thank-you',
+        name: 'ThankYou',
+        component: () => import('@/views/public/ThankYouView.vue')
       }
     ]
   },
-  // Wildcard route - sin layout
   {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',

@@ -1,39 +1,79 @@
 <template>
-  <div class="survey-page">
+  <div class="survey-public">
     <div class="survey-container">
-      <h1 class="survey-title">Acceso a Encuesta</h1>
-      <p class="survey-subtitle">Ingresa el código de la encuesta para comenzar</p>
-      
-      <div class="survey-form">
-        <input 
-          v-model="surveyCode"
-          type="text" 
-          placeholder="Código de encuesta"
-          class="survey-input"
-          @keyup.enter="accessSurvey"
-        />
-        <button 
-          @click="accessSurvey"
-          class="survey-button"
-          :disabled="!surveyCode"
-        >
-          Acceder
-        </button>
+      <div class="survey-header">
+        <h1 class="survey-title">Acceso a Encuesta</h1>
+        <p class="survey-subtitle">
+          Ingresa el ID de la encuesta para comenzar
+        </p>
       </div>
+
+      <form @submit.prevent="accessSurvey" class="survey-form">
+        <input
+          v-model="surveyId"
+          type="text"
+          placeholder="Ingresa el ID de la encuesta"
+          class="survey-input"
+          :class="{ error: error }"
+          :disabled="loading"
+        />
+        
+        <p v-if="error" class="error-message">
+          {{ error }}
+        </p>
+
+        <button 
+          type="submit" 
+          class="access-btn"
+          :disabled="loading || !surveyId"
+        >
+          {{ loading ? 'Verificando...' : 'Acceder' }}
+        </button>
+      </form>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { surveyService } from '@/services/survey.service'
 
-const surveyCode = ref('')
+const router = useRouter()
+const surveyId = ref('')  // ✨ CAMBIO: Usar surveyId en lugar de surveyCode
+const loading = ref(false)
+const error = ref('')
 
-const accessSurvey = () => {
-  if (surveyCode.value) {
-    // Aquí irá la lógica para validar y acceder a la encuesta
-    console.log('Accessing survey with code:', surveyCode.value)
-    // router.push(`/survey/${surveyCode.value}`)
+const accessSurvey = async () => {
+  if (!surveyId.value) return
+  
+  loading.value = true
+  error.value = ''
+  
+  try {
+    // ✨ CAMBIO: Usar getSurveyForResponse en lugar de getSurveyByCode
+    const response = await surveyService.getSurveyForResponse(surveyId.value)
+    
+    // Verificar que la encuesta está publicada
+    if (response.data.status !== 'PUBLICADA') {
+      throw new Error('Esta encuesta no está disponible para responder')
+    }
+    
+    // Si llegamos aquí, la encuesta existe y está activa - navegar a responder
+    router.push(`/survey/${surveyId.value}`)
+    
+  } catch (err: any) {
+    console.error('Error accessing survey:', err)
+    
+    if (err.response?.status === 404) {
+      error.value = 'Encuesta no encontrada'
+    } else if (err.response?.status === 403) {
+      error.value = 'Esta encuesta no está disponible para responder'
+    } else {
+      error.value = err.message || 'ID de encuesta no válido'
+    }
+  } finally {
+    loading.value = false
   }
 }
 </script>
@@ -78,12 +118,23 @@ const accessSurvey = () => {
   border-radius: var(--border-radius);
   font-size: 1rem;
   text-align: center;
+  transition: border-color 0.2s ease;
 }
 
 .survey-input:focus {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.survey-input.error {
+  border-color: var(--error-color);
+}
+
+.error-message {
+  color: var(--error-color);
+  font-size: 0.9rem;
+  margin-top: -var(--spacing-sm);
 }
 
 .survey-button {

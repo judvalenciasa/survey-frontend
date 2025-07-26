@@ -13,7 +13,7 @@ const adminRoutes: RouteRecordRaw[] = [
     children: [
       {
         path: 'dashboard',
-        name: 'Dashboard',
+        name: 'dashboard',
         component: () => import('@/views/admin/DashboardView.vue'),
         meta: {
           requiresAuth: true

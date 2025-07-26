@@ -1,40 +1,31 @@
 <template>
   <div class="survey-page">
-    <AppNavbar />
-    
-    <main class="survey-main">
-      <div class="survey-container">
-        <h1 class="survey-title">Acceso a Encuesta</h1>
-        <p class="survey-subtitle">Ingresa el código de la encuesta para comenzar</p>
-        
-        <div class="survey-form">
-          <input 
-            v-model="surveyCode"
-            type="text" 
-            placeholder="Código de encuesta"
-            class="survey-input"
-            @keyup.enter="accessSurvey"
-          />
-          <button 
-            @click="accessSurvey"
-            class="survey-button"
-            :disabled="!surveyCode"
-          >
-            Acceder
-          </button>
-        </div>
+    <div class="survey-container">
+      <h1 class="survey-title">Acceso a Encuesta</h1>
+      <p class="survey-subtitle">Ingresa el código de la encuesta para comenzar</p>
+      
+      <div class="survey-form">
+        <input 
+          v-model="surveyCode"
+          type="text" 
+          placeholder="Código de encuesta"
+          class="survey-input"
+          @keyup.enter="accessSurvey"
+        />
+        <button 
+          @click="accessSurvey"
+          class="survey-button"
+          :disabled="!surveyCode"
+        >
+          Acceder
+        </button>
       </div>
-    </main>
-
-    <AppFooter />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import AppNavbar from '@/components/common/AppNavbar.vue'
-import AppFooter from '@/components/common/AppFooter.vue'
-
 
 const surveyCode = ref('')
 
@@ -51,15 +42,9 @@ const accessSurvey = () => {
 .survey-page {
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
-  background: var(--bg-secondary);
-}
-
-.survey-main {
-  flex: 1;
-  display: flex;
   align-items: center;
   padding: var(--spacing-2xl) var(--spacing-md);
+  background: var(--bg-secondary);
 }
 
 .survey-container {

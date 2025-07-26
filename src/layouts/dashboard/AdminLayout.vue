@@ -1,19 +1,16 @@
 <template>
   <div class="admin-layout">
+    <!-- Sidebar fijo izquierdo -->
     <AppSidebar />
     
-    <main class="admin-main" :class="{ 'admin-main--with-sidebar': true }">
-      <AdminHeader />
-      <div class="admin-content">
-        <router-view />
-      </div>
-    </main>
+    <!-- Contenido principal (Header + Contenido dinámico) -->
+    <AdminContent class="admin-main" />
   </div>
 </template>
 
 <script setup lang="ts">
-import AppSidebar from '@/components/common/AppSidebar.vue'
-import AdminHeader from '@/components/admin/AdminHeader.vue'
+import AppSidebar from '@/layouts/dashboard/sidebar/AppSidebar.vue'
+import AdminContent from '@/layouts/dashboard/sidebar/AdminContent.vue'
 </script>
 
 <style scoped>
@@ -24,34 +21,18 @@ import AdminHeader from '@/components/admin/AdminHeader.vue'
 }
 
 .admin-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+  margin-left: 260px; /* Espacio para el sidebar */
   transition: margin-left 0.3s ease;
 }
 
-.admin-main--with-sidebar {
-  margin-left: 260px;
-}
-
-.admin-content {
-  flex: 1;
-  padding: var(--spacing-xl);
-  overflow-y: auto;
-  background: var(--bg-secondary, #f8f9fa);
-}
-
+/* Responsive */
 @media (max-width: 768px) {
   .admin-layout {
     flex-direction: column;
   }
   
-  .admin-main--with-sidebar {
+  .admin-main {
     margin-left: 0;
-  }
-  
-  .admin-content {
-    padding: var(--spacing-md);
   }
 }
 </style>

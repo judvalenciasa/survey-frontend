@@ -1,5 +1,4 @@
 <template>
-    <AppNavbar />
   <div class="login-page">
     <div class="login-container">
       <div class="login-header">
@@ -14,13 +13,10 @@
       <LoginForm />
     </div>
   </div>
-  <AppFooter />
 </template>
 
 <script setup lang="ts">
 import LoginForm from '@/components/auth/LoginForm.vue'
-import AppNavbar from '@/components/common/AppNavbar.vue'
-import AppFooter from '@/components/common/AppFooter.vue'
 
 const appName = import.meta.env.VITE_APP_NAME || 'Sistema de Encuestas'
 </script>

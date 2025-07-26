@@ -5,10 +5,10 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@components/*": ["/components/*"],
+      "@components/*": ["./components/*"],
       "@views/*": ["./views/*"],
       "@stores/*": ["./store/*"],
-      "@assets/*": ["./assets/*"]
+      "@assets/*": ["./assets/*"],
     },
     "types": ["node", "vite/client"],
     "lib": ["ES2023", "DOM", "DOM.Iterable"],

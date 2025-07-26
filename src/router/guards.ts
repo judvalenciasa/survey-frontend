@@ -16,11 +16,10 @@ export const authGuard = async (
 
   // 2. Ruta requiere autenticación
   if (to.meta.requiresAuth && !authStore.token) {
-    return next('/login')
+    return next('/auth/login')
   }
 
   // 3. Verificar rol de admin para rutas administrativas
-  // SOLO verificar rol si el user está completamente cargado
   if (
     to.path.startsWith('/admin') &&
     authStore.token &&

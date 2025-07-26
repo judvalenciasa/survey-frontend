@@ -8,7 +8,7 @@
         
         <div class="header-actions">
           <div class="user-info">
-            <span class="user-name">{{ authStore.user?.roles[0] || 'Admin' }}</span>
+            <span class="user-name">{{ authStore.user?.email || 'Admin' }}</span>
             <div class="user-avatar">
               {{ userInitials }}
             </div>

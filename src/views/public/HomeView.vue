@@ -1,6 +1,5 @@
 <template>
     <div class="home-page">
-      <AppNavbar />
       
       <main class="home-main">
         <div class="home-container">
@@ -35,14 +34,11 @@
         </div>
       </main>
   
-      <AppFooter />
     </div>
   </template>
   
   <script setup lang="ts">
   import { useRouter } from 'vue-router'
-  import AppNavbar from '@/components/common/AppNavbar.vue'
-  import AppFooter from '@/components/common/AppFooter.vue'
   import HomeCard from '@/components/common/HomeCard.vue'
   
   const router = useRouter()

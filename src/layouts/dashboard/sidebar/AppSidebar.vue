@@ -99,6 +99,7 @@
     height: 100vh;
     z-index: 1000;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    background-color: var(--primary-color);
   }
   
   .sidebar--collapsed {

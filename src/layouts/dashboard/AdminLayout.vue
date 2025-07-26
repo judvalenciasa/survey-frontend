@@ -1,9 +1,6 @@
 <template>
   <div class="admin-layout">
-    <!-- Sidebar fijo izquierdo -->
     <AppSidebar />
-    
-    <!-- Contenido principal (Header + Contenido dinámico) -->
     <AdminContent class="admin-main" />
   </div>
 </template>
@@ -18,10 +15,11 @@ import AdminContent from '@/layouts/dashboard/sidebar/AdminContent.vue'
   display: flex;
   min-height: 100vh;
   background: var(--bg-secondary, #f8f9fa);
+  width: 100%;
 }
 
 .admin-main {
-  margin-left: 260px; /* Espacio para el sidebar */
+  margin-left: 10%; /* Espacio para el sidebar */
   transition: margin-left 0.3s ease;
 }
 

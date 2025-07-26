@@ -27,7 +27,6 @@ const appName = import.meta.env.VITE_APP_NAME || 'Sistema de Encuestas'
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
   padding: var(--spacing-md);
   background: linear-gradient(135deg, var(--bg-secondary) 0%, #e0e7ff 100%);
 }
@@ -36,10 +35,11 @@ const appName = import.meta.env.VITE_APP_NAME || 'Sistema de Encuestas'
 .login-container {
   width: 100%;
   max-width: 400px;
-  padding: var(--spacing-2xl);
-  background: var(--bg-primary);
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-lg);
+  background-color: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 0px 15px rgba(0, 0, 0, 0.3); /* Sombra más oscura y pronunciada */
+  padding: 2rem;
+  margin-top: 10%;
 }
 
 /* Header del login */

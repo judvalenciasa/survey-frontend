@@ -55,7 +55,7 @@
   
   <style scoped>
   .home-page {
-    min-height: 100vh;
+    min-height: 85vh;
     display: flex;
     flex-direction: column;
     background: linear-gradient(135deg, var(--bg-secondary) 0%, #e0e7ff 100%);
@@ -66,6 +66,7 @@
     display: flex;
     align-items: center;
     padding: var(--spacing-2xl) var(--spacing-md);
+    height: 80%;
   }
   
   .home-container {

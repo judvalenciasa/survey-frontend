@@ -1,20 +1,45 @@
 <template>
-
   <div class="dashboard">
     <header class="dashboard-header">
       <div class="dashboard-stats">
-        <StatsCard title="Total Encuestas" :value="surveyStore.totalSurveys" icon="📊" color="primary" />
-        <StatsCard title="Encuestas Activas" :value="surveyStore.activeSurveys.length" icon="✅" color="success" />
-        <StatsCard title="Total Respuestas" :value="surveyStore.totalResponses" icon="📝" color="info" />
-        <StatsCard title="Respuestas Hoy" :value="todayResponses" icon="🗓️" color="warning" />
+        <StatsCard
+          title="Total Encuestas"
+          :value="surveyStore.totalSurveys"
+          icon="📊"
+          color="primary"
+        />
+        <StatsCard
+          title="Encuestas Activas"
+          :value="surveyStore.activeSurveys.length"
+          icon="✅"
+          color="success"
+        />
+        <StatsCard
+          title="Total Respuestas"
+          :value="surveyStore.totalResponses"
+          icon="📝"
+          color="info"
+        />
+        <StatsCard
+          title="Respuestas Hoy"
+          :value="todayResponses"
+          icon="🗓️"
+          color="warning"
+        />
       </div>
     </header>
 
     <div class="dashboard-actions">
-      <router-link to="/admin/surveys" class="action-button primary">
+      <router-link
+        to="/admin/surveys"
+        class="action-button primary"
+      >
         Ver Todas las Encuestas
       </router-link>
-      <router-link to="/admin/surveys/create" class="action-button secondary">
+      <router-link
+        to="/admin/surveys/create"
+        class="action-button secondary"
+      >
         Crear Nueva Encuesta
       </router-link>
     </div>
@@ -22,8 +47,13 @@
     <div class="dashboard-recent">
       <h2>Encuestas Recientes</h2>
       <div class="recent-surveys">
-        <SurveyCard v-for="survey in recentSurveys" :key="survey.id" :survey="survey" @view="viewSurvey"
-          @edit="editSurvey" />
+        <SurveyCard
+          v-for="survey in recentSurveys"
+          :key="survey.id"
+          :survey="survey"
+          @view="viewSurvey"
+          @edit="editSurvey"
+        />
       </div>
     </div>
   </div>
@@ -31,10 +61,10 @@
 
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { useSurveyStore } from '@/store/modules/survey'
-import StatsCard from '@/components/admin/StatsCard.vue'
-import SurveyCard from '@/components/survey/SurveyCard.vue'
+  import { useRouter } from 'vue-router'
+  import { useSurveyStore } from '@/store/modules/survey'
+  import StatsCard from '@/components/admin/StatsCard.vue'
+  import SurveyCard from '@/components/survey/SurveyCard.vue'
 
 const router = useRouter()
 const surveyStore = useSurveyStore()

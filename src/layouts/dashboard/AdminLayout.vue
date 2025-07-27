@@ -1,5 +1,8 @@
 <template>
-  <div class="admin-layout" :class="{ 'sidebar-collapsed': sidebarCollapsed }">
+  <div
+    class="admin-layout"
+    :class="{ 'sidebar-collapsed': sidebarCollapsed }"
+  >
     <AppSidebar @toggle-sidebar="handleSidebarToggle" />
     <AdminContent />
   </div>

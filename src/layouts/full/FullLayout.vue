@@ -1,20 +1,20 @@
 <template>
-    <div class="full-layout">
-      <!-- Header/Navbar público -->
-      <AppNavbar />
+  <div class="full-layout">
+    <!-- Header/Navbar público -->
+    <AppNavbar />
       
-      <!-- Contenido principal -->
-      <main class="full-main">
-        <router-view />
-      </main>
+    <!-- Contenido principal -->
+    <main class="full-main">
+      <router-view />
+    </main>
       
-      <!-- Footer -->
-      <AppFooter />
-    </div>
-  </template>
+    <!-- Footer -->
+    <AppFooter />
+  </div>
+</template>
   
   <script setup lang="ts">
-  import AppNavbar from '@/layouts/defaulLayouts/AppNavbar.vue'
+  import AppNavbar from '@/layouts/defaulLayouts/AppNavbar.vue' 
   import AppFooter from '@/layouts/defaulLayouts/AppFooter.vue'
   </script>
   

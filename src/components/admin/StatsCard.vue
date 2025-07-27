@@ -1,9 +1,18 @@
 <template>
-  <div class="stats-card" :class="`stats-card--${color}`">
-    <div class="stats-icon">{{ icon }}</div>
+  <div
+    class="stats-card"
+    :class="`stats-card--${color}`"
+  >
+    <div class="stats-icon">
+      {{ icon }}
+    </div>
     <div class="stats-content">
-      <h3 class="stats-value">{{ value }}</h3>
-      <p class="stats-title">{{ title }}</p>
+      <h3 class="stats-value">
+        {{ value }}
+      </h3>
+      <p class="stats-title">
+        {{ title }}
+      </p>
     </div>
   </div>
 </template>

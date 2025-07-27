@@ -1,11 +1,26 @@
 <template>
-  <aside class="sidebar" :class="{ 'sidebar--collapsed': isCollapsed }">
+  <aside
+    class="sidebar"
+    :class="{ 'sidebar--collapsed': isCollapsed }"
+  >
     <div class="sidebar-header">
       <div class="sidebar-brand">
-        <h3 v-show="!isCollapsed" class="brand-text">📊 FormST&T</h3>
-        <span v-show="isCollapsed" class="brand-icon">📊</span>
+        <h3
+          v-show="!isCollapsed"
+          class="brand-text"
+        >
+          📊 FormST&T
+        </h3>
+        <span
+          v-show="isCollapsed"
+          class="brand-icon"
+        >📊</span>
       </div>
-      <button @click="toggleSidebar" class="sidebar-toggle" :aria-label="isCollapsed ? 'Expandir sidebar' : 'Colapsar sidebar'">
+      <button
+        class="sidebar-toggle"
+        :aria-label="isCollapsed ? 'Expandir sidebar' : 'Colapsar sidebar'"
+        @click="toggleSidebar"
+      >
         <span>{{ isCollapsed ? '→' : '←' }}</span>
       </button>
     </div>
@@ -13,60 +28,108 @@
     <nav class="sidebar-nav">
       <ul class="nav-list">
         <li class="nav-item">
-          <router-link to="/admin/dashboard" class="nav-link" active-class="nav-link--active">
+          <router-link
+            to="/admin/dashboard"
+            class="nav-link"
+            active-class="nav-link--active"
+          >
             <span class="nav-icon">🏠</span>
-            <span v-show="!isCollapsed" class="nav-text">Dashboard</span>
+            <span
+              v-show="!isCollapsed"
+              class="nav-text"
+            >Dashboard</span>
           </router-link>
         </li>
         
         <li class="nav-item">
-          <router-link to="/admin/surveys" class="nav-link" active-class="nav-link--active">
+          <router-link
+            to="/admin/surveys"
+            class="nav-link"
+            active-class="nav-link--active"
+          >
             <span class="nav-icon">📝</span>
-            <span v-show="!isCollapsed" class="nav-text">Encuestas</span>
+            <span
+              v-show="!isCollapsed"
+              class="nav-text"
+            >Encuestas</span>
           </router-link>
         </li>
         
         <li class="nav-item">
-          <router-link to="/admin/surveys/create" class="nav-link" active-class="nav-link--active">
+          <router-link
+            to="/admin/surveys/create"
+            class="nav-link"
+            active-class="nav-link--active"
+          >
             <span class="nav-icon">➕</span>
-            <span v-show="!isCollapsed" class="nav-text">Nueva Encuesta</span>
+            <span
+              v-show="!isCollapsed"
+              class="nav-text"
+            >Nueva Encuesta</span>
           </router-link>
         </li>
         
         <li class="nav-item">
-          <router-link to="/admin/responses" class="nav-link" active-class="nav-link--active">
+          <router-link
+            to="/admin/responses"
+            class="nav-link"
+            active-class="nav-link--active"
+          >
             <span class="nav-icon">📊</span>
-            <span v-show="!isCollapsed" class="nav-text">Respuestas</span>
+            <span
+              v-show="!isCollapsed"
+              class="nav-text"
+            >Respuestas</span>
           </router-link>
         </li>
         
         <li class="nav-item">
-          <router-link to="/admin/analytics" class="nav-link" active-class="nav-link--active">
+          <router-link
+            to="/admin/analytics"
+            class="nav-link"
+            active-class="nav-link--active"
+          >
             <span class="nav-icon">📈</span>
-            <span v-show="!isCollapsed" class="nav-text">Analíticas</span>
+            <span
+              v-show="!isCollapsed"
+              class="nav-text"
+            >Analíticas</span>
           </router-link>
         </li>
         
         <li class="nav-item">
-          <router-link to="/admin/users" class="nav-link" active-class="nav-link--active">
+          <router-link
+            to="/admin/users"
+            class="nav-link"
+            active-class="nav-link--active"
+          >
             <span class="nav-icon">👥</span>
-            <span v-show="!isCollapsed" class="nav-text">Usuarios</span>
+            <span
+              v-show="!isCollapsed"
+              class="nav-text"
+            >Usuarios</span>
           </router-link>
         </li>
       </ul>
     </nav>
 
     <div class="sidebar-footer">
-      <button @click="logout" class="logout-btn">
+      <button
+        class="logout-btn"
+        @click="logout"
+      >
         <span class="nav-icon">🚪</span>
-        <span v-show="!isCollapsed" class="nav-text">Salir</span>
+        <span
+          v-show="!isCollapsed"
+          class="nav-text"
+        >Salir</span>
       </button>
     </div>
   </aside>
 </template>
 
 <script setup lang="ts">
-import { ref, inject, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/modules/auth'
 

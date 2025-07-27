@@ -1,31 +1,59 @@
 <template>
-  <div class="home-card" @click="$emit('click')">
+  <div
+    class="home-card"
+    @click="$emit('click')"
+  >
     <div class="card-header">
-      <div class="card-icon">{{ icon }}</div>
-      <h3 class="card-title">{{ title }}</h3>
+      <div class="card-icon">
+        {{ icon }}
+      </div>
+      <h3 class="card-title">
+        {{ title }}
+      </h3>
     </div>
     
-    <p class="card-description">{{ description }}</p>
+    <p class="card-description">
+      {{ description }}
+    </p>
     
-    <button class="card-button" :class="`button-${buttonColor}`">
+    <button
+      class="card-button"
+      :class="`button-${buttonColor}`"
+    >
       {{ buttonText }}
     </button>
   </div>
 </template>
 
-<script setup lang="ts">
-interface Props {
-  title: string
-  description: string
-  icon: string
-  buttonText: string
-  buttonColor: 'primary' | 'secondary'
-}
+<script lang="ts">
+import { defineComponent } from 'vue'
 
-defineProps<Props>()
-defineEmits<{
-  click: []
-}>()
+export default defineComponent({
+  name: 'HomeCard',
+  props: {
+    title: {
+      type: String,
+      required: true
+    },
+    description: {
+      type: String,
+      required: true
+    },
+    icon: {
+      type: String,
+      required: true
+    },
+    buttonText: {
+      type: String,
+      required: true
+    },
+    buttonColor: {
+      type: String as () => 'primary' | 'secondary',
+      required: true
+    }
+  },
+  emits: ['click']
+})
 </script>
 
 <style scoped>

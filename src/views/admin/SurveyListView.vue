@@ -2,7 +2,10 @@
   <div class="survey-list">
     <header class="list-header">
       <h1>Mis Encuestas</h1>
-      <router-link to="/admin/surveys/create" class="create-btn">
+      <router-link
+        to="/admin/surveys/create"
+        class="create-btn"
+      >
         Crear Nueva Encuesta
       </router-link>
     </header>
@@ -14,33 +17,59 @@
           type="text"
           placeholder="Buscar encuestas..."
           class="search-input"
-        />
-        <select v-model="statusFilter" class="status-filter">
-          <option value="">Todas</option>
-          <option value="active">Activas</option>
-          <option value="inactive">Inactivas</option>
+        >
+        <select
+          v-model="statusFilter"
+          class="status-filter"
+        >
+          <option value="">
+            Todas
+          </option>
+          <option value="active">
+            Activas
+          </option>
+          <option value="inactive">
+            Inactivas
+          </option>
         </select>
       </div>
     </div>
 
-    <div v-if="surveyStore.loading" class="loading">
+    <div
+      v-if="surveyStore.loading"
+      class="loading"
+    >
       Cargando encuestas...
     </div>
 
-    <div v-else-if="surveyStore.error" class="error">
+    <div
+      v-else-if="surveyStore.error"
+      class="error"
+    >
       {{ surveyStore.error }}
     </div>
 
-    <div v-else-if="filteredSurveys.length === 0" class="empty-state">
-      <div class="empty-icon">📊</div>
+    <div
+      v-else-if="filteredSurveys.length === 0"
+      class="empty-state"
+    >
+      <div class="empty-icon">
+        📊
+      </div>
       <h3>No tienes encuestas aún</h3>
       <p>Crea tu primera encuesta para comenzar</p>
-      <router-link to="/admin/surveys/create" class="create-btn">
+      <router-link
+        to="/admin/surveys/create"
+        class="create-btn"
+      >
         Crear Primera Encuesta
       </router-link>
     </div>
 
-    <div v-else class="surveys-grid">
+    <div
+      v-else
+      class="surveys-grid"
+    >
       <SurveyCard
         v-for="survey in filteredSurveys"
         :key="survey.id"
@@ -84,11 +113,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onBeforeMount } from 'vue'
 import { useRouter } from 'vue-router'
-import { useSurveyStore } from '@/store/modules/survey'
-import SurveyCard from '@/components/survey/SurveyCard.vue'
-import ConfirmModal from '@/components/common/ConfirmModal.vue'
+import { useSurveyStore } from '../../store/modules/survey'
+import SurveyCard from '../../components/survey/SurveyCard.vue' 
+import ConfirmModal from '../../components/common/ConfirmModal.vue'
 
 const router = useRouter()
 const surveyStore = useSurveyStore()
@@ -98,12 +127,12 @@ const statusFilter = ref('')
 
 // Estados para modales
 const showDeleteModal = ref(false)
-const showPublishModal = ref(false)  // ✨ NUEVO
-const showCloseModal = ref(false)    // ✨ NUEVO
+const showPublishModal = ref(false)
+const showCloseModal = ref(false)
 
 const surveyToDelete = ref<string | null>(null)
-const surveyToPublish = ref<string | null>(null)  // ✨ NUEVO
-const surveyToClose = ref<string | null>(null)    // ✨ NUEVO
+const surveyToPublish = ref<string | null>(null)
+const surveyToClose = ref<string | null>(null)
 
 const filteredSurveys = computed(() => {
   let filtered = surveyStore.surveys
@@ -126,6 +155,47 @@ const filteredSurveys = computed(() => {
 
   return filtered
 })
+
+// ✨ NUEVA FUNCIÓN: Validar y cerrar encuestas vencidas
+const validateAndCloseExpiredSurveys = async () => {
+  const now = new Date()
+  const expiredSurveys = surveyStore.surveys.filter(survey => {
+    // Solo validar encuestas publicadas que tengan fecha de cierre
+    if (survey.status !== 'PUBLICADA' || !survey.scheduledClose) {
+      return false
+    }
+    
+    const closeDate = new Date(survey.scheduledClose)
+    return closeDate <= now
+  })
+
+  // Cerrar encuestas vencidas automáticamente
+  if (expiredSurveys.length > 0) {
+    console.log(`Encontradas ${expiredSurveys.length} encuestas vencidas, cerrando automáticamente...`)
+    
+    for (const survey of expiredSurveys) {
+      try {
+        await surveyStore.closeSurvey(survey.id)
+        console.log(`Encuesta "${survey.name}" cerrada automáticamente por vencimiento`)
+      } catch (error) {
+        console.error(`Error al cerrar encuesta "${survey.name}":`, error)
+      }
+    }
+  }
+}
+
+// ✨ NUEVA FUNCIÓN: Cargar encuestas con validación
+const loadSurveysWithValidation = async () => {
+  try {
+    // Primero cargar las encuestas
+    await surveyStore.fetchSurveys()
+    
+    // Luego validar y cerrar las vencidas
+    await validateAndCloseExpiredSurveys()
+  } catch (error) {
+    console.error('Error al cargar encuestas:', error)
+  }
+}
 
 const viewSurvey = (id: string) => {
   router.push(`/admin/surveys/${id}`)
@@ -156,7 +226,6 @@ const deleteSurvey = async () => {
   }
 }
 
-// ✨ NUEVOS MÉTODOS
 const confirmPublish = (id: string) => {
   surveyToPublish.value = id
   showPublishModal.value = true
@@ -191,9 +260,12 @@ const closeSurvey = async () => {
   }
 }
 
-onMounted(() => {
-  surveyStore.fetchSurveys()
+// ✨ ACTUALIZADO: Usar la nueva función de carga con validación
+onBeforeMount(async () => {
+  await loadSurveysWithValidation()
 })
+
+// ✨ REMOVIDO: onMounted duplicado para evitar doble carga
 </script>
 
 <style scoped>

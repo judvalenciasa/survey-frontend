@@ -2,13 +2,18 @@
   <div class="survey-public">
     <div class="survey-container">
       <div class="survey-header">
-        <h1 class="survey-title">Acceso a Encuesta</h1>
+        <h1 class="survey-title">
+          Acceso a Encuesta
+        </h1>
         <p class="survey-subtitle">
           Ingresa el ID de la encuesta para comenzar
         </p>
       </div>
 
-      <form @submit.prevent="accessSurvey" class="survey-form">
+      <form
+        class="survey-form"
+        @submit.prevent="accessSurvey"
+      >
         <input
           v-model="surveyId"
           type="text"
@@ -16,9 +21,12 @@
           class="survey-input"
           :class="{ error: error }"
           :disabled="loading"
-        />
+        >
         
-        <p v-if="error" class="error-message">
+        <p
+          v-if="error"
+          class="error-message"
+        >
           {{ error }}
         </p>
 
@@ -37,7 +45,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { surveyService } from '@/services/survey.service'
+import { surveyService } from '../../services/survey.service'
 
 const router = useRouter()
 const surveyId = ref('')  // ✨ CAMBIO: Usar surveyId en lugar de surveyCode

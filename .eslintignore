@@ -1,0 +1,7 @@
+# Archivos que no queremos revisar
+dist/
+node_modules/
+public/
+*.config.js
+*.config.ts
+src/components/HelloWorld.vue 

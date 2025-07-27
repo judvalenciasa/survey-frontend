@@ -2,7 +2,6 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { Survey, CreateSurveyRequest, SurveyStatus } from '@/types/survey'
 import { surveyService } from '@/services/survey.service'
-import { useAuthStore } from './auth'
 
 export const useSurveyStore = defineStore('survey', () => {
   // Estado

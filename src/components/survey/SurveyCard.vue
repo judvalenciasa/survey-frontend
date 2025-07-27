@@ -1,7 +1,9 @@
 <template>
   <div class="survey-card">
     <div class="survey-header">
-      <h3 class="survey-title">{{ survey.name }}</h3>
+      <h3 class="survey-title">
+        {{ survey.name }}
+      </h3>
       <div class="survey-status">
         <span 
           class="status-badge" 
@@ -12,7 +14,9 @@
       </div>
     </div>
 
-    <p class="survey-description">{{ survey.description }}</p>
+    <p class="survey-description">
+      {{ survey.description }}
+    </p>
     
     <div class="survey-stats">
       <!-- ✨ NUEVO: Mostrar ID de la encuesta -->
@@ -20,9 +24,9 @@
         <span class="stat-icon">🔢</span>
         <span class="stat-text">ID: {{ survey.id }}</span>
         <button 
-          @click="copyToClipboard(survey.id)" 
-          class="copy-btn"
+          class="copy-btn" 
           title="Copiar ID"
+          @click="copyToClipboard(survey.id)"
         >
           📋
         </button>
@@ -36,7 +40,10 @@
         <span class="stat-icon">📊</span>
         <span class="stat-text">{{ survey.totalResponses || 0 }} respuestas</span>
       </div>
-      <div v-if="survey.code" class="stat">
+      <div
+        v-if="survey.code"
+        class="stat"
+      >
         <span class="stat-icon">🔑</span>
         <span class="stat-text">{{ survey.code }}</span>
       </div>
@@ -55,47 +62,47 @@
       <!-- Botones de estado según corresponda -->
       <button 
         v-if="survey.status === 'CREADA'"
-        @click="$emit('publish', survey.id)"
         class="action-btn publish-btn"
         title="Publicar encuesta para que sea visible al público"
+        @click="$emit('publish', survey.id)"
       >
         📢 Publicar
       </button>
       
       <button 
         v-if="survey.status === 'PUBLICADA'"
-        @click="$emit('close', survey.id)"
         class="action-btn close-btn"
         title="Cerrar encuesta - ya no se podrán enviar más respuestas"
+        @click="$emit('close', survey.id)"
       >
         🔒 Cerrar
       </button>
 
       <!-- Botones de acción -->
       <button 
-        @click="$emit('view', survey.id)"
         class="action-btn view-btn"
+        @click="$emit('view', survey.id)"
       >
         Ver Detalles
       </button>
       <button 
-        @click="$emit('edit', survey.id)"
         class="action-btn edit-btn"
         :disabled="survey.status === 'FINALIZADA'"
+        @click="$emit('edit', survey.id)"
       >
         Editar
       </button>
       <button 
-        @click="$emit('responses', survey.id)"
         class="action-btn responses-btn"
+        @click="$emit('responses', survey.id)"
       >
         Respuestas
       </button>
       <button 
-        @click="$emit('delete', survey.id)"
         class="action-btn delete-btn"
         :disabled="survey.status === 'PUBLICADA'"
         :title="survey.status === 'PUBLICADA' ? 'No se puede eliminar una encuesta publicada' : 'Eliminar encuesta'"
+        @click="$emit('delete', survey.id)"
       >
         Eliminar
       </button>
@@ -104,7 +111,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Survey, SurveyStatus } from '@/types/survey'
+import type { Survey, SurveyStatus } from '../../types/survey'
 
 interface Props {
   survey: Survey

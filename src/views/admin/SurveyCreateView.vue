@@ -7,28 +7,43 @@
       </p>
     </header>
 
-    <SurveyForm 
+    <SurveyForm
       :loading="surveyStore.loading"
       @submit="createSurvey"
       @cancel="goBack"
     />
 
     <!-- Modal de éxito -->
-    <div v-if="showSuccessModal" class="modal-overlay" @click="closeSuccessModal">
-      <div class="modal success-modal" @click.stop>
+    <div
+      v-if="showSuccessModal"
+      class="modal-overlay"
+      @click="closeSuccessModal"
+    >
+      <div
+        class="modal success-modal"
+        @click.stop
+      >
         <div class="modal-header">
           <h3>¡Encuesta Creada Exitosamente!</h3>
         </div>
         <div class="modal-body">
-          <div class="success-icon">✅</div>
+          <div class="success-icon">
+            ✅
+          </div>
           <p>Tu encuesta <strong>{{ createdSurveyName }}</strong> ha sido creada correctamente.</p>
           <p>Ya puedes encontrarla en tu lista de encuestas.</p>
         </div>
         <div class="modal-actions">
-          <button @click="goToSurveyList" class="btn-primary">
+          <button
+            class="btn-primary"
+            @click="goToSurveyList"
+          >
             Ver Lista de Encuestas
           </button>
-          <button @click="createAnother" class="btn-secondary">
+          <button
+            class="btn-secondary"
+            @click="createAnother"
+          >
             Crear Otra Encuesta
           </button>
         </div>
@@ -40,9 +55,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useSurveyStore } from '@/store/modules/survey'
-import type { CreateSurveyRequest } from '@/types/survey'
-import SurveyForm from '@/components/survey/SurveyForm.vue'
+import { useSurveyStore } from '../../store/modules/survey'
+import type { CreateSurveyRequest } from '../../types/survey'
+import SurveyForm from '../../components/survey/SurveyForm.vue'
 
 const router = useRouter()
 const surveyStore = useSurveyStore()
@@ -215,15 +230,15 @@ surveyStore.clearError()
   .survey-create-view {
     padding: var(--spacing-lg);
   }
-  
+
   .page-header h1 {
     font-size: 2rem;
   }
-  
+
   .modal-actions {
     flex-direction: column;
   }
-  
+
   .modal-overlay {
     padding: var(--spacing-md);
   }

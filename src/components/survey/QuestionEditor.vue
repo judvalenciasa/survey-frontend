@@ -2,7 +2,11 @@
   <div class="question-editor">
     <div class="question-header">
       <h4>Pregunta {{ question.order }}</h4>
-      <button @click="$emit('remove')" class="remove-btn" type="button">
+      <button
+        class="remove-btn"
+        type="button"
+        @click="$emit('remove')"
+      >
         ❌
       </button>
     </div>
@@ -17,45 +21,79 @@
         rows="3"
         required
       />
-      <ValidationMessage v-if="errors?.text" :message="errors.text" />
+      <ValidationMessage
+        v-if="errors?.text"
+        :message="errors.text"
+      />
     </div>
 
     <!-- Tipo de pregunta -->
     <div class="form-group">
       <label class="form-label">Tipo de pregunta *</label>
-      <select v-model="question.type" class="form-select" @change="onTypeChange">
-        <option value="">Selecciona un tipo</option>
-        <option v-for="type in QUESTION_TYPES" :key="type.value" :value="type.value">
+      <select
+        v-model="question.type"
+        class="form-select"
+        @change="onTypeChange"
+      >
+        <option value="">
+          Selecciona un tipo
+        </option>
+        <option
+          v-for="type in QuestionType"
+          :key="type.value"
+          :value="type.value"
+        >
           {{ type.label }}
         </option>
       </select>
-      <ValidationMessage v-if="errors?.type" :message="errors.type" />
+      <ValidationMessage
+        v-if="errors?.type"
+        :message="errors.type"
+      />
     </div>
 
     <!-- Configuración específica por tipo -->
-    <div v-if="question.type && needsOptions" class="form-group">
+    <div
+      v-if="question.type && needsOptions"
+      class="form-group"
+    >
       <label class="form-label">Opciones</label>
       
       <!-- Opciones para SINGLE_CHOICE y MULTIPLE_CHOICE -->
       <div v-if="question.type === 'SINGLE_CHOICE' || question.type === 'MULTIPLE_CHOICE'">
-        <div v-for="(option, index) in stringOptions" :key="index" class="option-row">
+        <div
+          v-for="(_ , index) in stringOptions"
+          :key="index"
+          class="option-row"
+        >
           <input
             v-model="stringOptions[index]"
             type="text"
             class="form-input"
             :placeholder="`Opción ${index + 1}`"
-          />
-          <button @click="removeOption(index)" type="button" class="remove-option-btn">
+          >
+          <button
+            type="button"
+            class="remove-option-btn"
+            @click="removeOption(index)"
+          >
             ❌
           </button>
         </div>
-        <button @click="addOption" type="button" class="add-option-btn">
+        <button
+          type="button"
+          class="add-option-btn"
+          @click="addOption"
+        >
           + Agregar opción
         </button>
       </div>
 
       <!-- Configuración para SCALE -->
-      <div v-if="question.type === 'SCALE'" class="scale-config">
+      <div
+        v-if="question.type === 'SCALE'"
+        class="scale-config"
+      >
         <div class="scale-row">
           <div class="form-group">
             <label class="form-label">Mínimo</label>
@@ -65,7 +103,7 @@
               class="form-input"
               min="1"
               max="10"
-            />
+            >
           </div>
           <div class="form-group">
             <label class="form-label">Máximo</label>
@@ -75,7 +113,7 @@
               class="form-input"
               min="2"
               max="10"
-            />
+            >
           </div>
           <div class="form-group">
             <label class="form-label">Paso</label>
@@ -85,7 +123,7 @@
               class="form-input"
               min="1"
               :max="scaleOptions.max - scaleOptions.min"
-            />
+            >
           </div>
         </div>
         
@@ -97,7 +135,7 @@
               type="text"
               class="form-input"
               placeholder="Ej: Muy malo"
-            />
+            >
           </div>
           <div class="form-group">
             <label class="form-label">Etiqueta máxima</label>
@@ -106,7 +144,7 @@
               type="text"
               class="form-input"
               placeholder="Ej: Excelente"
-            />
+            >
           </div>
         </div>
       </div>
@@ -115,7 +153,11 @@
     <!-- Pregunta obligatoria -->
     <div class="form-group">
       <label class="checkbox-label">
-        <input v-model="question.required" type="checkbox" class="form-checkbox" />
+        <input
+          v-model="question.required"
+          type="checkbox"
+          class="form-checkbox"
+        >
         <span class="checkbox-text">Pregunta obligatoria</span>
       </label>
     </div>
@@ -124,9 +166,12 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import type { CreateQuestionRequest, QuestionType, ScaleOptions } from '@/types/survey'
-import { QUESTION_TYPES } from '@/types/survey'
-import ValidationMessage from '@/components/forms/ValidationMessage.vue'
+import type { CreateQuestionRequest, ScaleOptions } from '../../types/survey'
+import { QUESTION_TYPES } from '../../utils/constants'
+import ValidationMessage from '../../components/forms/ValidationMessage.vue'
+
+// Usar la constante centralizada
+const QuestionType = QUESTION_TYPES
 
 interface Props {
   question: CreateQuestionRequest
@@ -164,7 +209,7 @@ const needsOptions = computed(() => {
 })
 
 // Watchers
-watch(() => props.question.type, (newType) => {
+watch(() => props.question.type, () => {
   onTypeChange()
 }, { immediate: true })
 

@@ -1,26 +1,36 @@
 <template>
-    <div class="modal-overlay" @click="$emit('cancel')">
-      <div class="modal-content" @click.stop>
-        <h3 class="modal-title">{{ title }}</h3>
-        <p class="modal-message">{{ message }}</p>
+  <div
+    class="modal-overlay"
+    @click="$emit('cancel')"
+  >
+    <div
+      class="modal-content"
+      @click.stop
+    >
+      <h3 class="modal-title">
+        {{ title }}
+      </h3>
+      <p class="modal-message">
+        {{ message }}
+      </p>
         
-        <div class="modal-actions">
-          <button 
-            @click="$emit('cancel')"
-            class="btn btn-secondary"
-          >
-            Cancelar
-          </button>
-          <button 
-            @click="$emit('confirm')"
-            class="btn btn-danger"
-          >
-            Confirmar
-          </button>
-        </div>
+      <div class="modal-actions">
+        <button 
+          class="btn btn-secondary"
+          @click="$emit('cancel')"
+        >
+          Cancelar
+        </button>
+        <button 
+          class="btn btn-danger"
+          @click="$emit('confirm')"
+        >
+          Confirmar
+        </button>
       </div>
     </div>
-  </template>
+  </div>
+</template>
   
   <script setup lang="ts">
   interface Props {

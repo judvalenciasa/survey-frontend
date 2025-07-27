@@ -1,6 +1,7 @@
 <template>
   <div class="admin-content-wrapper">
     <AdminHeader />
+   
     <main class="admin-main-content">
       <router-view />
     </main>

@@ -2,20 +2,32 @@
   <nav class="navbar">
     <div class="navbar-container">
       <div class="navbar-brand">
-        <router-link to="/" class="brand-link">
+        <router-link
+          to="/"
+          class="brand-link"
+        >
           <span class="brand-icon">📊</span>
           <span class="brand-text">{{ appName }}</span>
         </router-link>
       </div>
 
       <div class="navbar-menu">
-        <router-link to="/" class="nav-link">
+        <router-link
+          to="/"
+          class="nav-link"
+        >
           Inicio
         </router-link>
-        <router-link to="/login" class="nav-link">
+        <router-link
+          to="/login"
+          class="nav-link"
+        >
           Acceso
         </router-link>
-        <router-link to="/survey-presentation" class="nav-link">
+        <router-link
+          to="/survey-presentation"
+          class="nav-link"
+        >
           Encuesta
         </router-link>
       </div>

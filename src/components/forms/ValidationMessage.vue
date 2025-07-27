@@ -4,12 +4,18 @@
   </div>
 </template>
 
-<script setup lang="ts">
-interface Props {
-  message: string
-}
+<script lang="ts">
+import { defineComponent } from 'vue'
 
-defineProps<Props>()
+export default defineComponent({
+  name: 'ValidationMessage',
+  props: {
+    message: {
+      type: String,
+      required: true
+    }
+  }
+})
 </script>
 
 <style scoped>

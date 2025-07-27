@@ -1,48 +1,46 @@
 <template>
-    <div class="home-page">
-      
-      <main class="home-main">
-        <div class="home-container">
-          <header class="home-header">
-            <h1 class="home-title">
-              {{ appName }}
-            </h1>
-            <p class="home-subtitle">
-              Plataforma integral para la gestión y presentación de encuestas
-            </p>
-          </header>
+  <div class="home-page">
+    <main class="home-main">
+      <div class="home-container">
+        <header class="home-header">
+          <h1 class="home-title">
+            {{ appName }}
+          </h1>
+          <p class="home-subtitle">
+            Plataforma integral para la gestión y presentación de encuestas
+          </p>
+        </header>
   
-          <div class="home-cards">
-            <HomeCard
-              title="Acceso Administrativo"
-              description="Ingresa para gestionar encuestas, ver estadísticas y administrar el sistema"
-              icon="🔐"
-              button-text="Iniciar Sesión"
-              button-color="primary"
-              @click="goToLogin"
-            />
+        <div class="home-cards">
+          <HomeCard
+            title="Acceso Administrativo"
+            description="Ingresa para gestionar encuestas, ver estadísticas y administrar el sistema"
+            icon="🔐"
+            button-text="Iniciar Sesión"
+            button-color="primary"
+            @click="goToLogin"
+          />
             
-            <HomeCard
-              title="Presentar Encuesta"
-              description="¿Tienes un código de encuesta? Úsalo aquí para acceder y responder"
-              icon="📝"
-              button-text="Ingresar Código"
-              button-color="secondary"
-              @click="goToSurvey"
-            />
-          </div>
+          <HomeCard
+            title="Presentar Encuesta"
+            description="¿Tienes un código de encuesta? Úsalo aquí para acceder y responder"
+            icon="📝"
+            button-text="Ingresar Código"
+            button-color="secondary"
+            @click="goToSurvey"
+          />
         </div>
-      </main>
-  
-    </div>
-  </template>
+      </div>
+    </main>
+  </div>
+</template>
   
   <script setup lang="ts">
   import { useRouter } from 'vue-router'
-  import HomeCard from '@/components/common/HomeCard.vue'
+  import HomeCard from '../../components/common/HomeCard.vue'
   
   const router = useRouter()
-  const appName = import.meta.env.VITE_APP_NAME || 'Sistema de Encuestas'
+  const appName = (import.meta as any).env.VITE_APP_NAME || 'Sistema de Encuestas'
   
   const goToLogin = () => {
     router.push('/login')

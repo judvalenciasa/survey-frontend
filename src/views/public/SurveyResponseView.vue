@@ -1,32 +1,50 @@
 <template>
   <div class="survey-response-page">
     <!-- Estado de carga -->
-    <div v-if="loading" class="loading-state">
-      <div class="loading-spinner"></div>
+    <div
+      v-if="loading"
+      class="loading-state"
+    >
+      <div class="loading-spinner" />
       <p>Cargando encuesta...</p>
     </div>
 
     <!-- Error al cargar -->
-    <div v-else-if="error" class="error-state">
-      <div class="error-icon">❌</div>
+    <div
+      v-else-if="error"
+      class="error-state"
+    >
+      <div class="error-icon">
+        ❌
+      </div>
       <h2>Error al cargar la encuesta</h2>
       <p>{{ error }}</p>
-      <button @click="$router.push('/survey-presentation')" class="btn-secondary">
+      <button
+        class="btn-secondary"
+        @click="$router.push('/survey-presentation')"
+      >
         Volver a intentar
       </button>
     </div>
 
     <!-- Formulario de respuesta -->
-    <div v-else-if="survey && !submitted" class="survey-container">
+    <div
+      v-else-if="survey && !submitted"
+      class="survey-container"
+    >
       <div class="survey-header">
-        <h1 class="survey-title">{{ survey.name }}</h1>
-        <p class="survey-description">{{ survey.description }}</p>
+        <h1 class="survey-title">
+          {{ survey.name }}
+        </h1>
+        <p class="survey-description">
+          {{ survey.description }}
+        </p>
         <div class="survey-progress">
           <div class="progress-bar">
             <div 
               class="progress-fill" 
               :style="{ width: `${progressPercentage}%` }"
-            ></div>
+            />
           </div>
           <span class="progress-text">
             {{ answeredQuestions }} de {{ survey.questions.length }} preguntas respondidas
@@ -34,16 +52,22 @@
         </div>
       </div>
 
-      <form @submit.prevent="submitSurvey" class="survey-form">
+      <form
+        class="survey-form"
+        @submit.prevent="submitSurvey"
+      >
         <QuestionRender
           v-for="question in survey.questions"
           :key="question.id"
-          :question="question"
           v-model="responses[question.id]"
+          :question="question"
         />
 
         <!-- Error de validación -->
-        <div v-if="validationError" class="validation-error">
+        <div
+          v-if="validationError"
+          class="validation-error"
+        >
           {{ validationError }}
         </div>
 
@@ -62,11 +86,19 @@
     </div>
 
     <!-- Estado enviado -->
-    <div v-else-if="submitted" class="success-state">
-      <div class="success-icon">✅</div>
+    <div
+      v-else-if="submitted"
+      class="success-state"
+    >
+      <div class="success-icon">
+        ✅
+      </div>
       <h2>¡Respuestas enviadas exitosamente!</h2>
       <p>Gracias por participar en nuestra encuesta.</p>
-      <button @click="$router.push('/')" class="btn-primary">
+      <button
+        class="btn-primary"
+        @click="$router.push('/')"
+      >
         Volver al inicio
       </button>
     </div>

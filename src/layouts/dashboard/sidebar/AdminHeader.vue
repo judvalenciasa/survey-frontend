@@ -3,12 +3,17 @@
     <div class="header-content">
       <div class="header-title">
         <h2>{{ pageTitle }}</h2>
-        <p v-if="pageDescription && !isMobile">{{ pageDescription }}</p>
+        <p v-if="pageDescription && !isMobile">
+          {{ pageDescription }}
+        </p>
       </div>
       
       <div class="header-actions">
         <div class="user-info">
-          <span v-if="!isMobile" class="user-name">{{ authStore.user?.email || 'Admin' }}</span>
+          <span
+            v-if="!isMobile"
+            class="user-name"
+          >{{ authStore.user?.email || 'Admin' }}</span>
           <div class="user-avatar">
             {{ userInitials }}
           </div>

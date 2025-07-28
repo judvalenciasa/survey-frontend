@@ -166,7 +166,8 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import type { CreateQuestionRequest, ScaleOptions } from '../../types/survey'
+import type { CreateQuestionRequest } from '../../types/question'
+import type { ScaleOptions } from '../../types/question'
 import { QUESTION_TYPES } from '../../utils/constants'
 import ValidationMessage from '../../components/forms/ValidationMessage.vue'
 

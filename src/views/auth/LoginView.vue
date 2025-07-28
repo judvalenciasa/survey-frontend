@@ -2,9 +2,6 @@
   <div class="login-page">
     <div class="login-container">
       <div class="login-header">
-        <h1 class="login-title">
-          {{ appName }}
-        </h1>
         <p class="login-subtitle">
           Accede a tu cuenta para gestionar encuestas
         </p>
@@ -18,7 +15,6 @@
 <script setup lang="ts">
 import LoginForm from '@/components/auth/LoginForm.vue'
 
-const appName = import.meta.env.VITE_APP_NAME || 'Sistema de Encuestas'
 </script>
 
 <style scoped>

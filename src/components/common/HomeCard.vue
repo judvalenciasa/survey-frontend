@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="home-card"
-    @click="$emit('click')"
-  >
+  <div class="home-card" @click="$emit('click')">
     <div class="card-header">
       <div class="card-icon">
         {{ icon }}
@@ -11,15 +8,12 @@
         {{ title }}
       </h3>
     </div>
-    
+
     <p class="card-description">
       {{ description }}
     </p>
-    
-    <button
-      class="card-button"
-      :class="`button-${buttonColor}`"
-    >
+
+    <button class="card-button" :class="`button-${buttonColor}`">
       {{ buttonText }}
     </button>
   </div>
@@ -55,6 +49,7 @@ export default defineComponent({
   emits: ['click']
 })
 </script>
+
 
 <style scoped>
 .home-card {
@@ -129,11 +124,11 @@ export default defineComponent({
   .home-card {
     padding: var(--spacing-lg);
   }
-  
+
   .card-icon {
     font-size: 2.5rem;
   }
-  
+
   .card-title {
     font-size: 1.3rem;
   }

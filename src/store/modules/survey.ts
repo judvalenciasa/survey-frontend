@@ -1,215 +1,237 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
 import type { Survey, CreateSurveyRequest, SurveyStatus } from '@/types/survey'
+import type { SurveyState } from '@/types/store'
 import { surveyService } from '@/services/survey.service'
 
-export const useSurveyStore = defineStore('survey', () => {
-  // Estado
-  const surveys = ref<Survey[]>([])
-  const currentSurvey = ref<Survey | null>(null)
-  const loading = ref(false)
-  const error = ref<string | null>(null)
+/**
+ * Store de gestión de encuestas usando Pinia con Options API
+ */
+export const useSurveyStore = defineStore('survey', {
+  state: (): SurveyState => ({
+    surveys: [],
+    currentSurvey: null,
+    loading: false,
+    error: null
+  }),
 
-  // Getters computados
-  const activeSurveys = computed(() => 
-    surveys.value.filter(survey => survey.status === 'PUBLICADA')
-  )
-  
-  const totalSurveys = computed(() => surveys.value.length)
-  
-  const totalResponses = computed(() => 
-    surveys.value.reduce((sum, survey) => sum + (survey.totalResponses || 0), 0)
-  )
-
-  const getSurveysByStatus = computed(() => (status: SurveyStatus) =>
-    surveys.value.filter(survey => survey.status === status)
-  )
-
-  // Acciones
-  const fetchSurveys = async () => {
-    loading.value = true
-    error.value = null
-
-    try {
-      const response = await surveyService.getSurveys()
-      surveys.value = response.data
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Error al cargar encuestas'
-      console.error('Error fetching surveys:', err)
-    } finally {
-      loading.value = false
-    }
-  }
-
-  const fetchSurvey = async (id: string) => {
-    loading.value = true
-    error.value = null
-
-    try {
-      const response = await surveyService.getSurvey(id)
-      currentSurvey.value = response.data
-      return response.data
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Error al cargar encuesta'
-      console.error('Error fetching survey:', err)
-      throw err
-    } finally {
-      loading.value = false
-    }
-  }
-
-  const createSurvey = async (data: CreateSurveyRequest) => {
-    loading.value = true
-    error.value = null
-
-    try {
-      const response = await surveyService.createSurvey(data)
-      surveys.value.unshift(response.data)
-      return response.data
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Error al crear encuesta'
-      console.error('Error creating survey:', err)
-      throw err
-    } finally {
-      loading.value = false
-    }
-  }
-
-  const updateSurvey = async (id: string, data: Partial<Survey>) => {
-    loading.value = true
-    error.value = null
-
-    try {
-      const response = await surveyService.updateSurvey(id, data)
-      const index = surveys.value.findIndex(s => s.id === id)
-      if (index !== -1) {
-        surveys.value[index] = response.data
-      }
-      if (currentSurvey.value?.id === id) {
-        currentSurvey.value = response.data
-      }
-      return response.data
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Error al actualizar encuesta'
-      console.error('Error updating survey:', err)
-      throw err
-    } finally {
-      loading.value = false
-    }
-  }
-
-  const deleteSurvey = async (id: string) => {
-    loading.value = true
-    error.value = null
-
-    try {
-      await surveyService.deleteSurvey(id)
-      surveys.value = surveys.value.filter(s => s.id !== id)
-      if (currentSurvey.value?.id === id) {
-        currentSurvey.value = null
-      }
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Error al eliminar encuesta'
-      console.error('Error deleting survey:', err)
-      throw err
-    } finally {
-      loading.value = false
-    }
-  }
-
-  const updateSurveyStatus = async (id: string, status: SurveyStatus) => {
-    loading.value = true
-    error.value = null
-
-    try {
-      const response = await surveyService.updateSurveyStatus(id, status)
-      const index = surveys.value.findIndex(s => s.id === id)
-      if (index !== -1) {
-        surveys.value[index] = response.data
-      }
-      return response.data
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Error al actualizar estado'
-      console.error('Error updating survey status:', err)
-      throw err
-    } finally {
-      loading.value = false
-    }
-  }
-
-  // ✨ NUEVO: Publicar encuesta
-  const publishSurvey = async (id: string) => {
-    loading.value = true
-    error.value = null
-
-    try {
-      const response = await surveyService.publishSurvey(id)
-      const index = surveys.value.findIndex(s => s.id === id)
-      if (index !== -1) {
-        surveys.value[index] = response.data
-      }
-      return response.data
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Error al publicar encuesta'
-      console.error('Error publishing survey:', err)
-      throw err
-    } finally {
-      loading.value = false
-    }
-  }
-
-  // ✨ NUEVO: Cerrar encuesta
-  const closeSurvey = async (id: string) => {
-    loading.value = true
-    error.value = null
-
-    try {
-      const response = await surveyService.closeSurvey(id)
-      const index = surveys.value.findIndex(s => s.id === id)
-      if (index !== -1) {
-        surveys.value[index] = response.data
-      }
-      return response.data
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Error al cerrar encuesta'
-      console.error('Error closing survey:', err)
-      throw err
-    } finally {
-      loading.value = false
-    }
-  }
-
-  const clearError = () => {
-    error.value = null
-  }
-
-  const clearCurrentSurvey = () => {
-    currentSurvey.value = null
-  }
-
-  return {
-    // Estado
-    surveys,
-    currentSurvey,
-    loading,
-    error,
+  getters: {
+    /**
+     * Obtiene solo las encuestas con estado 'PUBLICADA'
+     */
+    activeSurveys: (state) => 
+      state.surveys.filter(survey => survey.status === 'PUBLICADA'),
     
-    // Getters
-    activeSurveys,
-    totalSurveys,
-    totalResponses,
-    getSurveysByStatus,
+    /**
+     * Cuenta total de encuestas
+     */
+    totalSurveys: (state) => state.surveys.length,
     
-    // Acciones
-    fetchSurveys,
-    fetchSurvey,
-    createSurvey,
-    updateSurvey,
-    deleteSurvey,
-    updateSurveyStatus,
-    publishSurvey,    // ✨ NUEVO
-    closeSurvey,      // ✨ NUEVO
-    clearError,
-    clearCurrentSurvey
+    /**
+     * Suma total de respuestas de todas las encuestas
+     */
+    totalResponses: (state) => 
+      state.surveys.reduce((sum, survey) => sum + (survey.totalResponses || 0), 0),
+
+    /**
+     * Función para filtrar encuestas por estado específico
+     */
+    getSurveysByStatus: (state) => (status: SurveyStatus) =>
+      state.surveys.filter(survey => survey.status === status)
+  },
+
+  actions: {
+    /**
+     * Carga todas las encuestas desde el servidor
+     */
+    async fetchSurveys() {
+      this.loading = true
+      this.error = null
+
+      try {
+        const response = await surveyService.getSurveys()
+        this.surveys = response.data
+      } catch (err: any) {
+        this.error = err.response?.data?.message || 'Error al cargar encuestas'
+        console.error('Error fetching surveys:', err)
+      } finally {
+        this.loading = false
+      }
+    },
+
+    /**
+     * Carga una encuesta específica por su ID
+     */
+    async fetchSurvey(id: string) {
+      this.loading = true
+      this.error = null
+
+      try {
+        const response = await surveyService.getSurvey(id)
+        this.currentSurvey = response.data
+        return response.data
+      } catch (err: any) {
+        this.error = err.response?.data?.message || 'Error al cargar encuesta'
+        console.error('Error fetching survey:', err)
+        throw err
+      } finally {
+        this.loading = false
+      }
+    },
+
+    /**
+     * Crea una nueva encuesta en el servidor
+     */
+    async createSurvey(data: CreateSurveyRequest) {
+      this.loading = true
+      this.error = null
+
+      try {
+        const response = await surveyService.createSurvey(data)
+        this.surveys.unshift(response.data)
+        return response.data
+      } catch (err: any) {
+        this.error = err.response?.data?.message || 'Error al crear encuesta'
+        console.error('Error creating survey:', err)
+        throw err
+      } finally {
+        this.loading = false
+      }
+    },
+
+    /**
+     * Actualiza una encuesta existente
+     */
+    async updateSurvey(id: string, data: Partial<Survey>) {
+      this.loading = true
+      this.error = null
+
+      try {
+        const response = await surveyService.updateSurvey(id, data)
+        
+        const index = this.surveys.findIndex(s => s.id === id)
+        if (index !== -1) {
+          this.surveys[index] = response.data
+        }
+        
+        if (this.currentSurvey?.id === id) {
+          this.currentSurvey = response.data
+        }
+        
+        return response.data
+      } catch (err: any) {
+        this.error = err.response?.data?.message || 'Error al actualizar encuesta'
+        console.error('Error updating survey:', err)
+        throw err
+      } finally {
+        this.loading = false
+      }
+    },
+
+    /**
+     * Elimina una encuesta permanentemente
+     */
+    async deleteSurvey(id: string) {
+      this.loading = true
+      this.error = null
+
+      try {
+        await surveyService.deleteSurvey(id)
+        
+        this.surveys = this.surveys.filter(s => s.id !== id)
+        
+        if (this.currentSurvey?.id === id) {
+          this.currentSurvey = null
+        }
+      } catch (err: any) {
+        this.error = err.response?.data?.message || 'Error al eliminar encuesta'
+        console.error('Error deleting survey:', err)
+        throw err
+      } finally {
+        this.loading = false
+      }
+    },
+
+    /**
+     * Cambia el estado de una encuesta
+     */
+    async updateSurveyStatus(id: string, status: SurveyStatus) {
+      this.loading = true
+      this.error = null
+
+      try {
+        const response = await surveyService.updateSurveyStatus(id, status)
+        const index = this.surveys.findIndex(s => s.id === id)
+        if (index !== -1) {
+          this.surveys[index] = response.data
+        }
+        return response.data
+      } catch (err: any) {
+        this.error = err.response?.data?.message || 'Error al actualizar estado'
+        console.error('Error updating survey status:', err)
+        throw err
+      } finally {
+        this.loading = false
+      }
+    },
+
+    /**
+     * Publica una encuesta (método de conveniencia)
+     */
+    async publishSurvey(id: string) {
+      this.loading = true
+      this.error = null
+
+      try {
+        const response = await surveyService.publishSurvey(id)
+        const index = this.surveys.findIndex(s => s.id === id)
+        if (index !== -1) {
+          this.surveys[index] = response.data
+        }
+        return response.data
+      } catch (err: any) {
+        this.error = err.response?.data?.message || 'Error al publicar encuesta'
+        console.error('Error publishing survey:', err)
+        throw err
+      } finally {
+        this.loading = false
+      }
+    },
+
+    /**
+     * Cierra una encuesta (método de conveniencia)
+     */
+    async closeSurvey(id: string) {
+      this.loading = true
+      this.error = null
+
+      try {
+        const response = await surveyService.closeSurvey(id)
+        const index = this.surveys.findIndex(s => s.id === id)
+        if (index !== -1) {
+          this.surveys[index] = response.data
+        }
+        return response.data
+      } catch (err: any) {
+        this.error = err.response?.data?.message || 'Error al cerrar encuesta'
+        console.error('Error closing survey:', err)
+        throw err
+      } finally {
+        this.loading = false
+      }
+    },
+
+    /**
+     * Limpia el mensaje de error actual
+     */
+    clearError() {
+      this.error = null
+    },
+
+    /**
+     * Limpia la encuesta actualmente seleccionada
+     */
+    clearCurrentSurvey() {
+      this.currentSurvey = null
+    }
   }
 }) 

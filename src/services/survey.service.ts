@@ -4,8 +4,8 @@ import type {
   Survey, 
   CreateSurveyRequest, 
   UpdateSurveyRequest,
-  SurveyResponse 
 } from '@/types/survey'
+import type { SurveyResponse } from '@/types/response'
 
 class SurveyService {
   private readonly baseURL = '/api/surveys'

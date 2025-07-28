@@ -1,104 +1,93 @@
 <template>
   <div class="dashboard">
+    <!-- Sección de estadísticas principales -->
     <header class="dashboard-header">
       <div class="dashboard-stats">
-        <StatsCard
-          title="Total Encuestas"
-          :value="surveyStore.totalSurveys"
-          icon="📊"
-          color="primary"
-        />
-        <StatsCard
-          title="Encuestas Activas"
-          :value="surveyStore.activeSurveys.length"
-          icon="✅"
-          color="success"
-        />
-        <StatsCard
-          title="Total Respuestas"
-          :value="surveyStore.totalResponses"
-          icon="📝"
-          color="info"
-        />
-        <StatsCard
-          title="Respuestas Hoy"
-          :value="todayResponses"
-          icon="🗓️"
-          color="warning"
-        />
+        <!-- Tarjetas de estadísticas con datos reactivos del store -->
+        <StatsCard title="Total Encuestas" :value="surveyStore.totalSurveys" icon="📊" color="primary" />
+        <StatsCard title="Encuestas Activas" :value="surveyStore.activeSurveys.length" icon="✅" color="success" />
+        <StatsCard title="Total Respuestas" :value="surveyStore.totalResponses" icon="📝" color="info" />
       </div>
     </header>
 
+    <!-- Botones de acción rápida para navegación -->
     <div class="dashboard-actions">
-      <router-link
-        to="/admin/surveys"
-        class="action-button primary"
-      >
+      <router-link to="/admin/surveys" class="action-button primary">
         Ver Todas las Encuestas
       </router-link>
-      <router-link
-        to="/admin/surveys/create"
-        class="action-button secondary"
-      >
+      <router-link to="/admin/surveys/create" class="action-button secondary">
         Crear Nueva Encuesta
       </router-link>
     </div>
 
+    <!-- Sección de encuestas recientes (últimas 3 modificadas) -->
     <div class="dashboard-recent">
       <h2>Encuestas Recientes</h2>
       <div class="recent-surveys">
-        <SurveyCard
-          v-for="survey in recentSurveys"
-          :key="survey.id"
-          :survey="survey"
-          @view="viewSurvey"
-          @edit="editSurvey"
-        />
+        <SurveyCard v-for="survey in recentSurveys" :key="survey.id" :survey="survey" @view="viewSurvey"
+          @edit="editSurvey" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+/**
+ * Vista del Dashboard Administrativo
+ */
+
 import { computed, onMounted } from 'vue'
-  import { useRouter } from 'vue-router'
-  import { useSurveyStore } from '@/store/modules/survey'
-  import StatsCard from '@/components/admin/StatsCard.vue'
-  import SurveyCard from '@/components/survey/SurveyCard.vue'
+import { useRouter } from 'vue-router'
+import { useSurveyStore } from '@/store/modules/survey'
+import StatsCard from '@/components/admin/StatsCard.vue'
+import SurveyCard from '@/components/survey/SurveyCard.vue'
+
+
 
 const router = useRouter()
+
 const surveyStore = useSurveyStore()
 
+/**
+ * Obtiene las 3 encuestas más recientemente modificadas
+ * @returns {ComputedRef<Survey[]>} Array de las 3 encuestas más recientes
+ */
 const recentSurveys = computed(() =>
   surveyStore.surveys
     .sort((a, b) => new Date(b.modifiedAt).getTime() - new Date(a.modifiedAt).getTime())
     .slice(0, 3)
 )
 
-const todayResponses = computed(() => {
-  // Aquí calcularías las respuestas de hoy
-  // Por ahora retornamos un valor dummy
-  return 12
-})
+/**
 
+ * @param {string} surveyId - ID único de la encuesta a visualizar
+ */
 const viewSurvey = (surveyId: string) => {
   router.push(`/admin/surveys/${surveyId}`)
 }
 
+/**
+ * Navega a la vista de edición de una encuesta
+ * @param {string} surveyId - ID único de la encuesta a editar
+ */
 const editSurvey = (surveyId: string) => {
   router.push(`/admin/surveys/${surveyId}/edit`)
 }
 
+/**
+ * Inicialización del componente
+ */
 onMounted(() => {
   surveyStore.fetchSurveys()
 })
 </script>
 
 <style scoped>
+
 .dashboard {
   padding: 10px var(--spacing-lg) var(--spacing-lg) var(--spacing-lg);
   max-width: 1200px;
-  margin:0px auto auto auto;
+  margin: 0px auto auto auto;
   width: 100%;
   background-color: #0056b3;
 }
@@ -124,7 +113,6 @@ onMounted(() => {
   margin-bottom: var(--spacing-2xl);
   justify-content: center;
 }
-
 
 .dashboard-actions {
   display: flex;
@@ -184,7 +172,6 @@ onMounted(() => {
   max-width: 350px;
 }
 
-/* Media queries para mejorar la responsividad */
 @media (max-width: 768px) {
   .dashboard {
     padding: var(--spacing-md);

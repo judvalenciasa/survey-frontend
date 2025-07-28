@@ -345,7 +345,9 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed, nextTick } from 'vue'
-import type { CreateSurveyRequest, CreateQuestionRequest, NumberOptions } from '../../types/survey'
+import type { CreateSurveyRequest } from '../../types/survey'
+import type { CreateQuestionRequest } from '../../types/question'
+import type { NumberOptions } from '../../types/question'
 import ValidationMessage from '../forms/ValidationMessage.vue'
 
 export default defineComponent({

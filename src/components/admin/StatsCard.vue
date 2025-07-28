@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="stats-card"
-    :class="`stats-card--${color}`"
-  >
+  <div class="stats-card" :class="`stats-card--${color}`">
     <div class="stats-icon">
       {{ icon }}
     </div>
@@ -26,6 +23,8 @@ interface Props {
 }
 
 defineProps<Props>()
+
+
 </script>
 
 <style scoped>
@@ -45,10 +44,21 @@ defineProps<Props>()
   transform: translateY(-2px);
 }
 
-.stats-card--primary { border-left-color: var(--primary-color); }
-.stats-card--success { border-left-color: var(--success-color); }
-.stats-card--info { border-left-color: #3b82f6; }
-.stats-card--warning { border-left-color: var(--warning-color); }
+.stats-card--primary {
+  border-left-color: var(--primary-color);
+}
+
+.stats-card--success {
+  border-left-color: var(--success-color);
+}
+
+.stats-card--info {
+  border-left-color: #3b82f6;
+}
+
+.stats-card--warning {
+  border-left-color: var(--warning-color);
+}
 
 .stats-icon {
   font-size: 2rem;
@@ -66,4 +76,4 @@ defineProps<Props>()
   margin: 0;
   font-size: 0.9rem;
 }
-</style> 
+</style>

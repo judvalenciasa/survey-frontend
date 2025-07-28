@@ -7,22 +7,11 @@
       </p>
     </header>
 
-    <SurveyForm
-      :loading="surveyStore.loading"
-      @submit="createSurvey"
-      @cancel="goBack"
-    />
+    <SurveyForm :loading="surveyStore.loading" @submit="createSurvey" @cancel="goBack" />
 
     <!-- Modal de éxito -->
-    <div
-      v-if="showSuccessModal"
-      class="modal-overlay"
-      @click="closeSuccessModal"
-    >
-      <div
-        class="modal success-modal"
-        @click.stop
-      >
+    <div v-if="showSuccessModal" class="modal-overlay" @click="closeSuccessModal">
+      <div class="modal success-modal" @click.stop>
         <div class="modal-header">
           <h3>¡Encuesta Creada Exitosamente!</h3>
         </div>
@@ -34,16 +23,10 @@
           <p>Ya puedes encontrarla en tu lista de encuestas.</p>
         </div>
         <div class="modal-actions">
-          <button
-            class="btn-primary"
-            @click="goToSurveyList"
-          >
+          <button class="btn-primary" @click="goToSurveyList">
             Ver Lista de Encuestas
           </button>
-          <button
-            class="btn-secondary"
-            @click="createAnother"
-          >
+          <button class="btn-secondary" @click="createAnother">
             Crear Otra Encuesta
           </button>
         </div>

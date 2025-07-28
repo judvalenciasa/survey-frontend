@@ -132,7 +132,8 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
-import type { Question, ScaleOptions } from '../../types/survey'
+import type { Question } from '../../types/question'
+import type { ScaleOptions } from '../../types/question'
 
 interface Props {
   question: Question

@@ -9,26 +9,15 @@
   <div class="survey-list">
     <header class="list-header">
       <h1>Mis Encuestas</h1>
-      <router-link
-        to="/admin/surveys/create"
-        class="create-btn"
-      >
+      <router-link to="/admin/surveys/create" class="create-btn">
         Crear Nueva Encuesta
       </router-link>
     </header>
 
     <div class="list-filters">
       <div class="filter-group">
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="Buscar encuestas..."
-          class="search-input"
-        >
-        <select
-          v-model="statusFilter"
-          class="status-filter"
-        >
+        <input v-model="searchQuery" type="text" placeholder="Buscar encuestas..." class="search-input">
+        <select v-model="statusFilter" class="status-filter">
           <option value="">
             Todas
           </option>
@@ -42,80 +31,45 @@
       </div>
     </div>
 
-    <div
-      v-if="surveyStore.loading"
-      class="loading"
-    >
+    <div v-if="surveyStore.loading" class="loading">
       Cargando encuestas...
     </div>
 
-    <div
-      v-else-if="surveyStore.error"
-      class="error"
-    >
+    <div v-else-if="surveyStore.error" class="error">
       {{ surveyStore.error }}
     </div>
 
-    <div
-      v-else-if="filteredSurveys.length === 0"
-      class="empty-state"
-    >
+    <div v-else-if="filteredSurveys.length === 0" class="empty-state">
       <div class="empty-icon">
         📊
       </div>
       <h3>No tienes encuestas aún</h3>
       <p>Crea tu primera encuesta para comenzar</p>
-      <router-link
-        to="/admin/surveys/create"
-        class="create-btn"
-      >
+      <router-link to="/admin/surveys/create" class="create-btn">
         Crear Primera Encuesta
       </router-link>
     </div>
 
-    <div
-      v-else
-      class="surveys-grid"
-    >
-      <SurveyCard
-        v-for="survey in filteredSurveys"
-        :key="survey.id"
-        :survey="survey"
-        @view="viewSurvey"
-        @edit="editSurvey"
-        @responses="viewResponses"
-        @delete="confirmDelete"
-        @publish="confirmPublish"
-        @close="confirmClose"
-      />
+    <div v-else class="surveys-grid">
+      <SurveyCard v-for="survey in filteredSurveys" :key="survey.id" :survey="survey" 
+        @edit="editSurvey" @responses="viewResponses" @delete="confirmDelete" @publish="confirmPublish"
+        @close="confirmClose" />
     </div>
 
     <!-- Modal de confirmación -->
-    <ConfirmModal
-      v-if="showDeleteModal"
-      title="Eliminar Encuesta"
+    <ConfirmModal v-if="showDeleteModal" title="Eliminar Encuesta"
       message="¿Estás seguro de que quieres eliminar esta encuesta? Esta acción no se puede deshacer."
-      @confirm="deleteSurvey"
-      @cancel="showDeleteModal = false"
-    />
+      @confirm="deleteSurvey" @cancel="showDeleteModal = false" />
 
     <!-- ✨ NUEVO: Modal de confirmación para publicar -->
-    <ConfirmModal
-      v-if="showPublishModal"
-      title="Publicar Encuesta"
+    <ConfirmModal v-if="showPublishModal" title="Publicar Encuesta"
       message="¿Estás seguro de que quieres publicar esta encuesta? Una vez publicada, estará disponible para recibir respuestas."
-      @confirm="publishSurvey"
-      @cancel="showPublishModal = false"
-    />
+      @confirm="publishSurvey" @cancel="showPublishModal = false" />
 
     <!-- ✨ NUEVO: Modal de confirmación para cerrar -->
-    <ConfirmModal
-      v-if="showCloseModal"
-      title="Cerrar Encuesta"
+    <ConfirmModal v-if="showCloseModal" title="Cerrar Encuesta"
       message="¿Estás seguro de que quieres cerrar esta encuesta? Ya no se podrán enviar más respuestas."
-      @confirm="closeSurvey"
-      @cancel="showCloseModal = false"
-    />
+      @confirm="closeSurvey" @cancel="showCloseModal = false" />
   </div>
 </template>
 
@@ -123,7 +77,7 @@
 import { ref, computed, onBeforeMount } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSurveyStore } from '../../store/modules/survey'
-import SurveyCard from '../../components/survey/SurveyCard.vue' 
+import SurveyCard from '../../components/survey/SurveyCard.vue'
 import ConfirmModal from '../../components/common/ConfirmModal.vue'
 
 const router = useRouter()
@@ -147,7 +101,7 @@ const filteredSurveys = computed(() => {
   // Filtrar por búsqueda (corregido para usar 'name' en lugar de 'title')
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
-    filtered = filtered.filter(survey => 
+    filtered = filtered.filter(survey =>
       survey.name.toLowerCase().includes(query) ||
       survey.description.toLowerCase().includes(query)
     )
@@ -171,7 +125,7 @@ const validateAndCloseExpiredSurveys = async () => {
     if (survey.status !== 'PUBLICADA' || !survey.scheduledClose) {
       return false
     }
-    
+
     const closeDate = new Date(survey.scheduledClose)
     return closeDate <= now
   })
@@ -179,7 +133,7 @@ const validateAndCloseExpiredSurveys = async () => {
   // Cerrar encuestas vencidas automáticamente
   if (expiredSurveys.length > 0) {
     console.log(`Encontradas ${expiredSurveys.length} encuestas vencidas, cerrando automáticamente...`)
-    
+
     for (const survey of expiredSurveys) {
       try {
         await surveyStore.closeSurvey(survey.id)
@@ -196,7 +150,7 @@ const loadSurveysWithValidation = async () => {
   try {
     // Primero cargar las encuestas
     await surveyStore.fetchSurveys()
-    
+
     // Luego validar y cerrar las vencidas
     await validateAndCloseExpiredSurveys()
   } catch (error) {
@@ -204,16 +158,17 @@ const loadSurveysWithValidation = async () => {
   }
 }
 
-const viewSurvey = (id: string) => {
-  router.push(`/admin/surveys/${id}`)
-}
-
-const editSurvey = (id: string) => {
-  router.push(`/admin/surveys/${id}/edit`)
+/**
+ * Navega a la edición de una encuesta
+ * @param surveyId - ID de la encuesta a editar
+ */
+const editSurvey = (surveyId: string) => {
+  router.push(`/admin/surveys/${surveyId}/edit`)
 }
 
 const viewResponses = (id: string) => {
-  router.push(`/admin/surveys/${id}/responses`)
+  // Navegar a la vista de respuestas con el ID de la encuesta seleccionado
+  router.push({ name: 'AdminResponses', query: { survey: id } })
 }
 
 const confirmDelete = (id: string) => {
@@ -227,8 +182,12 @@ const deleteSurvey = async () => {
       await surveyStore.deleteSurvey(surveyToDelete.value)
       showDeleteModal.value = false
       surveyToDelete.value = null
-    } catch (error) {
+      // Mostrar mensaje de éxito opcional
+      console.log('Encuesta eliminada correctamente')
+    } catch (error: any) {
       console.error('Error al eliminar encuesta:', error)
+      // Mostrar error al usuario
+      alert('Error al eliminar la encuesta: ' + (error.message || 'Error desconocido'))
     }
   }
 }
@@ -335,7 +294,8 @@ onBeforeMount(async () => {
   background: var(--bg-primary);
 }
 
-.loading, .error {
+.loading,
+.error {
   text-align: center;
   padding: var(--spacing-2xl);
   color: var(--text-secondary);
@@ -377,11 +337,11 @@ onBeforeMount(async () => {
     gap: var(--spacing-md);
     text-align: center;
   }
-  
+
   .filter-group {
     flex-direction: column;
   }
-  
+
   .surveys-grid {
     grid-template-columns: 1fr;
   }

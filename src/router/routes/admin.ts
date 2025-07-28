@@ -54,10 +54,11 @@ const adminRoutes: RouteRecordRaw[] = [
       },
       {
         path: 'responses',
-        name: 'ResponseView',
+        name: 'AdminResponses',
         component: () => import('@/views/admin/ResponseView.vue'),
         meta: {
-          requiresAuth: true
+          requiresAuth: true,
+          title: 'Gestión de Respuestas'
         }
       },
       {

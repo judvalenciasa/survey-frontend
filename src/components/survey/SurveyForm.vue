@@ -39,22 +39,10 @@
         </div>
       </div>
 
-  
-      <div class="form-group">
-        <label class="checkbox-label">
-          <input v-model="formData.template" type="checkbox" class="form-checkbox">
-          <span class="checkbox-text">Guardar como plantilla</span>
-        </label>
-      </div>
     </div>
 
     <div class="form-section">
-      <div class="questions-header">
-        <h3>Preguntas ({{ questions.length }})</h3>
-        <button type="button" class="add-question-btn" @click="addQuestion">
-          + Agregar Pregunta
-        </button>
-      </div>
+      
 
       <div v-if="questions.length === 0" class="empty-questions">
         <div class="empty-icon">
@@ -206,6 +194,13 @@
             </div>
           </div>
 
+          <!-- Mostrar errores de validación de pregunta -->
+          <div v-if="questionErrors[index]" class="question-errors">
+            <div v-for="(error, field) in questionErrors[index]" :key="field" class="question-error">
+              ❌ {{ error }}
+            </div>
+          </div>
+
           <!-- Checkbox obligatoria -->
           <div>
             <label style="display: flex; align-items: center; gap: 8px;">
@@ -214,6 +209,13 @@
             </label>
           </div>
         </div>
+      </div>
+
+      <div class="questions-header">
+        <h3>Preguntas ({{ questions.length }})</h3>
+        <button type="button" class="add-question-btn" @click="addQuestion">
+          + Agregar Pregunta
+        </button>
       </div>
     </div>
 
@@ -236,7 +238,7 @@
 </template>
 
 <script lang="ts">
-import { ref, computed, nextTick, defineComponent } from 'vue'
+import { ref, computed, nextTick, defineComponent, watch } from 'vue'
 import type { CreateSurveyRequest } from '../../types/survey'
 import type { CreateQuestionRequest, ScaleOptions, NumberOptions } from '../../types/question'
 import ValidationMessage from '../forms/ValidationMessage.vue'
@@ -259,14 +261,100 @@ export default defineComponent({
       description: '',
       scheduledOpen: '',
       scheduledClose: '',
-      template: false
+      template: true
     })
 
     const questions = ref<CreateQuestionRequest[]>([])
-
     const errors = ref<Record<string, string>>({})
     const questionErrors = ref<Record<number, Record<string, string>>>({})
     const generalError = ref<string | null>(null)
+
+    // ✅ Watchers para limpiar errores en tiempo real
+    watch(() => formData.value.name, (newValue) => {
+      if (newValue.trim() && errors.value.name) {
+        delete errors.value.name
+      }
+    })
+
+    watch(() => formData.value.description, (newValue) => {
+      if (newValue.trim() && errors.value.description) {
+        delete errors.value.description
+      }
+    })
+
+    watch(() => [formData.value.scheduledOpen, formData.value.scheduledClose], () => {
+      if (errors.value.scheduledClose) {
+        delete errors.value.scheduledClose
+      }
+    })
+
+    // ✅ Watcher para limpiar errores de preguntas
+    watch(() => questions.value, (newQuestions) => {
+      newQuestions.forEach((question, index) => {
+        const currentErrors = questionErrors.value[index]
+        if (!currentErrors) return
+
+        // Limpiar error de texto si está lleno
+        if (question.text.trim() && currentErrors.text) {
+          delete currentErrors.text
+        }
+
+        // Limpiar error de tipo si está seleccionado
+        if (question.type && currentErrors.type) {
+          delete currentErrors.type
+        }
+
+        // Limpiar errores de opciones según el tipo
+        if (currentErrors.options) {
+          let shouldClearOptions = false
+
+          if (question.type === 'SINGLE_CHOICE' || question.type === 'MULTIPLE_CHOICE') {
+            const options = question.options as string[]
+            if (options && options.length >= 2 && options.every(opt => opt.trim())) {
+              shouldClearOptions = true
+            }
+          }
+
+          if (question.type === 'SCALE') {
+            const scaleOptions = question.options as any
+            if (scaleOptions && 
+                typeof scaleOptions.min === 'number' && 
+                typeof scaleOptions.max === 'number' &&
+                scaleOptions.min < scaleOptions.max) {
+              shouldClearOptions = true
+            }
+          }
+
+          if (question.type === 'NUMBER') {
+            const numberOptions = question.options as NumberOptions
+            if (numberOptions && 
+                typeof numberOptions.min === 'number' && 
+                typeof numberOptions.max === 'number' &&
+                numberOptions.min < numberOptions.max) {
+              shouldClearOptions = true
+            }
+          }
+
+          if (question.type === 'TEXT' || question.type === 'YES_NO') {
+            shouldClearOptions = true // Estos tipos no necesitan configuración
+          }
+
+          if (shouldClearOptions) {
+            delete currentErrors.options
+          }
+        }
+
+        // Si no quedan errores, eliminar la entrada completa
+        if (Object.keys(currentErrors).length === 0) {
+          delete questionErrors.value[index]
+        }
+      })
+
+      // Limpiar error general si hay preguntas
+      if (newQuestions.length > 0 && generalError.value) {
+        generalError.value = null
+      }
+    }, { deep: true })
 
     /**
      * Calcula la fecha mínima para los campos de fecha
@@ -433,6 +521,14 @@ export default defineComponent({
       questions.value.forEach((question, index) => {
         const questionValidationErrors: Record<string, string> = {}
 
+        // 🐛 DEBUG: Mostrar información de la pregunta
+        console.log(`🔍 Validando pregunta ${index + 1}:`, {
+          text: question.text,
+          type: question.type,
+          options: question.options,
+          required: question.required
+        })
+
         if (!question.text.trim()) {
           questionValidationErrors.text = 'El texto de la pregunta es obligatorio'
         }
@@ -443,33 +539,68 @@ export default defineComponent({
 
         if (question.type === 'SINGLE_CHOICE' || question.type === 'MULTIPLE_CHOICE') {
           const options = question.options as string[]
-          if (!options || options.length < 2 || options.some(opt => !opt.trim())) {
-            questionValidationErrors.options = 'Debe proporcionar al menos 2 opciones válidas'
+          if (!options || options.length < 2) {
+            questionValidationErrors.options = 'Debe proporcionar al menos 2 opciones'
+          } else if (options.some(opt => !opt.trim())) {
+            questionValidationErrors.options = 'Todas las opciones deben tener contenido'
           }
         }
 
         if (question.type === 'SCALE') {
           const scaleOptions = question.options as any
-          if (!scaleOptions || scaleOptions.min >= scaleOptions.max) {
-            questionValidationErrors.options = 'Configuración de escala inválida'
+          console.log(`📊 Validando escala:`, scaleOptions)
+          
+          if (!scaleOptions) {
+            questionValidationErrors.options = 'Configuración de escala requerida'
+          } else if (typeof scaleOptions.min !== 'number' || typeof scaleOptions.max !== 'number') {
+            questionValidationErrors.options = 'Los valores mínimo y máximo deben ser números'
+          } else if (scaleOptions.min >= scaleOptions.max) {
+            questionValidationErrors.options = `El valor mínimo (${scaleOptions.min}) debe ser menor al máximo (${scaleOptions.max})`
+          } else if (scaleOptions.min < 1 || scaleOptions.max > 10) {
+            questionValidationErrors.options = 'La escala debe estar entre 1 y 10'
           }
         }
 
         if (question.type === 'NUMBER') {
           const numberOptions = question.options as NumberOptions
-          if (!numberOptions || numberOptions.min >= numberOptions.max) {
-            questionValidationErrors.options = 'Configuración de número inválida'
+          console.log(`🔢 Validando número:`, numberOptions)
+          
+          if (!numberOptions) {
+            questionValidationErrors.options = 'Configuración de número requerida'
+          } else if (typeof numberOptions.min !== 'number' || typeof numberOptions.max !== 'number') {
+            questionValidationErrors.options = 'Los valores mínimo y máximo deben ser números válidos'
+          } else if (numberOptions.min >= numberOptions.max) {
+            questionValidationErrors.options = `El valor mínimo (${numberOptions.min}) debe ser menor al máximo (${numberOptions.max})`
+          } else if (numberOptions.min < 0) {
+            questionValidationErrors.options = 'El valor mínimo no puede ser negativo'
+          } else if (numberOptions.max > 999999) {
+            questionValidationErrors.options = 'El valor máximo no puede exceder 999,999'
           }
         }
 
         if (Object.keys(questionValidationErrors).length > 0) {
           questionErrors.value[index] = questionValidationErrors
+          console.log(`❌ Errores en pregunta ${index + 1}:`, questionValidationErrors)
+        } else {
+          console.log(`✅ Pregunta ${index + 1} válida`)
         }
       })
 
-      return Object.keys(errors.value).length === 0 &&
+      const isValid = Object.keys(errors.value).length === 0 &&
         Object.keys(questionErrors.value).length === 0 &&
         !generalError.value
+
+      if (!isValid) {
+        console.log('❌ Formulario inválido:', {
+          errors: errors.value,
+          questionErrors: questionErrors.value,
+          generalError: generalError.value
+        })
+      } else {
+        console.log('✅ Formulario válido')
+      }
+
+      return isValid
     }
 
     /**
@@ -522,7 +653,23 @@ export default defineComponent({
      * @param index - Índice de la pregunta
      */
     const updateNumberOptions = (question: CreateQuestionRequest, index: number) => {
-      console.log('updateNumberOptions', question, index)
+      const currentOptions = getNumberOptions(question)
+      
+      // Asegurar que los valores son números válidos
+      if (typeof currentOptions.min === 'string') {
+        currentOptions.min = parseInt(currentOptions.min) || 0
+      }
+      if (typeof currentOptions.max === 'string') {
+        currentOptions.max = parseInt(currentOptions.max) || 100
+      }
+      
+      // Actualizar las opciones de la pregunta
+      question.options = {
+        min: currentOptions.min,
+        max: currentOptions.max
+      }
+      
+      console.log(`🔢 Opciones de número actualizadas para pregunta ${index + 1}:`, question.options)
     }
 
     /**
@@ -576,7 +723,7 @@ export default defineComponent({
       getNumberOptions,
       updateNumberOptions,
       updateScaleOptions,
-      updateScaleLabel, // 👈 Agregar este
+      updateScaleLabel,
       handleSubmit
     }
   }
@@ -748,6 +895,24 @@ export default defineComponent({
 
 .btn-secondary:hover {
   background: var(--bg-tertiary);
+}
+
+.question-errors {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid #ef4444;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 15px 0;
+}
+
+.question-error {
+  color: #ef4444;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.question-error:last-child {
+  margin-bottom: 0;
 }
 
 @media (max-width: 768px) {

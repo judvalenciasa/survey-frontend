@@ -1,25 +1,34 @@
 /**
  * Configuración principal de Axios para comunicación con la API
- * @description Instancia configurada de Axios con interceptores de autenticación
- * @module API Configuration
  */
 import axios, { type AxiosInstance } from 'axios'
 
+const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8082/api'
+
 /**
- * Instancia principal de Axios configurada para la aplicación
- * @description Incluye configuración base, timeout y headers por defecto
+ * ✅ Cliente API público (sin autenticación) - PARA RESPONSES
  */
-const api: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
-  timeout: 10000,
+export const publicApi: AxiosInstance = axios.create({
+  baseURL,
+  timeout: 480000,
   headers: {
     'Content-Type': 'application/json'
   }
 })
 
 /**
- * Interceptor de request que agrega automáticamente el token de autenticación
- * @description Obtiene el token del localStorage y lo incluye en las peticiones
+ * ✅ Cliente API autenticado (con token) - PARA ADMIN
+ */
+const api: AxiosInstance = axios.create({
+  baseURL,
+  timeout: 480000,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
+
+/**
+ * Interceptor SOLO para requests autenticadas (admin)
  */
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('auth-token')

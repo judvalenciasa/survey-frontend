@@ -19,12 +19,13 @@
 
       <form class="survey-form" @submit.prevent="accessSurvey">
         <input v-model="surveyId" type="text" placeholder="Número de encuesta" class="survey-input"
-          :class="{ error: error }" :disabled="loading" @input="filterAlphanumeric" @keydown="preventSpecialChars"
-          @paste="handlePaste" autocomplete="off" spellcheck="false" maxlength="20">
+          :class="{ error: error }" :disabled="loading" @input="clearError" 
+          autocomplete="off" spellcheck="false" maxlength="70">
 
-        <p v-if="error" class="error-message">
-          {{ error }}
-        </p>
+        <div v-if="error" class="error-message" :class="getErrorClass(error)">
+          <div class="error-icon">{{ getErrorIcon(error) }}</div>
+          <div class="error-text">{{ error }}</div>
+        </div>
 
         <button type="submit" class="access-btn" :disabled="loading || !surveyId">
           {{ loading ? 'Verificando...' : 'Acceder' }}
@@ -59,74 +60,11 @@ const loading = ref(false)
 const error = ref('')
 
 /**
- * Filtra el input para permitir solo caracteres alfanuméricos
- * Se ejecuta cada vez que el usuario escribe
- * 
- * @param {Event} event - Evento de input
+ * Limpia el mensaje de error cuando el usuario escribe
  */
-const filterAlphanumeric = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  const value = target.value
-
-  const alphanumericOnly = value.replace(/[^a-zA-Z0-9]/g, '')
-
-  if (value !== alphanumericOnly) {
-    surveyId.value = alphanumericOnly
-    target.value = alphanumericOnly
-  }
-
+const clearError = () => {
   if (error.value) {
     error.value = ''
-  }
-}
-
-/**
- * Previene la escritura de caracteres especiales desde el teclado
- * 
- * @param {KeyboardEvent} event - Evento de teclado
- */
-const preventSpecialChars = (event: KeyboardEvent) => {
-  const controlKeys = [
-    'Backspace', 'Delete', 'Tab', 'Enter', 'Escape',
-    'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
-    'Home', 'End', 'PageUp', 'PageDown'
-  ]
-
-  if (controlKeys.includes(event.key)) {
-    return
-  }
-
-  if (event.ctrlKey || event.metaKey) {
-    return
-  }
-
-  const isAlphanumeric = /^[a-zA-Z0-9]$/.test(event.key)
-
-  if (!isAlphanumeric) {
-    event.preventDefault()
-  }
-}
-
-/**
- * Maneja el pegado de texto para filtrar caracteres especiales
- * 
- * @param {ClipboardEvent} event - Evento de pegado
- */
-const handlePaste = (event: ClipboardEvent) => {
-  event.preventDefault()
-
-  const pastedText = event.clipboardData?.getData('text') || ''
-  const filteredText = pastedText.replace(/[^a-zA-Z0-9]/g, '')
-  const finalText = filteredText.substring(0, 20)
-
-  surveyId.value = finalText
-
-  if (error.value) {
-    error.value = ''
-  }
-
-  if (pastedText !== finalText) {
-    console.info('Texto pegado fue filtrado. Solo se mantuvieron letras y números.')
   }
 }
 
@@ -141,26 +79,65 @@ const accessSurvey = async () => {
 
   try {
     const response = await surveyService.getSurveyForResponse(surveyId.value)
-
+    
+    // ✅ MEJORADO: Verificar el estado y dar mensaje específico
     if (response.data.status !== 'PUBLICADA') {
-      throw new Error('Esta encuesta no está disponible para responder')
+      // La encuesta existe pero no está publicada
+      const statusMessages = {
+        'CREADA': 'Esta encuesta aún no ha sido publicada',
+        'CERRADA': 'Esta encuesta ya ha sido cerrada y no acepta más respuestas',
+        'FINALIZADA': 'Esta encuesta ha finalizado y no acepta respuestas'
+      }
+      
+      const statusMessage = statusMessages[response.data.status as keyof typeof statusMessages] || 
+                           `Esta encuesta está en estado "${response.data.status}" y no está disponible para responder`
+      
+      error.value = statusMessage
+      return // ✅ IMPORTANTE: No lanzar excepción, solo mostrar error
     }
 
+    // Si llegamos aquí, la encuesta está PUBLICADA
     router.push(`/survey/${surveyId.value}`)
 
   } catch (err: any) {
     console.error('Error accessing survey:', err)
 
+    // ✅ MEJORADO: Mensajes más específicos según el error
     if (err.response?.status === 404) {
-      error.value = 'Encuesta no encontrada. Verifica el ID ingresado.'
+      error.value = 'La encuesta no existe o no está publicada'
     } else if (err.response?.status === 403) {
-      error.value = 'Esta encuesta no está disponible para responder'
+      error.value = 'No tienes permisos para acceder a esta encuesta'
+    } else if (err.response?.status === 500) {
+      error.value = 'Error del servidor. Por favor intenta nuevamente más tarde.'
+    } else if (err.code === 'NETWORK_ERROR' || err.message.includes('Network Error')) {
+      error.value = 'No se puede conectar al servidor. Verifica tu conexión a internet.'
     } else {
-      error.value = err.message || 'ID de encuesta no válido'
+      error.value = err.message || 'Error al acceder a la encuesta. Intenta nuevamente.'
     }
   } finally {
     loading.value = false
   }
+}
+
+/**
+ * Obtiene la clase CSS según el tipo de error
+ */
+const getErrorClass = (errorMessage: string) => {
+  if (errorMessage.includes('no ha sido publicada')) return 'error-warning'
+  if (errorMessage.includes('cerrada') || errorMessage.includes('finalizado')) return 'error-info'
+  if (errorMessage.includes('No se encontró')) return 'error-danger'
+  return 'error-default'
+}
+
+/**
+ * Obtiene el icono según el tipo de error
+ */
+const getErrorIcon = (errorMessage: string) => {
+  if (errorMessage.includes('no ha sido publicada')) return '⏳'
+  if (errorMessage.includes('cerrada') || errorMessage.includes('finalizado')) return '🔒'
+  if (errorMessage.includes('No se encontró')) return '❌'
+  if (errorMessage.includes('servidor')) return '��'
+  return '⚠️'
 }
 
 </script>
@@ -227,14 +204,47 @@ const accessSurvey = async () => {
 }
 
 .error-message {
-  color: var(--error-color);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius);
+  margin-top: var(--spacing-sm);
   font-size: 0.9rem;
-  margin-top: -var(--spacing-sm);
-  text-align: left;
-  padding: var(--spacing-xs) var(--spacing-sm);
+  border-left: 4px solid;
+}
+
+.error-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.error-text {
+  flex: 1;
+}
+
+.error-danger {
   background-color: rgba(239, 68, 68, 0.1);
-  border-radius: var(--border-radius-sm);
-  border-left: 3px solid var(--error-color);
+  color: #dc2626;
+  border-left-color: #dc2626;
+}
+
+.error-warning {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: #d97706;
+  border-left-color: #d97706;
+}
+
+.error-info {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: #2563eb;
+  border-left-color: #2563eb;
+}
+
+.error-default {
+  background-color: rgba(107, 114, 128, 0.1);
+  color: #4b5563;
+  border-left-color: #4b5563;
 }
 
 .access-btn {

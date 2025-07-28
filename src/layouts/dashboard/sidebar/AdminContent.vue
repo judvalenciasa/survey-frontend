@@ -39,16 +39,15 @@ import AdminHeader from '@/layouts/dashboard/sidebar/AdminHeader.vue'
   overflow-y: auto;
   background: var(--bg-secondary, #f8f9fa);
   scroll-behavior: smooth;
-  container-type: inline-size;
 }
 
-@container (max-width: 600px) {
+@media (max-width: 600px) {
   .admin-main-content {
     padding: clamp(0.5rem, 2vw, 1rem);
   }
 }
 
-@container (min-width: 1200px) {
+@media (min-width: 1200px) {
   .admin-main-content {
     padding: clamp(1.5rem, 3vw, 2.5rem);
   }

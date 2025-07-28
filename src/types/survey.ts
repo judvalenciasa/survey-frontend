@@ -13,7 +13,6 @@ import type { Question, CreateQuestionRequest } from './question'
 export type SurveyStatus = 
   | 'CREADA'
   | 'PUBLICADA'
-  | 'PAUSADA'
   | 'FINALIZADA'
 
 /**
@@ -35,8 +34,6 @@ export interface Survey {
   previousVersionId?: string
   questions: Question[]
   template: boolean
-  
-  // Campos adicionales que puede devolver el frontend
   totalResponses?: number
   code?: string
 }

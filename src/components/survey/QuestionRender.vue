@@ -21,6 +21,16 @@
           @input="updateAnswer" />
       </div>
 
+      <!-- ✅ NUEVO: Pregunta numérica -->
+      <div v-else-if="question.type === 'NUMBER'" class="number-input">
+        <input v-model.number="answer" type="number" class="form-input number-field" :min="numberOptions.min"
+          :max="numberOptions.max" 
+          @input="updateAnswer">
+        <div class="number-hint">
+          Rango válido: {{ numberOptions.min }} - {{ numberOptions.max }}
+        </div>
+      </div>
+
       <!-- Sí/No -->
       <div v-else-if="question.type === 'YES_NO'" class="yes-no-options">
         <label class="radio-option">
@@ -128,6 +138,16 @@ const scaleRange = computed(() => {
 })
 
 /**
+ * Obtiene la configuración de opciones para preguntas tipo número
+ */
+const numberOptions = computed(() => {
+  if (props.question.options && typeof props.question.options === 'object' && !Array.isArray(props.question.options)) {
+    return props.question.options as { min: number; max: number }
+  }
+  return { min: 0, max: 100 }
+})
+
+/**
  * Actualiza la respuesta para preguntas de respuesta única
  */
 const updateAnswer = () => {
@@ -144,6 +164,8 @@ const updateMultipleAnswer = () => {
 watch(() => props.modelValue, (newValue) => {
   if (props.question.type === 'MULTIPLE_CHOICE') {
     multipleAnswer.value = Array.isArray(newValue) ? newValue : []
+  } else if (props.question.type === 'NUMBER') {
+    answer.value = newValue
   } else {
     answer.value = newValue
   }
@@ -152,6 +174,8 @@ watch(() => props.modelValue, (newValue) => {
 onMounted(() => {
   if (props.question.type === 'MULTIPLE_CHOICE') {
     multipleAnswer.value = Array.isArray(props.modelValue) ? props.modelValue : []
+  } else if (props.question.type === 'NUMBER') {
+    answer.value = props.modelValue || ''
   } else {
     answer.value = props.modelValue || ''
   }
@@ -203,6 +227,45 @@ onMounted(() => {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.number-input {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.number-field {
+  width: 100%;
+  padding: var(--spacing-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-family: inherit;
+  text-align: center;
+}
+
+/* ✅ AGREGAR: Ocultar las flechas del input número */
+.number-field::-webkit-outer-spin-button,
+.number-field::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.number-field[type=number] {
+  -moz-appearance: textfield; /* Firefox */
+}
+
+.number-field:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.number-hint {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  text-align: center;
 }
 
 .yes-no-options,

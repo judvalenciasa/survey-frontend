@@ -27,10 +27,23 @@
     <div class="dashboard-recent">
       <h2>Encuestas Recientes</h2>
       <div class="recent-surveys">
-        <SurveyCard v-for="survey in recentSurveys" :key="survey.id" :survey="survey" @view="viewSurvey"
-          @edit="editSurvey" />
+        <SurveyCard v-for="survey in recentSurveys" :key="survey.id" :survey="survey" @edit="editSurvey"
+          @responses="viewResponses" @delete="confirmDelete" @publish="confirmPublish" @close="confirmClose" />
       </div>
     </div>
+
+    <!-- Modales de confirmación -->
+    <ConfirmModal v-if="showPublishModal" title="Publicar Encuesta"
+      message="¿Estás seguro de que quieres publicar esta encuesta? Una vez publicada, estará disponible para recibir respuestas."
+      @confirm="publishSurvey" @cancel="showPublishModal = false" />
+
+    <ConfirmModal v-if="showCloseModal" title="Cerrar Encuesta"
+      message="¿Estás seguro de que quieres cerrar esta encuesta? Ya no se podrán enviar más respuestas."
+      @confirm="closeSurvey" @cancel="showCloseModal = false" />
+
+    <ConfirmModal v-if="showDeleteModal" title="Eliminar Encuesta"
+      message="¿Estás seguro de que quieres eliminar esta encuesta? Esta acción no se puede deshacer."
+      @confirm="deleteSurvey" @cancel="showDeleteModal = false" />
   </div>
 </template>
 
@@ -39,14 +52,24 @@
  * Dashboard administrativo con estadísticas y acceso rápido
  * @description Vista principal del admin con métricas y encuestas recientes
  */
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSurveyStore } from '../../store/modules/survey'
 import StatsCard from '@/components/admin/StatsCard.vue'
 import SurveyCard from '@/components/survey/SurveyCard.vue'
+import ConfirmModal from '@/components/common/ConfirmModal.vue'
 
 const router = useRouter()
 const surveyStore = useSurveyStore()
+
+// Estados para modales
+const showPublishModal = ref(false)
+const showCloseModal = ref(false)
+const showDeleteModal = ref(false)
+
+const surveyToPublish = ref<string | null>(null)
+const surveyToClose = ref<string | null>(null)
+const surveyToDelete = ref<string | null>(null)
 
 /**
  * Obtiene las 3 encuestas más recientemente modificadas
@@ -59,19 +82,97 @@ const recentSurveys = computed(() =>
 )
 
 /**
- * Navega a la vista detallada de una encuesta
- * @param surveyId - ID único de la encuesta a visualizar
- */
-const viewSurvey = (surveyId: string) => {
-  router.push(`/admin/surveys/${surveyId}`)
-}
-
-/**
  * Navega a la vista de edición de una encuesta
  * @param surveyId - ID único de la encuesta a editar
  */
 const editSurvey = (surveyId: string) => {
   router.push(`/admin/surveys/${surveyId}/edit`)
+}
+
+/**
+ * Navega a la vista de respuestas con la encuesta seleccionada
+ * @param surveyId - ID de la encuesta
+ */
+const viewResponses = (surveyId: string) => {
+  router.push({ name: 'AdminResponses', query: { survey: surveyId } })
+}
+
+/**
+ * Confirma la publicación de una encuesta
+ * @param surveyId - ID de la encuesta a publicar
+ */
+const confirmPublish = (surveyId: string) => {
+  surveyToPublish.value = surveyId
+  showPublishModal.value = true
+}
+
+/**
+ * Publica la encuesta seleccionada
+ */
+const publishSurvey = async () => {
+  if (surveyToPublish.value) {
+    try {
+      await surveyStore.publishSurvey(surveyToPublish.value)
+      showPublishModal.value = false
+      surveyToPublish.value = null
+      console.log('✅ Encuesta publicada correctamente')
+    } catch (error: any) {
+      console.error('❌ Error al publicar encuesta:', error)
+      alert('Error al publicar la encuesta: ' + (error.message || 'Error desconocido'))
+    }
+  }
+}
+
+/**
+ * Confirma el cierre de una encuesta
+ * @param surveyId - ID de la encuesta a cerrar
+ */
+const confirmClose = (surveyId: string) => {
+  surveyToClose.value = surveyId
+  showCloseModal.value = true
+}
+
+/**
+ * Cierra la encuesta seleccionada
+ */
+const closeSurvey = async () => {
+  if (surveyToClose.value) {
+    try {
+      await surveyStore.closeSurvey(surveyToClose.value)
+      showCloseModal.value = false
+      surveyToClose.value = null
+      console.log('✅ Encuesta cerrada correctamente')
+    } catch (error: any) {
+      console.error('❌ Error al cerrar encuesta:', error)
+      alert('Error al cerrar la encuesta: ' + (error.message || 'Error desconocido'))
+    }
+  }
+}
+
+/**
+ * Confirma la eliminación de una encuesta
+ * @param surveyId - ID de la encuesta a eliminar
+ */
+const confirmDelete = (surveyId: string) => {
+  surveyToDelete.value = surveyId
+  showDeleteModal.value = true
+}
+
+/**
+ * Elimina la encuesta seleccionada
+ */
+const deleteSurvey = async () => {
+  if (surveyToDelete.value) {
+    try {
+      await surveyStore.deleteSurvey(surveyToDelete.value)
+      showDeleteModal.value = false
+      surveyToDelete.value = null
+      console.log('✅ Encuesta eliminada correctamente')
+    } catch (error: any) {
+      console.error('❌ Error al eliminar encuesta:', error)
+      alert('Error al eliminar la encuesta: ' + (error.message || 'Error desconocido'))
+    }
+  }
 }
 
 /**

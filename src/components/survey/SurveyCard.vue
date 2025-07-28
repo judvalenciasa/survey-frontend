@@ -67,20 +67,17 @@
         🔒 Cerrar
       </button>
 
-      <!-- Botones de acción -->
-      <button class="action-btn view-btn" @click="$emit('view', survey.id)">
-        Ver Detalles
-      </button>
+      <!-- Botones de acción - REMOVIDO Ver Detalles -->
       <button class="action-btn edit-btn" :disabled="survey.status === 'FINALIZADA'" @click="$emit('edit', survey.id)">
-        Editar
+        ✏️ Editar
       </button>
       <button class="action-btn responses-btn" @click="$emit('responses', survey.id)">
-        Respuestas
+        📊 Respuestas
       </button>
       <button class="action-btn delete-btn" :disabled="survey.status === 'PUBLICADA'"
         :title="survey.status === 'PUBLICADA' ? 'No se puede eliminar una encuesta publicada' : 'Eliminar encuesta'"
         @click="$emit('delete', survey.id)">
-        Eliminar
+        🗑️ Eliminar
       </button>
     </div>
   </div>
@@ -96,7 +93,6 @@ interface Props {
 defineProps<Props>()
 
 defineEmits<{
-  view: [id: string]
   edit: [id: string]
   responses: [id: string]
   delete: [id: string]
@@ -111,10 +107,9 @@ defineEmits<{
  */
 const getStatusClass = (status: string) => {
   const classes: Record<string, string> = {
-    'CREADA': 'status-draft',
+    'CREADA': 'status-created', // ✅ CORREGIDO: era 'status-draft' pero el CSS es 'status-created'
     'PUBLICADA': 'status-active',
-    'PAUSADA': 'status-paused',
-    'FINALIZADA': 'status-finished'
+    'CERRADA': 'status-finished'
   }
   return classes[status] || 'status-draft'
 }
@@ -126,10 +121,9 @@ const getStatusClass = (status: string) => {
  */
 const getStatusLabel = (status: string) => {
   const labels: Record<string, string> = {
-    'CREADA': 'Borrador',
+    'CREADA': 'Creada',
     'PUBLICADA': 'Activa',
-    'PAUSADA': 'Pausada',
-    'FINALIZADA': 'Finalizada'
+    'CERRADA': 'Cerrada'
   }
   return labels[status] || 'Desconocido'
 }
@@ -187,6 +181,8 @@ const copyToClipboard = async (id: string) => {
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: var(--spacing-md);
+  gap: var(--spacing-sm);
+  min-height: 40px; /* ✅ AGREGADO: Altura mínima para consistencia */
 }
 
 .survey-title {
@@ -195,7 +191,16 @@ const copyToClipboard = async (id: string) => {
   font-weight: 600;
   margin: 0;
   flex: 1;
-  margin-right: var(--spacing-md);
+  line-height: 1.3;
+  
+  /* ✅ AGREGADO: Truncar títulos largos */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Máximo 2 líneas */
+  -webkit-box-orient: vertical;
+  max-width: calc(100% - 80px); /* Dejar espacio para el badge */
+  word-wrap: break-word;
 }
 
 .status-badge {
@@ -204,6 +209,10 @@ const copyToClipboard = async (id: string) => {
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0; /* ✅ IMPORTANTE: No se reduzca nunca */
+  align-self: flex-start; /* ✅ AGREGADO: Alineación superior */
+  min-width: 70px; /* ✅ AGREGADO: Ancho mínimo garantizado */
 }
 
 .status-created {
@@ -235,13 +244,14 @@ const copyToClipboard = async (id: string) => {
   color: var(--text-secondary);
   margin-bottom: var(--spacing-lg);
   line-height: 1.5;
+  word-wrap: break-word; /* ✅ AGREGADO */
 }
 
 .survey-stats {
-  display: flex;
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-lg);
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-xs);
+  margin: var(--spacing-md) 0;
 }
 
 .stat {
@@ -252,11 +262,13 @@ const copyToClipboard = async (id: string) => {
 
 .stat-icon {
   font-size: 0.9rem;
+  flex-shrink: 0; /* ✅ AGREGADO */
 }
 
 .stat-text {
   font-size: 0.85rem;
   color: var(--text-secondary);
+  word-wrap: break-word; /* ✅ AGREGADO */
 }
 
 .survey-dates {
@@ -272,7 +284,7 @@ const copyToClipboard = async (id: string) => {
 .survey-actions {
   display: flex;
   gap: var(--spacing-sm);
-  flex-wrap: wrap;
+  flex-wrap: wrap; /* ✅ YA EXISTE - Está bien */
 }
 
 .action-btn {
@@ -283,6 +295,8 @@ const copyToClipboard = async (id: string) => {
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+  white-space: nowrap; /* ✅ AGREGADO: Evitar que el texto se rompa */
+  flex-shrink: 0; /* ✅ AGREGADO: Mantener tamaño */
 }
 
 .view-btn {
@@ -366,12 +380,15 @@ const copyToClipboard = async (id: string) => {
 .stat-id {
   position: relative;
   font-family: 'Courier New', monospace;
-  /* Fuente monospace para el ID */
+  border-bottom: 1px solid var(--border-light, #e5e7eb);
+  padding-bottom: var(--spacing-xs);
+  margin-bottom: var(--spacing-xs);
 }
 
 .stat-id .stat-text {
-  font-size: 0.85rem;
+  font-size: 0.75rem; /* ✅ REDUCIDO para móviles */
   color: var(--text-secondary);
+  word-break: break-all; /* ✅ AGREGADO: Permitir partir IDs largos */
 }
 
 .copy-btn {
@@ -384,6 +401,7 @@ const copyToClipboard = async (id: string) => {
   font-size: 0.8rem;
   opacity: 0.7;
   transition: all 0.2s ease;
+  flex-shrink: 0; /* ✅ AGREGADO */
 }
 
 .copy-btn:hover {
@@ -429,5 +447,108 @@ const copyToClipboard = async (id: string) => {
   gap: var(--spacing-md, 12px);
   flex-wrap: wrap;
   margin-top: var(--spacing-xs, 4px);
+}
+
+/* ✅ AGREGADO: Media queries para responsive design */
+@media (max-width: 768px) {
+  .survey-card {
+    padding: var(--spacing-md); /* Menos padding en móviles */
+  }
+
+  .survey-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-sm);
+  }
+
+  .survey-title {
+    font-size: 1.1rem; /* Título más pequeño */
+    margin-bottom: var(--spacing-xs);
+    max-width: 100%; /* En móvil puede usar todo el ancho */
+    -webkit-line-clamp: 3; /* Más líneas en móvil */
+  }
+
+  .status-badge {
+    align-self: flex-start; /* Alinear a la izquierda */
+    font-size: 0.7rem;
+  }
+
+  .survey-stats {
+    gap: var(--spacing-xs);
+  }
+
+  .stat-text {
+    font-size: 0.8rem;
+  }
+
+  .stat-id .stat-text {
+    font-size: 0.7rem; /* ID aún más pequeño en móviles */
+  }
+
+  .survey-actions {
+    justify-content: center; /* Centrar botones en móviles */
+    gap: var(--spacing-xs);
+  }
+
+  .action-btn {
+    font-size: 0.8rem;
+    padding: var(--spacing-xs);
+    min-width: 80px; /* Ancho mínimo para botones */
+  }
+}
+
+@media (max-width: 480px) {
+  .survey-card {
+    padding: var(--spacing-sm);
+  }
+
+  .survey-title {
+    font-size: 1rem;
+    -webkit-line-clamp: 2; /* Limitar a 2 líneas en móviles pequeños */
+  }
+
+  .survey-actions {
+    flex-direction: column; /* Botones en columna en pantallas muy pequeñas */
+  }
+
+  .action-btn {
+    width: 100%; /* Botones de ancho completo */
+    justify-content: center;
+    text-align: center;
+  }
+
+  .stat-id {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: var(--spacing-xs);
+  }
+}
+
+/* ✅ AGREGADO: Mejoras para tablets */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .survey-stats {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xs);
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-xs);
+  }
+}
+
+/* ✅ AGREGADO: Mejoras para desktop grandes */
+@media (min-width: 1200px) {
+  .survey-actions {
+    justify-content: flex-start;
+  }
+  
+  .action-btn {
+    min-width: auto;
+  }
 }
 </style>

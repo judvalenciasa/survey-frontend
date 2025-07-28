@@ -15,12 +15,10 @@
 
     <!-- Error al cargar -->
     <div v-else-if="error" class="error-state">
-      <div class="error-icon">
-        ❌
-      </div>
+      <div class="error-icon">❌</div>
       <h2>Error al cargar la encuesta</h2>
       <p>{{ error }}</p>
-      <button class="btn-secondary" @click="$router.push('/survey-presentation')">
+      <button class="btn-secondary" @click="loadSurvey">
         Volver a intentar
       </button>
     </div>
@@ -28,12 +26,8 @@
     <!-- Formulario de respuesta -->
     <div v-else-if="survey && !submitted" class="survey-container">
       <div class="survey-header">
-        <h1 class="survey-title">
-          {{ survey.name }}
-        </h1>
-        <p class="survey-description">
-          {{ survey.description }}
-        </p>
+        <h1 class="survey-title">{{ survey.name }}</h1>
+        <p class="survey-description">{{ survey.description }}</p>
         <div class="survey-progress">
           <div class="progress-bar">
             <div class="progress-fill" :style="{ width: `${progressPercentage}%` }" />
@@ -50,12 +44,12 @@
       </div>
 
       <!-- Error de validación -->
-      <div v-if="error" class="validation-error">
-        {{ error }}
+      <div v-if="validationError" class="validation-error">
+        {{ validationError }}
       </div>
 
       <div class="submit-section">
-        <button class="submit-btn" :disabled="loading" @click="submitResponses">
+        <button class="submit-btn" :disabled="loading || !canSubmit" @click="submitResponses">
           <span v-if="loading">Enviando...</span>
           <span v-else>Enviar Respuestas</span>
         </button>
@@ -64,12 +58,10 @@
 
     <!-- Estado enviado -->
     <div v-else-if="submitted" class="success-state">
-      <div class="success-icon">
-        ✅
-      </div>
+      <div class="success-icon">✅</div>
       <h2>¡Respuestas enviadas exitosamente!</h2>
       <p>Gracias por participar en nuestra encuesta.</p>
-      <button class="btn-primary" @click="$router.push('/')">
+      <button class="btn-primary" @click="goHome">
         Volver al inicio
       </button>
     </div>
@@ -80,6 +72,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { surveyService } from '../../services/survey.service'
+import { responseService } from '../../services/response.service'
 import type { Survey } from '../../types/survey'
 import QuestionRender from '../../components/survey/QuestionRender.vue'
 
@@ -89,6 +82,7 @@ const router = useRouter()
 const survey = ref<Survey | null>(null)
 const loading = ref(false)
 const error = ref<string | null>(null)
+const validationError = ref<string | null>(null)
 const responses = ref<Record<string, any>>({})
 const submitted = ref(false)
 
@@ -96,15 +90,34 @@ const submitted = ref(false)
  * Calcula el número de preguntas respondidas
  */
 const answeredQuestions = computed(() => {
-  return Object.keys(responses.value).length
+  if (!survey.value) return 0
+  return survey.value.questions.filter(question => {
+    const response = responses.value[question.id]
+    return response !== null && response !== undefined && response !== '' &&
+      !(Array.isArray(response) && response.length === 0)
+  }).length
 })
 
 /**
  * Calcula el porcentaje de progreso de la encuesta
  */
 const progressPercentage = computed(() => {
-  if (!survey.value) return 0
+  if (!survey.value || survey.value.questions.length === 0) return 0
   return Math.round((answeredQuestions.value / survey.value.questions.length) * 100)
+})
+
+/**
+ * Verifica si se pueden enviar las respuestas
+ */
+const canSubmit = computed(() => {
+  if (!survey.value) return false
+
+  const requiredQuestions = survey.value.questions.filter(q => q.required)
+  return requiredQuestions.every(question => {
+    const response = responses.value[question.id]
+    return response !== null && response !== undefined && response !== '' &&
+      !(Array.isArray(response) && response.length === 0)
+  })
 })
 
 /**
@@ -113,9 +126,15 @@ const progressPercentage = computed(() => {
 const loadSurvey = async () => {
   loading.value = true
   error.value = null
+  validationError.value = null
 
   try {
     const surveyId = route.params.id as string
+    if (!surveyId) {
+      error.value = 'ID de encuesta no válido'
+      return
+    }
+
     const response = await surveyService.getSurveyForResponse(surveyId)
     survey.value = response.data
 
@@ -124,13 +143,21 @@ const loadSurvey = async () => {
       return
     }
 
+    // Inicializar respuestas
+    responses.value = {}
     survey.value.questions.forEach(question => {
-      responses.value[question.id] = null
+      responses.value[question.id] = question.type === 'MULTIPLE_CHOICE' ? [] : null
     })
 
   } catch (err: any) {
     console.error('Error cargando encuesta:', err)
-    error.value = err.response?.data?.message || 'Error al cargar la encuesta'
+    if (err.response?.status === 404) {
+      error.value = 'Encuesta no encontrada'
+    } else if (err.response?.status === 403) {
+      error.value = 'Esta encuesta no está disponible para responder'
+    } else {
+      error.value = err.response?.data?.message || 'Error al cargar la encuesta'
+    }
   } finally {
     loading.value = false
   }
@@ -143,16 +170,16 @@ const loadSurvey = async () => {
  */
 const updateResponse = (questionId: string, value: any) => {
   responses.value[questionId] = value
+  validationError.value = null // Limpiar error de validación al cambiar respuesta
 }
 
 /**
  * Valida que todas las preguntas obligatorias estén respondidas
- * @returns true si todas las preguntas obligatorias están respondidas
  */
 const validateResponses = (): boolean => {
   if (!survey.value) return false
 
-  const missingResponses = survey.value.questions
+  const missingQuestions = survey.value.questions
     .filter(question => question.required)
     .filter(question => {
       const response = responses.value[question.id]
@@ -160,11 +187,13 @@ const validateResponses = (): boolean => {
         (Array.isArray(response) && response.length === 0)
     })
 
-  if (missingResponses.length > 0) {
-    error.value = `Por favor complete todas las preguntas obligatorias: ${missingResponses.map(q => q.text).join(', ')}`
+  if (missingQuestions.length > 0) {
+    const questionNumbers = missingQuestions.map((_, index) => `${index + 1}`).join(', ')
+    validationError.value = `Por favor complete las preguntas obligatorias: ${questionNumbers}`
     return false
   }
 
+  validationError.value = null
   return true
 }
 
@@ -176,20 +205,51 @@ const submitResponses = async () => {
   if (!survey.value) return
 
   loading.value = true
+  validationError.value = null
+
   try {
-    await surveyService.submitResponse(survey.value.id, responses.value)
+    // Filtrar respuestas vacías
+    const filteredResponses = Object.fromEntries(
+      Object.entries(responses.value).filter(([_, value]) =>
+        value !== null && value !== undefined && value !== '' &&
+        !(Array.isArray(value) && value.length === 0)
+      )
+    )
+
+    await responseService.submitSurveyResponse(survey.value.id, filteredResponses)
     submitted.value = true
-    router.push('/thank-you')
+
+    // Opcional: Guardar en localStorage para evitar reenvíos
+    localStorage.setItem(`survey_completed_${survey.value.id}`, Date.now().toString())
+
   } catch (err: any) {
     console.error('Error enviando respuestas:', err)
-    error.value = err.response?.data?.message || 'Error al enviar las respuestas'
+    validationError.value = err.response?.data?.message || 'Error al enviar las respuestas. Por favor intente nuevamente.'
   } finally {
     loading.value = false
   }
 }
 
+/**
+ * Navegar al inicio
+ */
+const goHome = () => {
+  router.push('/survey-presentation')
+}
+
+// Verificar si ya se completó esta encuesta
+const checkIfCompleted = () => {
+  const surveyId = route.params.id as string
+  if (localStorage.getItem(`survey_completed_${surveyId}`)) {
+    submitted.value = true
+  }
+}
+
 onMounted(() => {
-  loadSurvey()
+  checkIfCompleted()
+  if (!submitted.value) {
+    loadSurvey()
+  }
 })
 </script>
 
@@ -289,8 +349,11 @@ onMounted(() => {
   color: var(--text-secondary);
 }
 
-.survey-form {
-  width: 100%;
+.questions-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
 }
 
 .validation-error {
@@ -301,12 +364,39 @@ onMounted(() => {
   margin-bottom: var(--spacing-lg);
   text-align: center;
   font-weight: 500;
+  border-left: 4px solid var(--error-color);
 }
 
-.form-actions {
+.submit-section {
   display: flex;
   justify-content: center;
   margin-top: var(--spacing-2xl);
+}
+
+.submit-btn {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: var(--spacing-lg) var(--spacing-2xl);
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 200px;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .btn-primary,
@@ -325,14 +415,9 @@ onMounted(() => {
   color: white;
 }
 
-.btn-primary:hover:not(:disabled) {
+.btn-primary:hover {
   background: var(--primary-hover);
   transform: translateY(-1px);
-}
-
-.btn-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
 }
 
 .btn-secondary {
@@ -356,6 +441,11 @@ onMounted(() => {
 
   .survey-title {
     font-size: 1.5rem;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: var(--spacing-md) var(--spacing-lg);
   }
 }
 </style>

@@ -35,7 +35,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-const appName = import.meta.env.VITE_APP_NAME || 'FormSTyT'
+const appName =  'FormSTyT'
 const currentYear = computed(() => new Date().getFullYear())
 </script>
 

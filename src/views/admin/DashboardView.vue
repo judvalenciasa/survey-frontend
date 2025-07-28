@@ -1,16 +1,13 @@
 <template>
   <div class="dashboard">
-    <!-- Sección de estadísticas principales -->
     <header class="dashboard-header">
       <div class="dashboard-stats">
-        <!-- Tarjetas de estadísticas con datos reactivos del store -->
         <StatsCard title="Total Encuestas" :value="surveyStore.totalSurveys" icon="📊" color="primary" />
         <StatsCard title="Encuestas Activas" :value="surveyStore.activeSurveys.length" icon="✅" color="success" />
         <StatsCard title="Total Respuestas" :value="surveyStore.totalResponses" icon="📝" color="info" />
       </div>
     </header>
 
-    <!-- Botones de acción rápida para navegación -->
     <div class="dashboard-actions">
       <router-link to="/admin/surveys" class="action-button primary">
         Ver Todas las Encuestas
@@ -20,7 +17,6 @@
       </router-link>
     </div>
 
-    <!-- Sección de encuestas recientes (últimas 3 modificadas) -->
     <div class="dashboard-recent">
       <h2>Encuestas Recientes</h2>
       <div class="recent-surveys">
@@ -32,13 +28,10 @@
 </template>
 
 <script setup lang="ts">
-/**
- * Vista del Dashboard Administrativo
- */
 
 import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useSurveyStore } from '@/store/modules/survey'
+import { useSurveyStore } from '../../store/modules/survey'
 import StatsCard from '@/components/admin/StatsCard.vue'
 import SurveyCard from '@/components/survey/SurveyCard.vue'
 
@@ -59,7 +52,6 @@ const recentSurveys = computed(() =>
 )
 
 /**
-
  * @param {string} surveyId - ID único de la encuesta a visualizar
  */
 const viewSurvey = (surveyId: string) => {
@@ -83,7 +75,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-
 .dashboard {
   padding: 10px var(--spacing-lg) var(--spacing-lg) var(--spacing-lg);
   max-width: 1200px;

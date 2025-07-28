@@ -34,8 +34,8 @@ export default [
     },
     rules: {
       ...typescript.configs.recommended.rules,
-      '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': 'warn'
+      '@typescript-eslint/no-unused-vars': 'warn',
+      'import/no-unresolved': 'off'
     }
   },
   
@@ -77,6 +77,8 @@ export default [
       'no-console': 'warn', // Permitir console en desarrollo
       'no-debugger': 'error',
       'no-undef': 'off' // Desactivar ya que globals lo maneja
+
+      
     }
   },
   

@@ -4,4 +4,3 @@ node_modules/
 public/
 *.config.js
 *.config.ts
-src/components/HelloWorld.vue 

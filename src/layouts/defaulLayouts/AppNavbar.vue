@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-const appName = import.meta.env.VITE_APP_NAME || 'FormSTyT'
+const appName =  'FormSTyT'
 </script>
 
 <style scoped>

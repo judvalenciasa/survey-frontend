@@ -1,26 +1,14 @@
 <template>
-  <aside
-    class="sidebar"
-    :class="{ 'sidebar--collapsed': isCollapsed }"
-  >
+  <aside class="sidebar" :class="{ 'sidebar--collapsed': isCollapsed }">
     <div class="sidebar-header">
       <div class="sidebar-brand">
-        <h3
-          v-show="!isCollapsed"
-          class="brand-text"
-        >
+        <h3 v-show="!isCollapsed" class="brand-text">
           📊 FormST&T
         </h3>
-        <span
-          v-show="isCollapsed"
-          class="brand-icon"
-        >📊</span>
+        <span v-show="isCollapsed" class="brand-icon">📊</span>
       </div>
-      <button
-        class="sidebar-toggle"
-        :aria-label="isCollapsed ? 'Expandir sidebar' : 'Colapsar sidebar'"
-        @click="toggleSidebar"
-      >
+      <button class="sidebar-toggle" :aria-label="isCollapsed ? 'Expandir sidebar' : 'Colapsar sidebar'"
+        @click="toggleSidebar">
         <span>{{ isCollapsed ? '→' : '←' }}</span>
       </button>
     </div>
@@ -28,101 +16,53 @@
     <nav class="sidebar-nav">
       <ul class="nav-list">
         <li class="nav-item">
-          <router-link
-            to="/admin/dashboard"
-            class="nav-link"
-            active-class="nav-link--active"
-          >
+          <router-link to="/admin/dashboard" class="nav-link" active-class="nav-link--active">
             <span class="nav-icon">🏠</span>
-            <span
-              v-show="!isCollapsed"
-              class="nav-text"
-            >Dashboard</span>
+            <span v-show="!isCollapsed" class="nav-text">Dashboard</span>
           </router-link>
         </li>
-        
+
         <li class="nav-item">
-          <router-link
-            to="/admin/surveys"
-            class="nav-link"
-            active-class="nav-link--active"
-          >
+          <router-link to="/admin/surveys" class="nav-link" active-class="nav-link--active">
             <span class="nav-icon">📝</span>
-            <span
-              v-show="!isCollapsed"
-              class="nav-text"
-            >Encuestas</span>
+            <span v-show="!isCollapsed" class="nav-text">Encuestas</span>
           </router-link>
         </li>
-        
+
         <li class="nav-item">
-          <router-link
-            to="/admin/surveys/create"
-            class="nav-link"
-            active-class="nav-link--active"
-          >
+          <router-link to="/admin/surveys/create" class="nav-link" active-class="nav-link--active">
             <span class="nav-icon">➕</span>
-            <span
-              v-show="!isCollapsed"
-              class="nav-text"
-            >Nueva Encuesta</span>
+            <span v-show="!isCollapsed" class="nav-text">Nueva Encuesta</span>
           </router-link>
         </li>
-        
+
         <li class="nav-item">
-          <router-link
-            to="/admin/responses"
-            class="nav-link"
-            active-class="nav-link--active"
-          >
+          <router-link to="/admin/responses" class="nav-link" active-class="nav-link--active">
             <span class="nav-icon">📊</span>
-            <span
-              v-show="!isCollapsed"
-              class="nav-text"
-            >Respuestas</span>
+            <span v-show="!isCollapsed" class="nav-text">Respuestas</span>
           </router-link>
         </li>
-        
+
         <li class="nav-item">
-          <router-link
-            to="/admin/analytics"
-            class="nav-link"
-            active-class="nav-link--active"
-          >
+          <router-link to="/admin/analytics" class="nav-link" active-class="nav-link--active">
             <span class="nav-icon">📈</span>
-            <span
-              v-show="!isCollapsed"
-              class="nav-text"
-            >Analíticas</span>
+            <span v-show="!isCollapsed" class="nav-text">Analíticas</span>
           </router-link>
         </li>
-        
+
         <li class="nav-item">
-          <router-link
-            to="/admin/users"
-            class="nav-link"
-            active-class="nav-link--active"
-          >
+          <router-link to="/admin/users" class="nav-link" active-class="nav-link--active">
             <span class="nav-icon">👥</span>
-            <span
-              v-show="!isCollapsed"
-              class="nav-text"
-            >Usuarios</span>
+            <span v-show="!isCollapsed" class="nav-text">Usuarios</span>
           </router-link>
         </li>
       </ul>
     </nav>
 
     <div class="sidebar-footer">
-      <button
-        class="logout-btn"
-        @click="logout"
-      >
+      <button class="logout-btn" @click="logout">
         <span class="nav-icon">🚪</span>
-        <span
-          v-show="!isCollapsed"
-          class="nav-text"
-        >Salir</span>
+        <span v-show="!isCollapsed" class="nav-text">Salir</span>
       </button>
     </div>
   </aside>
@@ -180,16 +120,16 @@ const logout = async () => {
   color: white;
   display: flex;
   flex-direction: column;
-  
+
   /* 🎯 DIMENSIONES DINÁMICAS */
   width: var(--sidebar-width);
   height: 100vh;
   position: sticky;
   top: 0;
-  
+
   /* 🎯 SOMBRA DINÁMICA */
   box-shadow: clamp(2px, 0.5vw, 4px) 0 clamp(10px, 2vw, 20px) rgba(0, 0, 0, 0.1);
-  
+
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
 }
@@ -348,22 +288,22 @@ const logout = async () => {
     height: auto;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   }
-  
+
   .sidebar-header {
     justify-content: center;
   }
-  
+
   .sidebar-toggle {
     display: none;
   }
-  
+
   .nav-link {
     justify-content: center;
     margin-right: 0;
     border-radius: clamp(4px, 1vw, 6px);
     margin: 0 var(--content-padding) clamp(2px, 0.5vw, 4px);
   }
-  
+
   .nav-text {
     opacity: 1 !important;
   }
@@ -373,7 +313,7 @@ const logout = async () => {
   .nav-link {
     padding: clamp(0.4rem, 1vw, 0.6rem) clamp(0.5rem, 1vw, 0.75rem);
   }
-  
+
   .sidebar-header {
     padding: clamp(0.5rem, 1vw, 0.75rem);
   }

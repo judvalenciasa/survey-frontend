@@ -1,5 +1,8 @@
 <template>
-  <div class="stats-card" :class="`stats-card--${color}`">
+  <div
+    class="stats-card"
+    :class="`stats-card--${color}`"
+  >
     <div class="stats-icon">
       {{ icon }}
     </div>

@@ -1,8 +1,13 @@
 /**
- * Tipos relacionados con respuestas de encuestas
+ * Definiciones de tipos para respuestas de encuestas
+ * @description Interfaces para manejo de respuestas y estadísticas
+ * @module Response Types
  */
 
-// Respuesta de encuesta
+/**
+ * Respuesta completa de una encuesta
+ * @interface SurveyResponse
+ */
 export interface SurveyResponse {
   id: string
   surveyId: string
@@ -11,13 +16,19 @@ export interface SurveyResponse {
   ipAddress?: string
 }
 
-// Request para crear respuesta
+/**
+ * Datos para crear una nueva respuesta
+ * @interface CreateResponseRequest
+ */
 export interface CreateResponseRequest {
   surveyId: string
   answers: Record<string, any>
 }
 
-// Estadísticas de respuestas
+/**
+ * Estadísticas agregadas de respuestas
+ * @interface ResponseStats
+ */
 export interface ResponseStats {
   totalResponses: number
   averageCompletionTime?: number

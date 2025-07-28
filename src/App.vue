@@ -1,3 +1,10 @@
+<!--
+/**
+ * Componente raíz de la aplicación Vue
+ * @description Contiene el RouterView principal y maneja la inicialización de la autenticación
+ * @author Sistema de Formularios STyT
+ */
+-->
 <script setup lang="ts">
 import { RouterView } from "vue-router";
 import { onMounted } from 'vue'
@@ -5,7 +12,6 @@ import { useAuthStore } from './store/modules/auth'
 
 const authStore = useAuthStore()
 
-// Inicializar autenticación al cargar la app
 onMounted(() => {
   authStore.initAuth()
 })

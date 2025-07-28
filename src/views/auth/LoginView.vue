@@ -1,3 +1,10 @@
+<!--
+/**
+ * Vista de página de inicio de sesión
+ * @description Página de autenticación para acceder al panel administrativo
+ * @view LoginView
+ */
+-->
 <template>
   <div class="login-page">
     <div class="login-container">
@@ -13,6 +20,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Vista de login con formulario centrado y diseño responsivo
+ * @description Página que contiene el formulario de autenticación
+ */
 import LoginForm from '@/components/auth/LoginForm.vue'
 
 </script>

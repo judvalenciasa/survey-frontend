@@ -1,3 +1,10 @@
+<!--
+/**
+ * Vista del dashboard administrativo
+ * @description Panel principal con estadísticas y acceso rápido a funcionalidades
+ * @view DashboardView
+ */
+-->
 <template>
   <div class="dashboard">
     <header class="dashboard-header">
@@ -28,22 +35,22 @@
 </template>
 
 <script setup lang="ts">
-
+/**
+ * Dashboard administrativo con estadísticas y acceso rápido
+ * @description Vista principal del admin con métricas y encuestas recientes
+ */
 import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSurveyStore } from '../../store/modules/survey'
 import StatsCard from '@/components/admin/StatsCard.vue'
 import SurveyCard from '@/components/survey/SurveyCard.vue'
 
-
-
 const router = useRouter()
-
 const surveyStore = useSurveyStore()
 
 /**
  * Obtiene las 3 encuestas más recientemente modificadas
- * @returns {ComputedRef<Survey[]>} Array de las 3 encuestas más recientes
+ * @returns Array de las 3 encuestas más recientes
  */
 const recentSurveys = computed(() =>
   surveyStore.surveys
@@ -52,7 +59,8 @@ const recentSurveys = computed(() =>
 )
 
 /**
- * @param {string} surveyId - ID único de la encuesta a visualizar
+ * Navega a la vista detallada de una encuesta
+ * @param surveyId - ID único de la encuesta a visualizar
  */
 const viewSurvey = (surveyId: string) => {
   router.push(`/admin/surveys/${surveyId}`)
@@ -60,14 +68,14 @@ const viewSurvey = (surveyId: string) => {
 
 /**
  * Navega a la vista de edición de una encuesta
- * @param {string} surveyId - ID único de la encuesta a editar
+ * @param surveyId - ID único de la encuesta a editar
  */
 const editSurvey = (surveyId: string) => {
   router.push(`/admin/surveys/${surveyId}/edit`)
 }
 
 /**
- * Inicialización del componente
+ * Inicializa la vista cargando las encuestas
  */
 onMounted(() => {
   surveyStore.fetchSurveys()

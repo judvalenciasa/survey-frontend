@@ -1,3 +1,13 @@
+/**
+ * Definiciones de tipos para autenticación de usuarios
+ * @description Interfaces para manejo de usuarios, login y estados de autenticación
+ * @module Authentication Types
+ */
+
+/**
+ * Representa un usuario del sistema
+ * @interface User
+ */
 export interface User {
     id: string
     username: string
@@ -8,17 +18,29 @@ export interface User {
     active: boolean
   }
   
-  export interface LoginRequest {
+/**
+ * Datos requeridos para iniciar sesión
+ * @interface LoginRequest
+ */
+export interface LoginRequest {
     username: string
     password: string
   }
   
-  export interface AuthResponse {
+/**
+ * Respuesta del servidor tras autenticación exitosa
+ * @interface AuthResponse
+ */
+export interface AuthResponse {
     token: string
     user: User
   }
   
-  export interface AuthState {
+/**
+ * Estado global de autenticación en el store
+ * @interface AuthState
+ */
+export interface AuthState {
     user: User | null
     token: string | null
     isAuthenticated: boolean

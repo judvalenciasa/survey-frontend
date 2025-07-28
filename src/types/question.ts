@@ -1,8 +1,13 @@
 /**
- * Tipos relacionados con preguntas de encuestas
+ * Definiciones de tipos para preguntas de encuestas
+ * @description Tipos, interfaces y configuraciones para el manejo de preguntas
+ * @module Question Types
  */
 
-// Tipos de pregunta soportados por el backend
+/**
+ * Tipos de pregunta soportados por el sistema
+ * @type QuestionType
+ */
 export type QuestionType = 
   | 'SINGLE_CHOICE' 
   | 'MULTIPLE_CHOICE' 
@@ -11,7 +16,10 @@ export type QuestionType =
   | 'TEXT'
   | 'NUMBER'
 
-// Configuración específica para preguntas tipo SCALE
+/**
+ * Configuración específica para preguntas tipo escala
+ * @interface ScaleOptions
+ */
 export interface ScaleOptions {
   min: number
   max: number
@@ -19,16 +27,25 @@ export interface ScaleOptions {
   labels?: Record<string, string>
 }
 
-// Configuración específica para preguntas tipo NUMBER
+/**
+ * Configuración específica para preguntas numéricas
+ * @interface NumberOptions
+ */
 export interface NumberOptions {
   min: number
   max: number
 }
 
-// Opciones de pregunta (pueden ser array de strings o configuración de escala)
+/**
+ * Opciones de pregunta según el tipo
+ * @type QuestionOptions
+ */
 export type QuestionOptions = string[] | ScaleOptions | null
 
-// Estructura de pregunta según el backend
+/**
+ * Estructura completa de una pregunta
+ * @interface Question
+ */
 export interface Question {
   id: string
   text: string
@@ -38,7 +55,10 @@ export interface Question {
   order: number
 }
 
-// Pregunta para crear (sin ID)
+/**
+ * Datos para crear una nueva pregunta
+ * @interface CreateQuestionRequest
+ */
 export interface CreateQuestionRequest {
   text: string
   type: QuestionType

@@ -1,11 +1,14 @@
 /**
- * Plugin de persistencia para Pinia
+ * Plugin de persistencia para stores Pinia
+ * @description Proporciona persistencia automática en localStorage para campos específicos
+ * @module Persistence Plugin
  */
 
 import type { PiniaPluginContext } from "pinia";
 
 /**
- * Configuración de persistencia por store
+ * Configuración de campos a persistir por cada store
+ * @description Define qué campos de cada store se guardan en localStorage
  */
 const persistenceConfig = {
   auth: ["token"],
@@ -13,7 +16,9 @@ const persistenceConfig = {
 };
 
 /**
- * Plugin de persistencia para Pinia
+ * Plugin de persistencia que se registra automáticamente con Pinia
+ * @param context - Contexto del plugin de Pinia
+ * @description Guarda y restaura automáticamente campos específicos del localStorage
  */
 export function persistencePlugin({ store }: PiniaPluginContext) {
   const storeId = store.$id;

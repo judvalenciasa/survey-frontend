@@ -1,3 +1,10 @@
+<!--
+/**
+ * Vista de acceso público a encuestas
+ * @description Página para ingresar ID de encuesta y acceder a responderla
+ * @view SurveyPublicView
+ */
+-->
 <template>
   <!--
     Vista Pública de Acceso a Encuestas
@@ -11,9 +18,9 @@
       </div>
 
       <form class="survey-form" @submit.prevent="accessSurvey">
-        <input v-model="surveyId" type="text" placeholder="Número de encuesta"
-          class="survey-input" :class="{ error: error }" :disabled="loading" @input="filterAlphanumeric"
-          @keydown="preventSpecialChars" @paste="handlePaste" autocomplete="off" spellcheck="false" maxlength="20">
+        <input v-model="surveyId" type="text" placeholder="Número de encuesta" class="survey-input"
+          :class="{ error: error }" :disabled="loading" @input="filterAlphanumeric" @keydown="preventSpecialChars"
+          @paste="handlePaste" autocomplete="off" spellcheck="false" maxlength="20">
 
         <p v-if="error" class="error-message">
           {{ error }}
@@ -90,13 +97,13 @@ const preventSpecialChars = (event: KeyboardEvent) => {
   }
 
   if (event.ctrlKey || event.metaKey) {
-    return 
+    return
   }
 
   const isAlphanumeric = /^[a-zA-Z0-9]$/.test(event.key)
 
   if (!isAlphanumeric) {
-    event.preventDefault() 
+    event.preventDefault()
   }
 }
 
@@ -107,11 +114,11 @@ const preventSpecialChars = (event: KeyboardEvent) => {
  */
 const handlePaste = (event: ClipboardEvent) => {
   event.preventDefault()
-  
+
   const pastedText = event.clipboardData?.getData('text') || ''
   const filteredText = pastedText.replace(/[^a-zA-Z0-9]/g, '')
   const finalText = filteredText.substring(0, 20)
-  
+
   surveyId.value = finalText
 
   if (error.value) {

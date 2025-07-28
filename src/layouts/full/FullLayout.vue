@@ -1,24 +1,33 @@
+<!--
+/**
+ * Layout completo para páginas públicas
+ * @description Layout con navbar, contenido y footer para rutas públicas
+ * @component FullLayout
+ */
+-->
 <template>
   <div class="full-layout">
-    <!-- Header/Navbar público -->
     <AppNavbar />
       
-    <!-- Contenido principal -->
     <main class="full-main">
       <router-view />
     </main>
       
-    <!-- Footer -->
     <AppFooter />
   </div>
 </template>
   
-  <script setup lang="ts">
-  import AppNavbar from '@/layouts/defaulLayouts/AppNavbar.vue' 
-  import AppFooter from '@/layouts/defaulLayouts/AppFooter.vue'
-  </script>
+<script setup lang="ts">
+
+/**
+ * Layout principal para páginas públicas y de autenticación
+ * @description Combina navbar, contenido y footer en un diseño completo
+ */
+import AppNavbar from '@/layouts/defaulLayouts/AppNavbar.vue' 
+import AppFooter from '@/layouts/defaulLayouts/AppFooter.vue'
+</script>
   
-  <style scoped>
+<style scoped>
   .full-layout {
     min-height: 100vh;
     display: flex;
@@ -29,6 +38,5 @@
   .full-main {
     flex: 1;
     width: 100%;
-    /* El contenido decide su propio espaciado y background */
   }
-  </style>
+</style>

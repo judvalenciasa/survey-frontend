@@ -1,37 +1,32 @@
+<!--
+/**
+ * Vista para responder encuestas públicas
+ * @description Página interactiva para responder preguntas de encuesta con progreso
+ * @view SurveyResponseView
+ */
+-->
 <template>
   <div class="survey-response-page">
     <!-- Estado de carga -->
-    <div
-      v-if="loading"
-      class="loading-state"
-    >
+    <div v-if="loading" class="loading-state">
       <div class="loading-spinner" />
       <p>Cargando encuesta...</p>
     </div>
 
     <!-- Error al cargar -->
-    <div
-      v-else-if="error"
-      class="error-state"
-    >
+    <div v-else-if="error" class="error-state">
       <div class="error-icon">
         ❌
       </div>
       <h2>Error al cargar la encuesta</h2>
       <p>{{ error }}</p>
-      <button
-        class="btn-secondary"
-        @click="$router.push('/survey-presentation')"
-      >
+      <button class="btn-secondary" @click="$router.push('/survey-presentation')">
         Volver a intentar
       </button>
     </div>
 
     <!-- Formulario de respuesta -->
-    <div
-      v-else-if="survey && !submitted"
-      class="survey-container"
-    >
+    <div v-else-if="survey && !submitted" class="survey-container">
       <div class="survey-header">
         <h1 class="survey-title">
           {{ survey.name }}
@@ -41,10 +36,7 @@
         </p>
         <div class="survey-progress">
           <div class="progress-bar">
-            <div 
-              class="progress-fill" 
-              :style="{ width: `${progressPercentage}%` }"
-            />
+            <div class="progress-fill" :style="{ width: `${progressPercentage}%` }" />
           </div>
           <span class="progress-text">
             {{ answeredQuestions }} de {{ survey.questions.length }} preguntas respondidas
@@ -52,53 +44,32 @@
         </div>
       </div>
 
-      <form
-        class="survey-form"
-        @submit.prevent="submitSurvey"
-      >
-        <QuestionRender
-          v-for="question in survey.questions"
-          :key="question.id"
-          v-model="responses[question.id]"
-          :question="question"
-        />
+      <div class="questions-container">
+        <QuestionRender v-for="question in survey.questions" :key="question.id" :question="question"
+          :model-value="responses[question.id]" @update:model-value="updateResponse(question.id, $event)" />
+      </div>
 
-        <!-- Error de validación -->
-        <div
-          v-if="validationError"
-          class="validation-error"
-        >
-          {{ validationError }}
-        </div>
+      <!-- Error de validación -->
+      <div v-if="error" class="validation-error">
+        {{ error }}
+      </div>
 
-        <!-- Botones de acción -->
-        <div class="form-actions">
-          <button 
-            type="submit" 
-            class="btn-primary"
-            :disabled="submitting"
-          >
-            <span v-if="submitting">Enviando...</span>
-            <span v-else>Enviar Respuestas</span>
-          </button>
-        </div>
-      </form>
+      <div class="submit-section">
+        <button class="submit-btn" :disabled="loading" @click="submitResponses">
+          <span v-if="loading">Enviando...</span>
+          <span v-else>Enviar Respuestas</span>
+        </button>
+      </div>
     </div>
 
     <!-- Estado enviado -->
-    <div
-      v-else-if="submitted"
-      class="success-state"
-    >
+    <div v-else-if="submitted" class="success-state">
       <div class="success-icon">
         ✅
       </div>
       <h2>¡Respuestas enviadas exitosamente!</h2>
       <p>Gracias por participar en nuestra encuesta.</p>
-      <button
-        class="btn-primary"
-        @click="$router.push('/')"
-      >
+      <button class="btn-primary" @click="$router.push('/')">
         Volver al inicio
       </button>
     </div>
@@ -107,130 +78,116 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { surveyService } from '@/services/survey.service'
-import type { Survey } from '@/types/survey'
-import QuestionRender from '@/components/survey/QuestionRender.vue'
+import { useRoute, useRouter } from 'vue-router'
+import { surveyService } from '../../services/survey.service'
+import type { Survey } from '../../types/survey'
+import QuestionRender from '../../components/survey/QuestionRender.vue'
 
-const router = useRouter()
 const route = useRoute()
+const router = useRouter()
 
-// Estado
-const loading = ref(true)
-const error = ref('')
 const survey = ref<Survey | null>(null)
+const loading = ref(false)
+const error = ref<string | null>(null)
 const responses = ref<Record<string, any>>({})
-const submitting = ref(false)
 const submitted = ref(false)
-const validationError = ref('')
 
-// Computadas
+/**
+ * Calcula el número de preguntas respondidas
+ */
 const answeredQuestions = computed(() => {
-  if (!survey.value) return 0
-  return survey.value.questions.filter(q => {
-    const answer = responses.value[q.id]
-    return answer !== undefined && answer !== '' && answer !== null
-  }).length
+  return Object.keys(responses.value).length
 })
 
+/**
+ * Calcula el porcentaje de progreso de la encuesta
+ */
 const progressPercentage = computed(() => {
   if (!survey.value) return 0
   return Math.round((answeredQuestions.value / survey.value.questions.length) * 100)
 })
 
-// Métodos
+/**
+ * Carga los datos de la encuesta desde el servidor
+ */
 const loadSurvey = async () => {
+  loading.value = true
+  error.value = null
+
   try {
-    loading.value = true
-    error.value = ''
-    
-    // ✨ CAMBIO: Usar 'id' en lugar de 'code' y el método correcto
     const surveyId = route.params.id as string
-    console.log('Loading survey with ID:', surveyId) // Para debugging
-    
     const response = await surveyService.getSurveyForResponse(surveyId)
     survey.value = response.data
-    
-    // Verificar que la encuesta está publicada
+
     if (survey.value.status !== 'PUBLICADA') {
-      throw new Error('Esta encuesta no está disponible para responder')
-    }
-    
-    // Inicializar respuestas vacías
-    survey.value.questions.forEach(question => {
-      responses.value[question.id] = question.type === 'MULTIPLE_CHOICE' ? [] : ''
-    })
-    
-  } catch (err: any) {
-    console.error('Error loading survey:', err)
-    
-    if (err.response?.status === 404) {
-      error.value = 'Encuesta no encontrada'
-    } else if (err.response?.status === 403) {
       error.value = 'Esta encuesta no está disponible para responder'
-    } else {
-      error.value = err.message || 'No se pudo cargar la encuesta'
+      return
     }
+
+    survey.value.questions.forEach(question => {
+      responses.value[question.id] = null
+    })
+
+  } catch (err: any) {
+    console.error('Error cargando encuesta:', err)
+    error.value = err.response?.data?.message || 'Error al cargar la encuesta'
   } finally {
     loading.value = false
   }
 }
 
+/**
+ * Actualiza la respuesta de una pregunta específica
+ * @param questionId - ID de la pregunta
+ * @param value - Valor de la respuesta
+ */
+const updateResponse = (questionId: string, value: any) => {
+  responses.value[questionId] = value
+}
+
+/**
+ * Valida que todas las preguntas obligatorias estén respondidas
+ * @returns true si todas las preguntas obligatorias están respondidas
+ */
 const validateResponses = (): boolean => {
   if (!survey.value) return false
-  
-  validationError.value = ''
-  
-  // Verificar preguntas obligatorias
-  const missingQuestions = survey.value.questions.filter(question => {
-    if (!question.required) return false
-    
-    const answer = responses.value[question.id]
-    
-    if (question.type === 'MULTIPLE_CHOICE') {
-      return !Array.isArray(answer) || answer.length === 0
-    }
-    
-    return answer === undefined || answer === '' || answer === null
-  })
-  
-  if (missingQuestions.length > 0) {
-    validationError.value = `Por favor responde todas las preguntas obligatorias (faltan ${missingQuestions.length})`
+
+  const missingResponses = survey.value.questions
+    .filter(question => question.required)
+    .filter(question => {
+      const response = responses.value[question.id]
+      return response === null || response === undefined || response === '' ||
+        (Array.isArray(response) && response.length === 0)
+    })
+
+  if (missingResponses.length > 0) {
+    error.value = `Por favor complete todas las preguntas obligatorias: ${missingResponses.map(q => q.text).join(', ')}`
     return false
   }
-  
+
   return true
 }
 
-const submitSurvey = async () => {
+/**
+ * Envía las respuestas de la encuesta
+ */
+const submitResponses = async () => {
   if (!validateResponses()) return
-  
+  if (!survey.value) return
+
+  loading.value = true
   try {
-    submitting.value = true
-    validationError.value = ''
-    
-    // ✨ CAMBIO: Usar 'id' en lugar de 'code'
-    const surveyId = route.params.id as string
-    console.log('Submitting responses for survey ID:', surveyId) // Para debugging
-    
-    await surveyService.submitResponse(surveyId, responses.value)
-    
+    await surveyService.submitResponse(survey.value.id, responses.value)
     submitted.value = true
-    
-    // Opcional: Redirigir a página de agradecimiento después de un delay
-    setTimeout(() => {
-      router.push('/thank-you')
-    }, 2000)
-    
+    router.push('/thank-you')
   } catch (err: any) {
-    console.error('Error submitting responses:', err)
-    validationError.value = err.response?.data?.message || 'Error al enviar las respuestas'
+    console.error('Error enviando respuestas:', err)
+    error.value = err.response?.data?.message || 'Error al enviar las respuestas'
   } finally {
-    submitting.value = false
+    loading.value = false
   }
 }
 
-// Ciclo de vida
 onMounted(() => {
   loadSurvey()
 })
@@ -265,8 +222,13 @@ onMounted(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .error-icon,
@@ -387,11 +349,11 @@ onMounted(() => {
   .survey-response-page {
     padding: var(--spacing-lg);
   }
-  
+
   .survey-header {
     padding: var(--spacing-lg);
   }
-  
+
   .survey-title {
     font-size: 1.5rem;
   }

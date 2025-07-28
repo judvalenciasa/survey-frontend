@@ -1,8 +1,12 @@
+<!--
+/**
+ * Tarjeta interactiva para la página de inicio
+ * @description Muestra una acción disponible con icono, título, descripción y botón
+ * @component HomeCard
+ */
+-->
 <template>
-  <div
-    class="home-card"
-    @click="$emit('click')"
-  >
+  <div class="home-card" @click="$emit('click')">
     <div class="card-header">
       <div class="card-icon">
         {{ icon }}
@@ -16,10 +20,7 @@
       {{ description }}
     </p>
 
-    <button
-      class="card-button"
-      :class="`button-${buttonColor}`"
-    >
+    <button class="card-button" :class="`button-${buttonColor}`">
       {{ buttonText }}
     </button>
   </div>
@@ -28,6 +29,10 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 
+/**
+ * Componente de tarjeta para acciones principales de la página de inicio
+ * @description Tarjeta clickeable que muestra información y acción disponible
+ */
 export default defineComponent({
   name: 'HomeCard',
   props: {

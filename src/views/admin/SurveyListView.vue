@@ -1,3 +1,10 @@
+<!--
+/**
+ * Vista de listado y gestión de encuestas
+ * @description Página administrativa para listar, filtrar y gestionar encuestas
+ * @view SurveyListView
+ */
+-->
 <template>
   <div class="survey-list">
     <header class="list-header">

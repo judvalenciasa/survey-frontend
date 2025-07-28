@@ -1,3 +1,10 @@
+<!--
+/**
+ * Vista de agradecimiento tras completar encuesta
+ * @description Página de confirmación con animación y opciones de navegación
+ * @view ThankYouView
+ */
+-->
 <template>
   <div class="thank-you-page">
     <div class="thank-you-container">
@@ -54,14 +61,24 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Vista de confirmación tras envío exitoso de encuesta
+ * @description Página con animación de éxito y opciones de navegación
+ */
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
+/**
+ * Navega hacia la página de inicio
+ */
 const goHome = () => {
   router.push('/')
 }
 
+/**
+ * Navega hacia la página de presentación de encuestas
+ */
 const goToSurveyAccess = () => {
   router.push('/survey-presentation')
 }

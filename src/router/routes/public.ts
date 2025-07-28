@@ -1,6 +1,15 @@
+/**
+ * Rutas públicas de la aplicación
+ * @description Define todas las rutas accesibles sin autenticación
+ * @module Public Routes
+ */
 import type { RouteRecordRaw } from 'vue-router'
 import FullLayout from '@/layouts/full/FullLayout.vue'
 
+/**
+ * Configuración de rutas públicas
+ * @description Rutas accesibles para todos los usuarios, incluyendo respuesta a encuestas
+ */
 const publicRoutes: RouteRecordRaw[] = [
   {
     path: '/',
@@ -16,7 +25,6 @@ const publicRoutes: RouteRecordRaw[] = [
         name: 'SurveyPresentation',
         component: () => import('@/views/public/SurveyPublicView.vue')
       },
-      // ✨ ACTUALIZADO: Usar ID en lugar de code
       {
         path: 'survey/:id',
         name: 'SurveyResponse',

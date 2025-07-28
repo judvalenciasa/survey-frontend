@@ -1,8 +1,17 @@
+/**
+ * Rutas del panel de administración
+ * @description Define todas las rutas para el área administrativa de la aplicación
+ * @module Admin Routes
+ */
 import type { RouteRecordRaw } from 'vue-router'
 import AdminLayout from '@/layouts/dashboard/AdminLayout.vue'
 
+/**
+ * Configuración de rutas administrativas
+ * @description Rutas protegidas que requieren autenticación y permisos de admin
+ */
 const adminRoutes: RouteRecordRaw[] = [
-  // Redirect principal
+
   {
     path: '/admin',
     redirect: '/admin/dashboard'

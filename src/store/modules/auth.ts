@@ -1,11 +1,15 @@
+/**
+ * Store de autenticación de usuarios
+ * @description Maneja el estado de autenticación, login, logout y persistencia de tokens
+ * @module Auth Store
+ */
 import { defineStore } from 'pinia'
 import type { LoginRequest, AuthState } from '@/types/auth'
 import { authService } from '@/services/auth.service'
 
 /**
- * Maneja el estado de autenticación del usuario, incluyendo login, logout,
- * y verificación de estado de autenticación. Utiliza localStorage para
- * persistir el token de autenticación entre sesiones.
+ * Store de autenticación que maneja el estado del usuario
+ * @description Gestiona login, logout, verificación de estado y persistencia de tokens
  */
 export const useAuthStore = defineStore('auth', {
  
@@ -18,13 +22,22 @@ export const useAuthStore = defineStore('auth', {
   }),
 
   getters: {
+    /**
+     * Determina si el usuario está autenticado
+     */
     isAuthenticated: (state) => !!state.token,
+    
+    /**
+     * Verifica si el usuario tiene rol de administrador
+     */
     isAdmin: (state) => state.user?.roles?.includes('ADMIN') || false
   },
 
   actions: {
     /**
-     * Autentica un usuario con credenciales
+     * Autentica un usuario con sus credenciales
+     * @param credentials - Datos de login del usuario
+     * @returns Resultado de la operación
      */
     async login(credentials: LoginRequest) {
       this.loading = true
@@ -49,7 +62,7 @@ export const useAuthStore = defineStore('auth', {
 
     /**
      * Cierra la sesión del usuario actual
-     * 
+     * @description Limpia el estado y remueve el token del localStorage
      */
     logout() {
       this.user = null
@@ -60,6 +73,7 @@ export const useAuthStore = defineStore('auth', {
 
     /**
      * Inicializa la autenticación al cargar la aplicación
+     * @description Verifica si existe un token válido y restaura la sesión
      */
     async initAuth() {
       if (this.token) {

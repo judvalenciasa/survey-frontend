@@ -1,3 +1,10 @@
+<!--
+/**
+ * Tarjeta de estadística para el dashboard
+ * @description Muestra métricas importantes con icono y color temático
+ * @component StatsCard
+ */
+-->
 <template>
   <div
     class="stats-card"
@@ -18,6 +25,9 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Props del componente StatsCard
+ */
 interface Props {
   title: string
   value: number | string
@@ -26,7 +36,6 @@ interface Props {
 }
 
 defineProps<Props>()
-
 
 </script>
 

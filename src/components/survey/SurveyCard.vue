@@ -1,3 +1,10 @@
+<!--
+/**
+ * Tarjeta de encuesta para listados y dashboard
+ * @description Muestra información resumida de una encuesta con acciones disponibles
+ * @component SurveyCard
+ */
+-->
 <template>
   <div class="survey-card">
     <div class="survey-header">
@@ -5,10 +12,7 @@
         {{ survey.name }}
       </h3>
       <div class="survey-status">
-        <span 
-          class="status-badge" 
-          :class="getStatusClass(survey.status)"
-        >
+        <span class="status-badge" :class="getStatusClass(survey.status)">
           {{ getStatusLabel(survey.status) }}
         </span>
       </div>
@@ -17,21 +21,17 @@
     <p class="survey-description">
       {{ survey.description }}
     </p>
-    
+
     <div class="survey-stats">
       <!-- ✨ NUEVO: Mostrar ID de la encuesta -->
       <div class="stat stat-id">
         <span class="stat-icon">🔢</span>
         <span class="stat-text">ID: {{ survey.id }}</span>
-        <button 
-          class="copy-btn" 
-          title="Copiar ID"
-          @click="copyToClipboard(survey.id)"
-        >
+        <button class="copy-btn" title="Copiar ID" @click="copyToClipboard(survey.id)">
           📋
         </button>
       </div>
-      
+
       <div class="stat">
         <span class="stat-icon">📝</span>
         <span class="stat-text">{{ survey.questions.length }} preguntas</span>
@@ -40,10 +40,7 @@
         <span class="stat-icon">📊</span>
         <span class="stat-text">{{ survey.totalResponses || 0 }} respuestas</span>
       </div>
-      <div
-        v-if="survey.code"
-        class="stat"
-      >
+      <div v-if="survey.code" class="stat">
         <span class="stat-icon">🔑</span>
         <span class="stat-text">{{ survey.code }}</span>
       </div>
@@ -60,50 +57,29 @@
 
     <div class="survey-actions">
       <!-- Botones de estado según corresponda -->
-      <button 
-        v-if="survey.status === 'CREADA'"
-        class="action-btn publish-btn"
-        title="Publicar encuesta para que sea visible al público"
-        @click="$emit('publish', survey.id)"
-      >
+      <button v-if="survey.status === 'CREADA'" class="action-btn publish-btn"
+        title="Publicar encuesta para que sea visible al público" @click="$emit('publish', survey.id)">
         📢 Publicar
       </button>
-      
-      <button 
-        v-if="survey.status === 'PUBLICADA'"
-        class="action-btn close-btn"
-        title="Cerrar encuesta - ya no se podrán enviar más respuestas"
-        @click="$emit('close', survey.id)"
-      >
+
+      <button v-if="survey.status === 'PUBLICADA'" class="action-btn close-btn"
+        title="Cerrar encuesta - ya no se podrán enviar más respuestas" @click="$emit('close', survey.id)">
         🔒 Cerrar
       </button>
 
       <!-- Botones de acción -->
-      <button 
-        class="action-btn view-btn"
-        @click="$emit('view', survey.id)"
-      >
+      <button class="action-btn view-btn" @click="$emit('view', survey.id)">
         Ver Detalles
       </button>
-      <button 
-        class="action-btn edit-btn"
-        :disabled="survey.status === 'FINALIZADA'"
-        @click="$emit('edit', survey.id)"
-      >
+      <button class="action-btn edit-btn" :disabled="survey.status === 'FINALIZADA'" @click="$emit('edit', survey.id)">
         Editar
       </button>
-      <button 
-        class="action-btn responses-btn"
-        @click="$emit('responses', survey.id)"
-      >
+      <button class="action-btn responses-btn" @click="$emit('responses', survey.id)">
         Respuestas
       </button>
-      <button 
-        class="action-btn delete-btn"
-        :disabled="survey.status === 'PUBLICADA'"
+      <button class="action-btn delete-btn" :disabled="survey.status === 'PUBLICADA'"
         :title="survey.status === 'PUBLICADA' ? 'No se puede eliminar una encuesta publicada' : 'Eliminar encuesta'"
-        @click="$emit('delete', survey.id)"
-      >
+        @click="$emit('delete', survey.id)">
         Eliminar
       </button>
     </div>
@@ -111,7 +87,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Survey, SurveyStatus } from '../../types/survey'
+import type { Survey } from '../../types/survey'
 
 interface Props {
   survey: Survey
@@ -128,6 +104,41 @@ defineEmits<{
   close: [id: string]
 }>()
 
+/**
+ * Obtiene la clase CSS según el estado de la encuesta
+ * @param status - Estado de la encuesta
+ * @returns Clase CSS correspondiente
+ */
+const getStatusClass = (status: string) => {
+  const classes: Record<string, string> = {
+    'CREADA': 'status-draft',
+    'PUBLICADA': 'status-active',
+    'PAUSADA': 'status-paused',
+    'FINALIZADA': 'status-finished'
+  }
+  return classes[status] || 'status-draft'
+}
+
+/**
+ * Obtiene la etiqueta legible del estado de la encuesta
+ * @param status - Estado de la encuesta
+ * @returns Etiqueta legible del estado
+ */
+const getStatusLabel = (status: string) => {
+  const labels: Record<string, string> = {
+    'CREADA': 'Borrador',
+    'PUBLICADA': 'Activa',
+    'PAUSADA': 'Pausada',
+    'FINALIZADA': 'Finalizada'
+  }
+  return labels[status] || 'Desconocido'
+}
+
+/**
+ * Formatea una fecha para mostrar de forma legible
+ * @param dateString - Cadena de fecha ISO
+ * @returns Fecha formateada
+ */
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('es-ES', {
     year: 'numeric',
@@ -136,42 +147,23 @@ const formatDate = (dateString: string) => {
   })
 }
 
-// ✨ NUEVO: Función para copiar ID al portapapeles
-const copyToClipboard = async (text: string) => {
+/**
+ * Copia el ID de la encuesta al portapapeles
+ * @param id - ID de la encuesta a copiar
+ */
+const copyToClipboard = async (id: string) => {
   try {
-    await navigator.clipboard.writeText(text)
-    // Mostrar feedback visual (opcional)
-    console.log('ID copiado al portapapeles:', text)
+    await navigator.clipboard.writeText(id)
+    alert('ID copiado al portapapeles')
   } catch (err) {
-    console.error('Error al copiar al portapapeles:', err)
-    // Fallback para navegadores más antiguos
     const textArea = document.createElement('textarea')
-    textArea.value = text
+    textArea.value = id
     document.body.appendChild(textArea)
     textArea.select()
     document.execCommand('copy')
     document.body.removeChild(textArea)
+    alert('ID copiado al portapapeles')
   }
-}
-
-const getStatusLabel = (status: SurveyStatus): string => {
-  const statusLabels: Record<SurveyStatus, string> = {
-    'CREADA': 'Creada',
-    'PUBLICADA': 'Publicada',
-    'PAUSADA': 'Pausada',
-    'FINALIZADA': 'Finalizada'
-  }
-  return statusLabels[status] || status
-}
-
-const getStatusClass = (status: SurveyStatus): string => {
-  const statusClasses: Record<SurveyStatus, string> = {
-    'CREADA': 'status-created',
-    'PUBLICADA': 'status-active',
-    'PAUSADA': 'status-paused',
-    'FINALIZADA': 'status-finished'
-  }
-  return statusClasses[status] || 'status-default'
 }
 </script>
 
@@ -373,7 +365,8 @@ const getStatusClass = (status: SurveyStatus): string => {
 /* ✨ NUEVO: Estilos para el ID y botón de copia */
 .stat-id {
   position: relative;
-  font-family: 'Courier New', monospace; /* Fuente monospace para el ID */
+  font-family: 'Courier New', monospace;
+  /* Fuente monospace para el ID */
 }
 
 .stat-id .stat-text {
@@ -404,7 +397,8 @@ const getStatusClass = (status: SurveyStatus): string => {
 
 /* Hacer que el ID sea más legible */
 .stat-id {
-  grid-column: 1 / -1; /* Ocupar todo el ancho disponible */
+  grid-column: 1 / -1;
+  /* Ocupar todo el ancho disponible */
   border-bottom: 1px solid var(--border-light, #e5e7eb);
   padding-bottom: var(--spacing-xs, 4px);
   margin-bottom: var(--spacing-xs, 4px);

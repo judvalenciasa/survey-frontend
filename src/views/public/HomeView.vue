@@ -1,3 +1,10 @@
+<!--
+/**
+ * Vista de página de inicio de la aplicación
+ * @description Página principal con opciones de acceso administrativo y respuesta de encuestas
+ * @view HomeView
+ */
+-->
 <template>
   <div class="home-page">
     <main class="home-main">
@@ -26,23 +33,33 @@
 </template>
 
 <script setup lang="ts">
-
+/**
+ * Vista principal de la aplicación con navegación hacia funcionalidades principales
+ * @description Página de bienvenida con opciones para admin y usuarios finales
+ */
 import { useRouter } from 'vue-router'
 import HomeCard from '../../components/common/HomeCard.vue'
 
 const router = useRouter()
+
+/**
+ * Nombre de la aplicación mostrado en el título
+ */
 const appName = 'Sistema de Encuestas'
 
-
+/**
+ * Navega hacia la página de login administrativo
+ */
 const goToLogin = () => {
   router.push('/login')
 }
 
+/**
+ * Navega hacia la página de presentación de encuestas
+ */
 const goToSurvey = () => {
   router.push('/survey-presentation')
 }
-
-
 </script>
 
 <style scoped>

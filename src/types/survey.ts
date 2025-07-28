@@ -1,17 +1,25 @@
 /**
- * Tipos principales de encuestas
+ * Definiciones de tipos principales para encuestas
+ * @description Tipos centrales para manejo de encuestas y sus estados
+ * @module Survey Types
  */
 
 import type { Question, CreateQuestionRequest } from './question'
 
-// Tipos de estado de encuesta
+/**
+ * Estados posibles de una encuesta
+ * @type SurveyStatus
+ */
 export type SurveyStatus = 
-  | 'CREADA'     // Estado inicial
-  | 'PUBLICADA'  // Publicada para responder
-  | 'PAUSADA'    // Temporalmente pausada
-  | 'FINALIZADA' // Cerrada permanentemente
+  | 'CREADA'
+  | 'PUBLICADA'
+  | 'PAUSADA'
+  | 'FINALIZADA'
 
-// Estructura de encuesta según el backend
+/**
+ * Estructura completa de una encuesta
+ * @interface Survey
+ */
 export interface Survey {
   id: string
   name: string
@@ -33,7 +41,10 @@ export interface Survey {
   code?: string
 }
 
-// Request para crear encuesta
+/**
+ * Datos para crear una nueva encuesta
+ * @interface CreateSurveyRequest
+ */
 export interface CreateSurveyRequest {
   name: string
   description: string
@@ -43,7 +54,10 @@ export interface CreateSurveyRequest {
   template?: boolean
 }
 
-// Request para actualizar encuesta
+/**
+ * Datos para actualizar una encuesta existente
+ * @interface UpdateSurveyRequest
+ */
 export interface UpdateSurveyRequest {
   name?: string
   description?: string

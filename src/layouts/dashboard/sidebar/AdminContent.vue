@@ -1,3 +1,10 @@
+<!--
+/**
+ * Área de contenido principal del panel administrativo
+ * @description Contiene el header y el router-view para páginas de admin
+ * @component AdminContent
+ */
+-->
 <template>
   <div class="admin-content-wrapper">
     <AdminHeader />
@@ -9,6 +16,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Wrapper del contenido administrativo con header y contenido principal
+ * @description Estructura el área de contenido del dashboard administrativo
+ */
 import AdminHeader from '@/layouts/dashboard/sidebar/AdminHeader.vue'
 </script>
 

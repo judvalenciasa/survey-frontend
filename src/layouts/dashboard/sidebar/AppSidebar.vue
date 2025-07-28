@@ -1,3 +1,10 @@
+<!--
+/**
+ * Sidebar de navegación del panel administrativo
+ * @description Navegación lateral colapsable con enlaces del admin
+ * @component AppSidebar
+ */
+-->
 <template>
   <aside class="sidebar" :class="{ 'sidebar--collapsed': isCollapsed }">
     <div class="sidebar-header">

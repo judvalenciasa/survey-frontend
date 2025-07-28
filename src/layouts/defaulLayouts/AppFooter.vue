@@ -1,3 +1,10 @@
+<!--
+/**
+ * Footer global de la aplicación
+ * @description Pie de página con información de la aplicación y enlaces
+ * @component AppFooter
+ */
+-->
 <template>
   <footer class="footer">
     <div class="footer-container">
@@ -33,9 +40,20 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Componente de footer con información de copyright y enlaces
+ * @description Footer responsive con branding y enlaces institucionales
+ */
 import { computed } from 'vue'
 
+/**
+ * Nombre de la aplicación
+ */
 const appName =  'FormSTyT'
+
+/**
+ * Año actual calculado dinámicamente
+ */
 const currentYear = computed(() => new Date().getFullYear())
 </script>
 

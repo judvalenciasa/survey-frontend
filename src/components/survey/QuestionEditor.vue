@@ -1,150 +1,83 @@
+<!--
+/**
+ * Editor de preguntas para formularios de encuesta
+ * @description Permite crear y editar preguntas con diferentes tipos y configuraciones
+ * @component QuestionEditor
+ */
+-->
 <template>
   <div class="question-editor">
     <div class="question-header">
       <h4>Pregunta {{ question.order }}</h4>
-      <button
-        class="remove-btn"
-        type="button"
-        @click="$emit('remove')"
-      >
+      <button class="remove-btn" type="button" @click="$emit('remove')">
         ❌
       </button>
     </div>
 
-    <!-- Texto de la pregunta -->
     <div class="form-group">
       <label class="form-label">Texto de la pregunta *</label>
-      <textarea
-        v-model="question.text"
-        class="form-textarea"
-        placeholder="Escribe aquí el texto de tu pregunta..."
-        rows="3"
-        required
-      />
-      <ValidationMessage
-        v-if="errors?.text"
-        :message="errors.text"
-      />
+      <textarea v-model="question.text" class="form-textarea" placeholder="Escribe aquí el texto de tu pregunta..."
+        rows="3" required />
+      <ValidationMessage v-if="errors?.text" :message="errors.text" />
     </div>
 
-    <!-- Tipo de pregunta -->
     <div class="form-group">
       <label class="form-label">Tipo de pregunta *</label>
-      <select
-        v-model="question.type"
-        class="form-select"
-        @change="onTypeChange"
-      >
+      <select v-model="question.type" class="form-select" @change="onTypeChange">
         <option value="">
           Selecciona un tipo
         </option>
-        <option
-          v-for="type in QuestionType"
-          :key="type.value"
-          :value="type.value"
-        >
+        <option v-for="type in QuestionType" :key="type.value" :value="type.value">
           {{ type.label }}
         </option>
       </select>
-      <ValidationMessage
-        v-if="errors?.type"
-        :message="errors.type"
-      />
+      <ValidationMessage v-if="errors?.type" :message="errors.type" />
     </div>
 
-    <!-- Configuración específica por tipo -->
-    <div
-      v-if="question.type && needsOptions"
-      class="form-group"
-    >
+
+    <div v-if="question.type && needsOptions" class="form-group">
       <label class="form-label">Opciones</label>
-      
-      <!-- Opciones para SINGLE_CHOICE y MULTIPLE_CHOICE -->
+
       <div v-if="question.type === 'SINGLE_CHOICE' || question.type === 'MULTIPLE_CHOICE'">
-        <div
-          v-for="(_ , index) in stringOptions"
-          :key="index"
-          class="option-row"
-        >
-          <input
-            v-model="stringOptions[index]"
-            type="text"
-            class="form-input"
-            :placeholder="`Opción ${index + 1}`"
-          >
-          <button
-            type="button"
-            class="remove-option-btn"
-            @click="removeOption(index)"
-          >
+        <div v-for="(_, index) in stringOptions" :key="index" class="option-row">
+          <input v-model="stringOptions[index]" type="text" class="form-input" :placeholder="`Opción ${index + 1}`">
+          <button type="button" class="remove-option-btn" @click="removeOption(index)">
             ❌
           </button>
         </div>
-        <button
-          type="button"
-          class="add-option-btn"
-          @click="addOption"
-        >
+        <button type="button" class="add-option-btn" @click="addOption">
           + Agregar opción
         </button>
       </div>
 
       <!-- Configuración para SCALE -->
-      <div
-        v-if="question.type === 'SCALE'"
-        class="scale-config"
-      >
+      <div v-if="question.type === 'SCALE'" class="scale-config">
         <div class="scale-row">
           <div class="form-group">
             <label class="form-label">Mínimo</label>
-            <input
-              v-model.number="scaleOptions.min"
-              type="number"
-              class="form-input"
-              min="1"
-              max="10"
-            >
+            <input v-model.number="scaleOptions.min" type="number" class="form-input" min="1" max="10">
           </div>
           <div class="form-group">
             <label class="form-label">Máximo</label>
-            <input
-              v-model.number="scaleOptions.max"
-              type="number"
-              class="form-input"
-              min="2"
-              max="10"
-            >
+            <input v-model.number="scaleOptions.max" type="number" class="form-input" min="2" max="10">
           </div>
           <div class="form-group">
             <label class="form-label">Paso</label>
-            <input
-              v-model.number="scaleOptions.step"
-              type="number"
-              class="form-input"
-              min="1"
-              :max="scaleOptions.max - scaleOptions.min"
-            >
+            <input v-model.number="scaleOptions.step" type="number" class="form-input" min="1"
+              :max="scaleOptions.max - scaleOptions.min">
           </div>
         </div>
-        
+
         <div class="scale-labels">
           <div class="form-group">
             <label class="form-label">Etiqueta mínima</label>
-            <input
-              v-model="scaleLabels[scaleOptions.min.toString()]"
-              type="text"
-              class="form-input"
-              placeholder="Ej: Muy malo"
-            >
+            <input v-model="scaleLabels[scaleOptions.min.toString()]" type="text" class="form-input"
+              placeholder="Ej: Muy malo">
           </div>
           <div class="form-group">
             <label class="form-label">Etiqueta máxima</label>
-            <input
-              v-model="scaleLabels[scaleOptions.max.toString()]"
-              type="text"
-              class="form-input"
-              placeholder="Ej: Excelente"
-            >
+            <input v-model="scaleLabels[scaleOptions.max.toString()]" type="text" class="form-input"
+              placeholder="Ej: Excelente">
           </div>
         </div>
       </div>
@@ -153,11 +86,7 @@
     <!-- Pregunta obligatoria -->
     <div class="form-group">
       <label class="checkbox-label">
-        <input
-          v-model="question.required"
-          type="checkbox"
-          class="form-checkbox"
-        >
+        <input v-model="question.required" type="checkbox" class="form-checkbox">
         <span class="checkbox-text">Pregunta obligatoria</span>
       </label>
     </div>
@@ -166,12 +95,10 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import type { CreateQuestionRequest } from '../../types/question'
-import type { ScaleOptions } from '../../types/question'
+import type { CreateQuestionRequest, ScaleOptions } from '../../types/question'
 import { QUESTION_TYPES } from '../../utils/constants'
 import ValidationMessage from '../../components/forms/ValidationMessage.vue'
 
-// Usar la constante centralizada
 const QuestionType = QUESTION_TYPES
 
 interface Props {
@@ -185,10 +112,8 @@ defineEmits<{
   remove: []
 }>()
 
-// Opciones para preguntas de opción múltiple
 const stringOptions = ref<string[]>([])
 
-// Configuración para preguntas de escala
 const scaleOptions = ref<ScaleOptions>({
   min: 1,
   max: 5,
@@ -196,7 +121,9 @@ const scaleOptions = ref<ScaleOptions>({
   labels: {}
 })
 
-// Reactive labels para evitar problemas con undefined
+/**
+ * Gestiona las etiquetas de escala de forma reactiva
+ */
 const scaleLabels = computed({
   get: () => scaleOptions.value.labels || {},
   set: (value) => {
@@ -204,12 +131,13 @@ const scaleLabels = computed({
   }
 })
 
-// Computadas
+/**
+ * Determina si el tipo de pregunta actual necesita opciones configurables
+ */
 const needsOptions = computed(() => {
   return ['SINGLE_CHOICE', 'MULTIPLE_CHOICE', 'SCALE'].includes(props.question.type)
 })
 
-// Watchers
 watch(() => props.question.type, () => {
   onTypeChange()
 }, { immediate: true })
@@ -226,18 +154,20 @@ watch(scaleOptions, (newOptions) => {
   }
 }, { deep: true })
 
-// Métodos
+/**
+ * Maneja el cambio de tipo de pregunta y configura las opciones correspondientes
+ */
 const onTypeChange = () => {
   const type = props.question.type
 
   if (type === 'SINGLE_CHOICE' || type === 'MULTIPLE_CHOICE') {
-    stringOptions.value = Array.isArray(props.question.options) 
-      ? [...props.question.options] 
+    stringOptions.value = Array.isArray(props.question.options)
+      ? [...props.question.options]
       : ['', '']
     props.question.options = stringOptions.value
   } else if (type === 'SCALE') {
     if (props.question.options && typeof props.question.options === 'object' && !Array.isArray(props.question.options)) {
-      scaleOptions.value = { 
+      scaleOptions.value = {
         ...props.question.options as ScaleOptions,
         labels: (props.question.options as ScaleOptions).labels || {}
       }
@@ -255,23 +185,29 @@ const onTypeChange = () => {
   }
 }
 
+/**
+ * Agrega una nueva opción a la lista de opciones de respuesta
+ */
 const addOption = () => {
   stringOptions.value.push('')
 }
 
+/**
+ * Elimina una opción de la lista de opciones de respuesta
+ * @param index - Índice de la opción a eliminar
+ */
 const removeOption = (index: number) => {
   if (stringOptions.value.length > 1) {
     stringOptions.value.splice(index, 1)
   }
 }
 
-// Inicializar si ya hay datos
 if (props.question.options) {
   if (Array.isArray(props.question.options)) {
     stringOptions.value = [...props.question.options]
   } else if (typeof props.question.options === 'object') {
     const options = props.question.options as ScaleOptions
-    scaleOptions.value = { 
+    scaleOptions.value = {
       ...options,
       labels: options.labels || {}
     }
@@ -419,11 +355,11 @@ if (props.question.options) {
   .scale-row {
     grid-template-columns: 1fr;
   }
-  
+
   .scale-labels {
     grid-template-columns: 1fr;
   }
-  
+
   .option-row {
     flex-direction: column;
     align-items: stretch;

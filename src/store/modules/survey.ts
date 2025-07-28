@@ -1,10 +1,16 @@
+/**
+ * Store de gestión de encuestas
+ * @description Maneja el estado global de encuestas, operaciones CRUD y filtros
+ * @module Survey Store
+ */
 import { defineStore } from 'pinia'
 import type { Survey, CreateSurveyRequest, SurveyStatus } from '@/types/survey'
 import type { SurveyState } from '@/types/store'
 import { surveyService } from '@/services/survey.service'
 
 /**
- * Store de gestión de encuestas usando Pinia con Options API
+ * Store principal de encuestas usando Pinia
+ * @description Gestiona todas las operaciones relacionadas con encuestas
  */
 export const useSurveyStore = defineStore('survey', {
   state: (): SurveyState => ({
@@ -16,24 +22,29 @@ export const useSurveyStore = defineStore('survey', {
 
   getters: {
     /**
-     * Obtiene solo las encuestas con estado 'PUBLICADA'
+     * Obtiene únicamente las encuestas publicadas
+     * @returns Array de encuestas con estado 'PUBLICADA'
      */
     activeSurveys: (state) => 
       state.surveys.filter(survey => survey.status === 'PUBLICADA'),
     
     /**
-     * Cuenta total de encuestas
+     * Cuenta total de encuestas disponibles
+     * @returns Número total de encuestas
      */
     totalSurveys: (state) => state.surveys.length,
     
     /**
      * Suma total de respuestas de todas las encuestas
+     * @returns Número total de respuestas acumuladas
      */
     totalResponses: (state) => 
       state.surveys.reduce((sum, survey) => sum + (survey.totalResponses || 0), 0),
 
     /**
      * Función para filtrar encuestas por estado específico
+     * @param status - Estado de encuesta a filtrar
+     * @returns Array de encuestas con el estado especificado
      */
     getSurveysByStatus: (state) => (status: SurveyStatus) =>
       state.surveys.filter(survey => survey.status === status)
@@ -42,6 +53,7 @@ export const useSurveyStore = defineStore('survey', {
   actions: {
     /**
      * Carga todas las encuestas desde el servidor
+     * @description Actualiza el estado con la lista completa de encuestas
      */
     async fetchSurveys() {
       this.loading = true

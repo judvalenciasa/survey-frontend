@@ -1,3 +1,10 @@
+<!--
+/**
+ * Barra de navegación principal
+ * @description Navbar responsive con navegación y branding de la aplicación
+ * @component AppNavbar
+ */
+-->
 <template>
   <nav class="navbar">
     <div class="navbar-container">
@@ -36,6 +43,14 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Componente de navegación principal para páginas públicas
+ * @description Navbar sticky con enlaces principales y responsive design
+ */
+
+/**
+ * Nombre de la aplicación
+ */
 const appName =  'FormSTyT'
 </script>
 

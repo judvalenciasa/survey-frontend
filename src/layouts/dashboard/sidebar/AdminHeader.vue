@@ -1,3 +1,10 @@
+<!--
+/**
+ * Header del panel de administración
+ * @description Muestra título de página, descripción y información del usuario
+ * @component AdminHeader
+ */
+-->
 <template>
   <header class="admin-header">
     <div class="header-content">
@@ -24,6 +31,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Header administrativo con títulos dinámicos e información de usuario
+ * @description Cambia título y descripción según la ruta actual
+ */
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '../../../store/modules/auth'
@@ -31,8 +42,14 @@ import { useAuthStore } from '../../../store/modules/auth'
 const route = useRoute()
 const authStore = useAuthStore()
 
+/**
+ * Estado para detectar dispositivos móviles
+ */
 const isMobile = ref(false)
 
+/**
+ * Verifica si estamos en dispositivo móvil
+ */
 const checkMobile = () => {
   isMobile.value = window.innerWidth <= 768
 }
@@ -46,6 +63,9 @@ onUnmounted(() => {
   window.removeEventListener('resize', checkMobile)
 })
 
+/**
+ * Título de la página según la ruta actual
+ */
 const pageTitle = computed(() => {
   const titles: Record<string, string> = {
     'Dashboard': 'Panel Administrativo',
@@ -59,6 +79,9 @@ const pageTitle = computed(() => {
   return titles[route.name as string] || 'Administración'
 })
 
+/**
+ * Descripción de la página según la ruta actual
+ */
 const pageDescription = computed(() => {
   const descriptions: Record<string, string> = {
     'Dashboard': 'Resumen general de tu sistema de encuestas',
@@ -72,6 +95,9 @@ const pageDescription = computed(() => {
   return descriptions[route.name as string]
 })
 
+/**
+ * Iniciales del usuario para el avatar
+ */
 const userInitials = computed(() => {
   const name = authStore.user?.email || 'Admin'
   return name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)

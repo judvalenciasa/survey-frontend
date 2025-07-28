@@ -1,3 +1,10 @@
+<!--
+/**
+ * Layout principal del panel de administración
+ * @description Layout con sidebar colapsable y área de contenido para admin
+ * @component AdminLayout
+ */
+-->
 <template>
   <div
     class="admin-layout"
@@ -9,17 +16,30 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Layout administrativo con sidebar y contenido principal
+ * @description Gestiona el estado del sidebar y proporciona estructura del admin
+ */
 import { ref, provide } from 'vue'
 import AppSidebar from '@/layouts/dashboard/sidebar/AppSidebar.vue'
 import AdminContent from '@/layouts/dashboard/sidebar/AdminContent.vue'
 
+/**
+ * Estado del sidebar (colapsado o expandido)
+ */
 const sidebarCollapsed = ref(false)
 
+/**
+ * Maneja el toggle del sidebar
+ * @param collapsed - Estado de colapso del sidebar
+ */
 const handleSidebarToggle = (collapsed: boolean) => {
   sidebarCollapsed.value = collapsed
 }
 
-// Proporcionar el estado del sidebar a componentes hijos
+/**
+ * Proporciona el estado del sidebar a componentes hijos
+ */
 provide('sidebarCollapsed', sidebarCollapsed)
 </script>
 

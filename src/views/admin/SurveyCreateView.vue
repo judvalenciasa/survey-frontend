@@ -1,3 +1,10 @@
+<!--
+/**
+ * Vista de creación de nuevas encuestas
+ * @description Página para crear encuestas con formulario completo y modal de éxito
+ * @view SurveyCreateView
+ */
+-->
 <template>
   <div class="survey-create-view">
     <header class="page-header">
@@ -7,22 +14,10 @@
       </p>
     </header>
 
-    <SurveyForm
-      :loading="surveyStore.loading"
-      @submit="createSurvey"
-      @cancel="goBack"
-    />
+    <SurveyForm :loading="surveyStore.loading" @submit="createSurvey" @cancel="goBack" />
 
-    <!-- Modal de éxito -->
-    <div
-      v-if="showSuccessModal"
-      class="modal-overlay"
-      @click="closeSuccessModal"
-    >
-      <div
-        class="modal success-modal"
-        @click.stop
-      >
+    <div v-if="showSuccessModal" class="modal-overlay" @click="closeSuccessModal">
+      <div class="modal success-modal" @click.stop>
         <div class="modal-header">
           <h3>¡Encuesta Creada Exitosamente!</h3>
         </div>
@@ -34,16 +29,10 @@
           <p>Ya puedes encontrarla en tu lista de encuestas.</p>
         </div>
         <div class="modal-actions">
-          <button
-            class="btn-primary"
-            @click="goToSurveyList"
-          >
+          <button class="btn-primary" @click="goToSurveyList">
             Ver Lista de Encuestas
           </button>
-          <button
-            class="btn-secondary"
-            @click="createAnother"
-          >
+          <button class="btn-secondary" @click="createAnother">
             Crear Otra Encuesta
           </button>
         </div>
@@ -53,53 +42,64 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSurveyStore } from '../../store/modules/survey'
-import type { CreateSurveyRequest } from '../../types/survey'
 import SurveyForm from '../../components/survey/SurveyForm.vue'
+import type { CreateSurveyRequest } from '../../types/survey'
 
 const router = useRouter()
 const surveyStore = useSurveyStore()
 
-// Estado
 const showSuccessModal = ref(false)
 const createdSurveyName = ref('')
 
-// Métodos
+/**
+ * Crea una nueva encuesta
+ * @param data - Datos de la encuesta a crear
+ */
 const createSurvey = async (data: CreateSurveyRequest) => {
   try {
-    const createdSurvey = await surveyStore.createSurvey(data)
-    createdSurveyName.value = createdSurvey.name
+    const survey = await surveyStore.createSurvey(data)
+    createdSurveyName.value = survey.name
     showSuccessModal.value = true
   } catch (error) {
-    console.error('Error creating survey:', error)
-    // El error ya está manejado en el store y se muestra en el formulario
+    console.error('Error al crear encuesta:', error)
   }
 }
 
-const goBack = () => {
-  router.push('/admin/surveys')
-}
-
-const closeSuccessModal = () => {
-  showSuccessModal.value = false
-  goToSurveyList()
-}
-
+/**
+ * Navega hacia la lista de encuestas
+ */
 const goToSurveyList = () => {
   showSuccessModal.value = false
   router.push('/admin/surveys')
 }
 
+/**
+ * Prepara el formulario para crear otra encuesta
+ */
 const createAnother = () => {
   showSuccessModal.value = false
-  // Limpiar errores y recargar la página para un formulario limpio
-  surveyStore.clearError()
-  window.location.reload()
+  nextTick(() => {
+    window.location.reload()
+  })
 }
 
-// Limpiar errores al entrar a la vista
+/**
+ * Navega hacia atrás
+ */
+const goBack = () => {
+  router.back()
+}
+
+/**
+ * Cierra el modal de éxito
+ */
+const closeSuccessModal = () => {
+  showSuccessModal.value = false
+}
+
 surveyStore.clearError()
 </script>
 

@@ -1,11 +1,16 @@
 /**
- * Tipos para estados de stores relacionados con encuestas
+ * Definiciones de tipos para estados de stores Pinia
+ * @description Interfaces para estados globales de la aplicación
+ * @module Store Types
  */
 
 import type { Survey } from './survey'
 import type { SurveyResponse } from './response'
 
-// Estado del store de encuestas
+/**
+ * Estado del store de encuestas
+ * @interface SurveyState
+ */
 export interface SurveyState {
   surveys: Survey[]
   currentSurvey: Survey | null
@@ -13,7 +18,10 @@ export interface SurveyState {
   error: string | null
 }
 
-// Estado del store de respuestas (para futuro)
+/**
+ * Estado del store de respuestas
+ * @interface ResponseState
+ */
 export interface ResponseState {
   responses: SurveyResponse[]
   currentResponse: SurveyResponse | null

@@ -168,17 +168,21 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
               <div>
                 <label style="display: block; font-weight: bold; margin-bottom: 5px;">Etiqueta mínima:</label>
-                <input v-model="getScaleOptions(question).labels[getScaleOptions(question).min.toString()]" type="text"
+                <input 
+                  :value="getScaleOptions(question).labels?.[getScaleOptions(question).min?.toString() ?? '1'] ?? ''"
+                  @input="updateScaleLabel(question, 'min', $event)"
+                  type="text"
                   placeholder="Ej: Muy malo"
-                  style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
-                  @input="updateScaleOptions(question, index)">
+                  style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
               </div>
               <div>
                 <label style="display: block; font-weight: bold; margin-bottom: 5px;">Etiqueta máxima:</label>
-                <input v-model="getScaleOptions(question).labels[getScaleOptions(question).max.toString()]" type="text"
+                <input 
+                  :value="getScaleOptions(question).labels?.[getScaleOptions(question).max?.toString() ?? '5'] ?? ''"
+                  @input="updateScaleLabel(question, 'max', $event)"
+                  type="text"
                   placeholder="Ej: Excelente"
-                  style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
-                  @input="updateScaleOptions(question, index)">
+                  style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
               </div>
             </div>
           </div>
@@ -375,9 +379,22 @@ export default defineComponent({
      * @param question - Pregunta de la cual obtener las opciones
      * @returns Opciones de escala
      */
-    const getScaleOptions = (question: CreateQuestionRequest) => {
-      if (question.options && typeof question.options === 'object' && !Array.isArray(question.options) && 'min' in question.options && 'labels' in question.options) {
-        return question.options as ScaleOptions
+    const getScaleOptions = (question: CreateQuestionRequest): ScaleOptions => {
+      if (
+        question.options && 
+        typeof question.options === 'object' && 
+        !Array.isArray(question.options) && 
+        'min' in question.options && 
+        'labels' in question.options
+      ) {
+        const options = question.options as ScaleOptions
+        // Asegurar que las propiedades requeridas existen
+        return {
+          min: options.min ?? 1,
+          max: options.max ?? 5,
+          step: options.step ?? 1,
+          labels: options.labels ?? {}
+        }
       }
       return { min: 1, max: 5, step: 1, labels: {} }
     }
@@ -517,6 +534,30 @@ export default defineComponent({
       console.log('updateScaleOptions', question, index)
     }
 
+    /**
+     * Actualiza una etiqueta específica de la escala
+     * @param question - Pregunta a actualizar
+     * @param type - Tipo de etiqueta ('min' o 'max')
+     * @param event - Evento del input
+     */
+    const updateScaleLabel = (question: CreateQuestionRequest, type: 'min' | 'max', event: Event) => {
+      const target = event.target as HTMLInputElement
+      if (!target) return
+      
+      const value = target.value
+      const scaleOptions = getScaleOptions(question)
+      
+      if (!scaleOptions.labels) {
+        scaleOptions.labels = {}
+      }
+      
+      const key = type === 'min' ? scaleOptions.min?.toString() : scaleOptions.max?.toString()
+      if (key) {
+        scaleOptions.labels[key] = value
+        question.options = scaleOptions
+      }
+    }
+
     return {
       formData,
       questions,
@@ -535,6 +576,7 @@ export default defineComponent({
       getNumberOptions,
       updateNumberOptions,
       updateScaleOptions,
+      updateScaleLabel, // 👈 Agregar este
       handleSubmit
     }
   }

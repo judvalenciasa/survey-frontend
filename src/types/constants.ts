@@ -26,6 +26,5 @@ export const QUESTION_TYPES: { value: QuestionType; label: string }[] = [
 export const SURVEY_STATUSES: { value: SurveyStatus; label: string }[] = [
   { value: 'CREADA', label: 'Creada' },
   { value: 'PUBLICADA', label: 'Publicada' },
-  { value: 'PAUSADA', label: 'Pausada' },
   { value: 'FINALIZADA', label: 'Finalizada' }
 ]

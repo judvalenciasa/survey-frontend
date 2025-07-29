@@ -238,18 +238,34 @@ const goHome = () => {
 }
 
 // Verificar si ya se completó esta encuesta
+/*
 const checkIfCompleted = () => {
   const surveyId = route.params.id as string
   if (localStorage.getItem(`survey_completed_${surveyId}`)) {
     submitted.value = true
   }
 }
+  */
+
+const keysToRemove: string[] = Object.keys(localStorage).filter((key: string) =>
+  key.startsWith('survey_completed_')
+)
 
 onMounted(() => {
-  checkIfCompleted()
+  try {
+    keysToRemove.forEach((key: string) => {
+      localStorage.removeItem(key)
+    })
+  } catch (error: unknown) {
+    console.warn('Error limpiando localStorage:', error)
+  }
+
+  /*Si se reequiere que no se respona una nueva encuesta desde ese navegador*/
+  /*checkIfCompleted()
   if (!submitted.value) {
     loadSurvey()
-  }
+  }*/
+  loadSurvey()
 })
 </script>
 

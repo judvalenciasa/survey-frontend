@@ -67,9 +67,9 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useSurveyStore } from '../../store/modules/survey'
-import type { UpdateSurveyRequest } from '../../types/survey'
-import SurveyEditForm from '../../components/survey/SurveyEditForm.vue'
+import { useSurveyStore } from '../../../store/modules/survey'
+import type { UpdateSurveyRequest } from '../../../types/survey'
+import SurveyEditForm from '../../../components/survey/SurveyEditForm.vue'
 
 /**
  * Vista de edición de encuestas con funcionalidades completas

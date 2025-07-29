@@ -10,49 +10,26 @@
     <div class="thank-you-container">
       <div class="success-animation">
         <div class="checkmark">
-          <svg
-            viewBox="0 0 100 100"
-            class="checkmark-svg"
-          >
-            <circle
-              cx="50"
-              cy="50"
-              r="45"
-              fill="none"
-              stroke="#10b981"
-              stroke-width="3"
-              class="checkmark-circle"
-            />
-            <path
-              d="M25 50 L40 65 L75 30"
-              fill="none"
-              stroke="#10b981"
-              stroke-width="4"
-              stroke-linecap="round"
-              class="checkmark-check"
-            />
+          <svg viewBox="0 0 100 100" class="checkmark-svg">
+            <circle cx="50" cy="50" r="45" fill="none" stroke="#10b981" stroke-width="3" class="checkmark-circle" />
+            <path d="M25 50 L40 65 L75 30" fill="none" stroke="#10b981" stroke-width="4" stroke-linecap="round"
+              class="checkmark-check" />
           </svg>
         </div>
       </div>
-      
+
       <h1 class="thank-you-title">
         ¡Gracias por participar!
       </h1>
       <p class="thank-you-message">
         Tu respuesta ha sido enviada exitosamente. Apreciamos el tiempo que dedicaste a completar nuestra encuesta.
       </p>
-      
+
       <div class="thank-you-actions">
-        <button
-          class="btn-primary"
-          @click="goHome"
-        >
+        <button class="btn-primary" @click="goHome">
           Volver al inicio
         </button>
-        <button
-          class="btn-secondary"
-          @click="goToSurveyAccess"
-        >
+        <button class="btn-secondary" @click="goToSurveyAccess">
           Responder otra encuesta
         </button>
       </div>
@@ -204,22 +181,22 @@ const goToSurveyAccess = () => {
   .thank-you-page {
     padding: var(--spacing-lg);
   }
-  
+
   .thank-you-title {
     font-size: 2rem;
   }
-  
+
   .thank-you-actions {
     flex-direction: column;
     align-items: center;
   }
-  
+
   .btn-primary,
   .btn-secondary {
     width: 100%;
     max-width: 250px;
   }
-  
+
   .checkmark {
     width: 100px;
     height: 100px;
@@ -236,9 +213,10 @@ const goToSurveyAccess = () => {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
-</style> 
+</style>

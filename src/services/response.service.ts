@@ -12,7 +12,7 @@ import { publicApi } from './api'  // ✅ Importar cliente público
  * Clase que encapsula todas las operaciones relacionadas con respuestas
  */
 class ResponseService {
-  private baseURL = '/responses'
+  private baseURL = '/api/responses'
 
   /**
    * Obtiene todas las respuestas de una encuesta específica
@@ -96,7 +96,6 @@ class ResponseService {
         answer
       }))
     }
-   console.log('🚀 Enviando respuesta pública (SIN TOKEN):', responseData)
     
     
     return publicApi.post<any>('/api/responses/submit', responseData)

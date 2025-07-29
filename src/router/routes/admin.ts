@@ -23,7 +23,7 @@ const adminRoutes: RouteRecordRaw[] = [
       {
         path: 'dashboard',
         name: 'dashboard',
-        component: () => import('@/views/admin/DashboardView.vue'),
+        component: () => import('@/views/admin/dashboard/DashboardView.vue'),
         meta: {
           requiresAuth: true
         }
@@ -31,7 +31,7 @@ const adminRoutes: RouteRecordRaw[] = [
       {
         path: 'surveys',
         name: 'SurveyList',
-        component: () => import('@/views/admin/SurveyListView.vue'),
+        component: () => import('@/views/admin/survey/SurveyListView.vue'),
         meta: {
           requiresAuth: true
         }
@@ -39,7 +39,7 @@ const adminRoutes: RouteRecordRaw[] = [
       {
         path: 'surveys/create',
         name: 'SurveyCreate',
-        component: () => import('@/views/admin/SurveyCreateView.vue'),
+        component: () => import('@/views/admin/survey/SurveyCreateView.vue'),
         meta: {
           requiresAuth: true
         }
@@ -47,7 +47,7 @@ const adminRoutes: RouteRecordRaw[] = [
       {
         path: 'surveys/:id/edit',
         name: 'SurveyEdit',
-        component: () => import('@/views/admin/SurveyEditView.vue'),
+        component: () => import('@/views/admin/survey/SurveyEditView.vue'),
         meta: {
           requiresAuth: true
         }
@@ -55,7 +55,7 @@ const adminRoutes: RouteRecordRaw[] = [
       {
         path: 'responses',
         name: 'AdminResponses',
-        component: () => import('@/views/admin/ResponseView.vue'),
+        component: () => import('@/views/admin/response/ResponseView.vue'),
         meta: {
           requiresAuth: true,
           title: 'Gestión de Respuestas'
@@ -64,7 +64,7 @@ const adminRoutes: RouteRecordRaw[] = [
       {
         path: 'analytics',
         name: 'AnalyticsView',
-        component: () => import('@/views/admin/AnalyticsView.vue'),
+        component: () => import('@/views/admin/analitycs/AnalyticsView.vue'),
         meta: {
           requiresAuth: true
         }

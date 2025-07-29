@@ -54,7 +54,7 @@
  */
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useSurveyStore } from '../../store/modules/survey'
+import { useSurveyStore } from '../../../store/modules/survey'
 import StatsCard from '@/components/admin/StatsCard.vue'
 import SurveyCard from '@/components/survey/SurveyCard.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'

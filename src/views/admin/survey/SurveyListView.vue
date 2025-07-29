@@ -76,9 +76,9 @@
 <script setup lang="ts">
 import { ref, computed, onBeforeMount } from 'vue'
 import { useRouter } from 'vue-router'
-import { useSurveyStore } from '../../store/modules/survey'
-import SurveyCard from '../../components/survey/SurveyCard.vue'
-import ConfirmModal from '../../components/common/ConfirmModal.vue'
+import { useSurveyStore } from '../../../store/modules/survey'
+import SurveyCard from '../../../components/survey/SurveyCard.vue'
+import ConfirmModal from '../../../components/common/ConfirmModal.vue'
 
 const router = useRouter()
 const surveyStore = useSurveyStore()

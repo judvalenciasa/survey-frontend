@@ -5,13 +5,21 @@
  */
 
 /**
+ * Estructura de una respuesta individual a una pregunta
+ */
+export interface QuestionAnswer {
+  questionId: string
+  answer: any
+}
+
+/**
  * Respuesta completa de una encuesta
  * @interface SurveyResponse
  */
 export interface SurveyResponse {
   id: string
   surveyId: string
-  answers: Record<string, any>
+  answers: QuestionAnswer[]  // Cambio aquí: array en lugar de Record
   submittedAt: string
   ipAddress?: string
 }
@@ -34,3 +42,6 @@ export interface ResponseStats {
   averageCompletionTime?: number
   completionRate: number
 }
+
+
+

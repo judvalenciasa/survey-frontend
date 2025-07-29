@@ -44,9 +44,9 @@
 <script setup lang="ts">
 import { ref, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
-import { useSurveyStore } from '../../store/modules/survey'
-import SurveyForm from '../../components/survey/SurveyForm.vue'
-import type { CreateSurveyRequest } from '../../types/survey'
+import { useSurveyStore } from '../../../store/modules/survey'
+import SurveyForm from '../../../components/survey/SurveyForm.vue'
+import type { CreateSurveyRequest } from '../../../types/survey'
 
 const router = useRouter()
 const surveyStore = useSurveyStore()

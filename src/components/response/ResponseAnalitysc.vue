@@ -6,48 +6,63 @@
  */
 -->
 <template>
-    <div class="response-analytics">
-        <div class="analytics-header">
-            <h3>📊 Análisis de Respuestas</h3>
-            <p v-if="survey">Análisis para: <strong>{{ survey.name }}</strong></p>
-        </div>
-
-        <div v-if="!analysis" class="loading-state">
-            <div class="loading-spinner"></div>
-            <p>Cargando análisis...</p>
-        </div>
-
-        <div v-else class="analysis-content">
-            <div class="analysis-summary">
-                <div class="summary-card">
-                    <h4>Resumen General</h4>
-                    <ul>
-                        <li>Total de respuestas: <strong>{{ analysis.totalResponses || 0 }}</strong></li>
-                        <li>Preguntas analizadas: <strong>{{ survey?.questions?.length || 0 }}</strong></li>
-                        <li>Fecha de análisis: <strong>{{ currentDate }}</strong></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div v-if="survey?.questions" class="questions-analysis">
-                <h4>Análisis por Pregunta</h4>
-                <div v-for="(question, index) in survey.questions" :key="question.id" class="question-analysis-card">
-                    <div class="question-header">
-                        <h5>{{ index + 1 }}. {{ question.text }}</h5>
-                        <span class="question-type">{{ getQuestionTypeLabel(question.type) }}</span>
-                    </div>
-
-                    <div class="analysis-placeholder">
-                        <div class="placeholder-content">
-                            <span class="placeholder-icon">📈</span>
-                            <p>Análisis disponible para pregunta tipo <strong>{{ question.type }}</strong></p>
-                            <small>La implementación específica se desarrollará según los requisitos de análisis</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <div class="response-analytics">
+    <div class="analytics-header">
+      <h3>📊 Análisis de Respuestas</h3>
+      <p v-if="survey">
+        Análisis para: <strong>{{ survey.name }}</strong>
+      </p>
     </div>
+
+    <div
+      v-if="!analysis"
+      class="loading-state"
+    >
+      <div class="loading-spinner" />
+      <p>Cargando análisis...</p>
+    </div>
+
+    <div
+      v-else
+      class="analysis-content"
+    >
+      <div class="analysis-summary">
+        <div class="summary-card">
+          <h4>Resumen General</h4>
+          <ul>
+            <li>Total de respuestas: <strong>{{ analysis.totalResponses || 0 }}</strong></li>
+            <li>Preguntas analizadas: <strong>{{ survey?.questions?.length || 0 }}</strong></li>
+            <li>Fecha de análisis: <strong>{{ currentDate }}</strong></li>
+          </ul>
+        </div>
+      </div>
+
+      <div
+        v-if="survey?.questions"
+        class="questions-analysis"
+      >
+        <h4>Análisis por Pregunta</h4>
+        <div
+          v-for="(question, index) in survey.questions"
+          :key="question.id"
+          class="question-analysis-card"
+        >
+          <div class="question-header">
+            <h5>{{ index + 1 }}. {{ question.text }}</h5>
+            <span class="question-type">{{ getQuestionTypeLabel(question.type) }}</span>
+          </div>
+
+          <div class="analysis-placeholder">
+            <div class="placeholder-content">
+              <span class="placeholder-icon">📈</span>
+              <p>Análisis disponible para pregunta tipo <strong>{{ question.type }}</strong></p>
+              <small>La implementación específica se desarrollará según los requisitos de análisis</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">

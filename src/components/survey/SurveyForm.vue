@@ -6,65 +6,106 @@
  */
 -->
 <template>
-  <form class="survey-form" @submit.prevent="handleSubmit">
+  <form
+    class="survey-form"
+    @submit.prevent="handleSubmit"
+  >
     <div class="form-section">
       <h3>Información General</h3>
 
      
       <div class="form-group">
         <label class="form-label">Nombre de la encuesta *</label>
-        <input v-model="formData.name" type="text" class="form-input" :class="{ error: errors.name }"
-          placeholder="Ej: Encuesta de Satisfacción Laboral 2025" required>
-        <ValidationMessage v-if="errors.name" :message="errors.name" />
+        <input
+          v-model="formData.name"
+          type="text"
+          class="form-input"
+          :class="{ error: errors.name }"
+          placeholder="Ej: Encuesta de Satisfacción Laboral 2025"
+          required
+        >
+        <ValidationMessage
+          v-if="errors.name"
+          :message="errors.name"
+        />
       </div>
 
       
       <div class="form-group">
         <label class="form-label">Descripción *</label>
-        <textarea v-model="formData.description" class="form-textarea" :class="{ error: errors.description }"
-          placeholder="Describe el propósito y objetivos de esta encuesta..." rows="4" required />
-        <ValidationMessage v-if="errors.description" :message="errors.description" />
+        <textarea
+          v-model="formData.description"
+          class="form-textarea"
+          :class="{ error: errors.description }"
+          placeholder="Describe el propósito y objetivos de esta encuesta..."
+          rows="4"
+          required
+        />
+        <ValidationMessage
+          v-if="errors.description"
+          :message="errors.description"
+        />
       </div>
 
       
       <div class="date-row">
         <div class="form-group">
           <label class="form-label">Fecha de apertura</label>
-          <input v-model="formData.scheduledOpen" type="datetime-local" class="form-input" :min="minDate">
+          <input
+            v-model="formData.scheduledOpen"
+            type="datetime-local"
+            class="form-input"
+            :min="minDate"
+          >
         </div>
         <div class="form-group">
           <label class="form-label">Fecha de cierre</label>
-          <input v-model="formData.scheduledClose" type="datetime-local" class="form-input"
-            :min="formData.scheduledOpen || minDate">
+          <input
+            v-model="formData.scheduledClose"
+            type="datetime-local"
+            class="form-input"
+            :min="formData.scheduledOpen || minDate"
+          >
         </div>
       </div>
-
     </div>
 
     <div class="form-section">
-      
-
-      <div v-if="questions.length === 0" class="empty-questions">
+      <div
+        v-if="questions.length === 0"
+        class="empty-questions"
+      >
         <div class="empty-icon">
           ❓
         </div>
         <p>No hay preguntas aún. Agrega la primera pregunta para comenzar.</p>
-        <button type="button" class="add-question-btn" @click="addQuestion">
+        <button
+          type="button"
+          class="add-question-btn"
+          @click="addQuestion"
+        >
           Agregar Primera Pregunta
         </button>
       </div>
 
-      <div v-else class="questions-list">
+      <div
+        v-else
+        class="questions-list"
+      >
         <!-- Reemplaza la sección "COMPONENTE SIMPLE DE PREGUNTA" con esto: -->
-        <div v-for="(question, index) in questions" :key="`simple-question-${index}`"
-          style="border: 2px solid #007bff; padding: 20px; margin: 15px 0; border-radius: 8px; background: white;">
+        <div
+          v-for="(question, index) in questions"
+          :key="`simple-question-${index}`"
+          style="border: 2px solid #007bff; padding: 20px; margin: 15px 0; border-radius: 8px; background: white;"
+        >
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h4 style="margin: 0; color: #007bff;">
               🔹 Pregunta {{ question.order }}
             </h4>
             <button
               style="background: #dc3545; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;"
-              @click="removeQuestion(index)">
+              @click="removeQuestion(index)"
+            >
               🗑️ Eliminar
             </button>
           </div>
@@ -72,16 +113,22 @@
           <!-- Campo de texto -->
           <div style="margin-bottom: 15px;">
             <label style="display: block; font-weight: bold; margin-bottom: 5px;">Texto de la pregunta:</label>
-            <input v-model="question.text" type="text" placeholder="Escribe el texto de tu pregunta..."
-              style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+            <input
+              v-model="question.text"
+              type="text"
+              placeholder="Escribe el texto de tu pregunta..."
+              style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;"
+            >
           </div>
 
           <!-- Selector de tipo -->
           <div style="margin-bottom: 15px;">
             <label style="display: block; font-weight: bold; margin-bottom: 5px;">Tipo de pregunta:</label>
-            <select v-model="question.type"
+            <select
+              v-model="question.type"
               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;"
-              @change="onQuestionTypeChange(question, index)">
+              @change="onQuestionTypeChange(question, index)"
+            >
               <option value="TEXT">
                 📝 Texto libre
               </option>
@@ -104,52 +151,80 @@
           </div>
 
           <!-- ✨ OPCIONES PARA SINGLE_CHOICE Y MULTIPLE_CHOICE -->
-          <div v-if="question.type === 'SINGLE_CHOICE' || question.type === 'MULTIPLE_CHOICE'"
-            style="margin-bottom: 15px;">
+          <div
+            v-if="question.type === 'SINGLE_CHOICE' || question.type === 'MULTIPLE_CHOICE'"
+            style="margin-bottom: 15px;"
+          >
             <label style="display: block; font-weight: bold; margin-bottom: 10px;">Opciones de respuesta:</label>
 
-            <div v-for="(_option, optIndex) in getQuestionOptions(question)" :key="optIndex"
-              style="display: flex; gap: 10px; margin-bottom: 8px; align-items: center;">
-              <input v-model="getQuestionOptions(question)[optIndex]" type="text"
+            <div
+              v-for="(_option, optIndex) in getQuestionOptions(question)"
+              :key="optIndex"
+              style="display: flex; gap: 10px; margin-bottom: 8px; align-items: center;"
+            >
+              <input
+                v-model="getQuestionOptions(question)[optIndex]"
+                type="text"
                 :placeholder="`Opción ${optIndex + 1}`"
                 style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
-                @input="updateQuestionOptions(question, index)">
-              <button v-if="getQuestionOptions(question).length > 1"
+                @input="updateQuestionOptions(question, index)"
+              >
+              <button
+                v-if="getQuestionOptions(question).length > 1"
                 style="background: #dc3545; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer;"
-                @click="removeOption(question, optIndex)">
+                @click="removeOption(question, optIndex)"
+              >
                 ❌
               </button>
             </div>
 
             <button
               style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 5px;"
-              @click="addOption(question)">
+              @click="addOption(question)"
+            >
               + Agregar opción
             </button>
           </div>
 
           <!-- ✨ CONFIGURACIÓN PARA ESCALA -->
-          <div v-if="question.type === 'SCALE'" style="margin-bottom: 15px;">
+          <div
+            v-if="question.type === 'SCALE'"
+            style="margin-bottom: 15px;"
+          >
             <label style="display: block; font-weight: bold; margin-bottom: 10px;">Configuración de escala:</label>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px;">
               <div>
                 <label style="display: block; font-weight: bold; margin-bottom: 5px;">Mínimo:</label>
-                <input v-model.number="getScaleOptions(question).min" type="number" min="1" max="10"
+                <input
+                  v-model.number="getScaleOptions(question).min"
+                  type="number"
+                  min="1"
+                  max="10"
                   style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
-                  @input="updateScaleOptions(question, index)">
+                  @input="updateScaleOptions(question, index)"
+                >
               </div>
               <div>
                 <label style="display: block; font-weight: bold; margin-bottom: 5px;">Máximo:</label>
-                <input v-model.number="getScaleOptions(question).max" type="number" min="2" max="10"
+                <input
+                  v-model.number="getScaleOptions(question).max"
+                  type="number"
+                  min="2"
+                  max="10"
                   style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
-                  @input="updateScaleOptions(question, index)">
+                  @input="updateScaleOptions(question, index)"
+                >
               </div>
               <div>
                 <label style="display: block; font-weight: bold; margin-bottom: 5px;">Paso:</label>
-                <input v-model.number="getScaleOptions(question).step" type="number" min="1"
+                <input
+                  v-model.number="getScaleOptions(question).step"
+                  type="number"
+                  min="1"
                   style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
-                  @input="updateScaleOptions(question, index)">
+                  @input="updateScaleOptions(question, index)"
+                >
               </div>
             </div>
 
@@ -158,45 +233,67 @@
                 <label style="display: block; font-weight: bold; margin-bottom: 5px;">Etiqueta mínima:</label>
                 <input 
                   :value="getScaleOptions(question).labels?.[getScaleOptions(question).min?.toString() ?? '1'] ?? ''"
-                  @input="updateScaleLabel(question, 'min', $event)"
                   type="text"
                   placeholder="Ej: Muy malo"
-                  style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                  style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
+                  @input="updateScaleLabel(question, 'min', $event)"
+                >
               </div>
               <div>
                 <label style="display: block; font-weight: bold; margin-bottom: 5px;">Etiqueta máxima:</label>
                 <input 
                   :value="getScaleOptions(question).labels?.[getScaleOptions(question).max?.toString() ?? '5'] ?? ''"
-                  @input="updateScaleLabel(question, 'max', $event)"
                   type="text"
                   placeholder="Ej: Excelente"
-                  style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                  style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
+                  @input="updateScaleLabel(question, 'max', $event)"
+                >
               </div>
             </div>
           </div>
 
           <!-- ✨ CONFIGURACIÓN PARA NUMBER -->
-          <div v-if="question.type === 'NUMBER'" style="margin-bottom: 15px;">
+          <div
+            v-if="question.type === 'NUMBER'"
+            style="margin-bottom: 15px;"
+          >
             <label style="display: block; font-weight: bold; margin-bottom: 10px;">Configuración de número:</label>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
               <div>
                 <label style="display: block; font-weight: bold; margin-bottom: 5px;">Mínimo:</label>
-                <input v-model.number="getNumberOptions(question).min" type="number" min="0" max="1000"
+                <input
+                  v-model.number="getNumberOptions(question).min"
+                  type="number"
+                  min="0"
+                  max="1000"
                   style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
-                  @input="updateNumberOptions(question, index)">
+                  @input="updateNumberOptions(question, index)"
+                >
               </div>
               <div>
                 <label style="display: block; font-weight: bold; margin-bottom: 5px;">Máximo:</label>
-                <input v-model.number="getNumberOptions(question).max" type="number" min="1" max="1000"
+                <input
+                  v-model.number="getNumberOptions(question).max"
+                  type="number"
+                  min="1"
+                  max="1000"
                   style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
-                  @input="updateNumberOptions(question, index)">
+                  @input="updateNumberOptions(question, index)"
+                >
               </div>
             </div>
           </div>
 
           <!-- Mostrar errores de validación de pregunta -->
-          <div v-if="questionErrors[index]" class="question-errors">
-            <div v-for="(error, field) in questionErrors[index]" :key="field" class="question-error">
+          <div
+            v-if="questionErrors[index]"
+            class="question-errors"
+          >
+            <div
+              v-for="(error, field) in questionErrors[index]"
+              :key="field"
+              class="question-error"
+            >
               ❌ {{ error }}
             </div>
           </div>
@@ -204,7 +301,10 @@
           <!-- Checkbox obligatoria -->
           <div>
             <label style="display: flex; align-items: center; gap: 8px;">
-              <input v-model="question.required" type="checkbox">
+              <input
+                v-model="question.required"
+                type="checkbox"
+              >
               <span>❗ Pregunta obligatoria</span>
             </label>
           </div>
@@ -213,23 +313,38 @@
 
       <div class="questions-header">
         <h3>Preguntas ({{ questions.length }})</h3>
-        <button type="button" class="add-question-btn" @click="addQuestion">
+        <button
+          type="button"
+          class="add-question-btn"
+          @click="addQuestion"
+        >
           + Agregar Pregunta
         </button>
       </div>
     </div>
 
     <!-- Error general -->
-    <div v-if="generalError" class="form-error">
+    <div
+      v-if="generalError"
+      class="form-error"
+    >
       {{ generalError }}
     </div>
 
     <!-- Botones de acción -->
     <div class="form-actions">
-      <button type="button" class="btn-secondary" @click="$emit('cancel')">
+      <button
+        type="button"
+        class="btn-secondary"
+        @click="$emit('cancel')"
+      >
         Cancelar
       </button>
-      <button type="submit" class="btn-primary" :disabled="loading">
+      <button
+        type="submit"
+        class="btn-primary"
+        :disabled="loading"
+      >
         <span v-if="loading">Creando...</span>
         <span v-else>Crear Encuesta</span>
       </button>

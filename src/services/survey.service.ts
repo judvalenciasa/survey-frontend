@@ -3,27 +3,27 @@
  * @description Maneja todas las operaciones CRUD de encuestas y respuestas
  * @module Survey Service
  */
-import type { AxiosResponse } from 'axios'
-import api from './api'
-import type { 
-  Survey, 
-  CreateSurveyRequest, 
+import type { AxiosResponse } from "axios";
+import api from "./api";
+import type {
+  Survey,
+  CreateSurveyRequest,
   UpdateSurveyRequest,
-} from '@/types/survey'
-import type { SurveyResponse } from '@/types/response'
+} from "@/types/survey";
+import type { SurveyResponse } from "@/types/response";
 
 /**
  * Clase que encapsula todas las operaciones relacionadas con encuestas
  */
 class SurveyService {
-  private readonly baseURL = '/api/surveys'
+  private readonly baseURL = "/api/surveys";
 
   /**
    * Obtiene todas las encuestas del usuario autenticado
    * @returns Lista de encuestas del usuario
    */
   async getSurveys(): Promise<AxiosResponse<Survey[]>> {
-    return api.get<Survey[]>(this.baseURL)
+    return api.get<Survey[]>(this.baseURL);
   }
 
   /**
@@ -32,7 +32,7 @@ class SurveyService {
    * @returns Datos completos de la encuesta
    */
   async getSurvey(id: string): Promise<AxiosResponse<Survey>> {
-    return api.get<Survey>(`${this.baseURL}/${id}`)
+    return api.get<Survey>(`${this.baseURL}/${id}`);
   }
 
   /**
@@ -41,7 +41,7 @@ class SurveyService {
    * @returns Encuesta preparada para respuestas públicas
    */
   async getSurveyForResponse(id: string): Promise<AxiosResponse<Survey>> {
-    return api.get<Survey>(`${this.baseURL}/${id}/view`)
+    return api.get<Survey>(`${this.baseURL}/${id}/view`);
   }
 
   /**
@@ -50,7 +50,7 @@ class SurveyService {
    * @returns Encuesta accesible públicamente
    */
   async getSurveyByCode(code: string): Promise<AxiosResponse<Survey>> {
-    return api.get<Survey>(`${this.baseURL}/public/${code}`)
+    return api.get<Survey>(`${this.baseURL}/public/${code}`);
   }
 
   /**
@@ -58,8 +58,10 @@ class SurveyService {
    * @param data - Datos de la encuesta a crear
    * @returns Encuesta creada con ID asignado
    */
-  async createSurvey(data: CreateSurveyRequest): Promise<AxiosResponse<Survey>> {
-    return api.post<Survey>(this.baseURL, data)
+  async createSurvey(
+    data: CreateSurveyRequest
+  ): Promise<AxiosResponse<Survey>> {
+    return api.post<Survey>(this.baseURL, data);
   }
 
   /**
@@ -68,8 +70,11 @@ class SurveyService {
    * @param data - Datos parciales a actualizar
    * @returns Encuesta actualizada
    */
-  async updateSurvey(id: string, data: UpdateSurveyRequest): Promise<AxiosResponse<Survey>> {
-    return api.put<Survey>(`${this.baseURL}/${id}`, data)
+  async updateSurvey(
+    id: string,
+    data: UpdateSurveyRequest
+  ): Promise<AxiosResponse<Survey>> {
+    return api.put<Survey>(`${this.baseURL}/${id}`, data);
   }
 
   /**
@@ -78,7 +83,7 @@ class SurveyService {
    * @returns Encuesta con estado actualizado
    */
   async publishSurvey(id: string): Promise<AxiosResponse<Survey>> {
-    return api.post<Survey>(`${this.baseURL}/${id}/publish`)
+    return api.post<Survey>(`${this.baseURL}/${id}/publish`);
   }
 
   /**
@@ -87,7 +92,7 @@ class SurveyService {
    * @returns Encuesta con estado actualizado
    */
   async closeSurvey(id: string): Promise<AxiosResponse<Survey>> {
-    return api.post<Survey>(`${this.baseURL}/${id}/close`)
+    return api.post<Survey>(`${this.baseURL}/${id}/close`);
   }
 
   /**
@@ -96,7 +101,7 @@ class SurveyService {
    * @returns Confirmación de eliminación
    */
   async deleteSurvey(id: string): Promise<AxiosResponse<void>> {
-    return api.delete<void>(`${this.baseURL}/${id}`)
+    return api.delete<void>(`${this.baseURL}/${id}`);
   }
 
   /**
@@ -105,8 +110,11 @@ class SurveyService {
    * @param status - Nuevo estado de la encuesta
    * @returns Encuesta con estado actualizado
    */
-  async updateSurveyStatus(id: string, status: string): Promise<AxiosResponse<Survey>> {
-    return api.patch<Survey>(`${this.baseURL}/${id}/status`, { status })
+  async updateSurveyStatus(
+    id: string,
+    status: string
+  ): Promise<AxiosResponse<Survey>> {
+    return api.patch<Survey>(`${this.baseURL}/${id}/status`, { status });
   }
 
   /**
@@ -114,8 +122,10 @@ class SurveyService {
    * @param id - ID de la encuesta
    * @returns Lista de respuestas de la encuesta
    */
-  async getSurveyResponses(id: string): Promise<AxiosResponse<SurveyResponse[]>> {
-    return api.get<SurveyResponse[]>(`${this.baseURL}/${id}/responses`)
+  async getSurveyResponses(
+    id: string
+  ): Promise<AxiosResponse<SurveyResponse[]>> {
+    return api.get<SurveyResponse[]>(`${this.baseURL}/${id}/responses`);
   }
 
   /**
@@ -124,18 +134,23 @@ class SurveyService {
    * @param answers - Respuestas organizadas por ID de pregunta
    * @returns Confirmación del envío
    */
-  async submitResponse(surveyId: string, answers: Record<string, any>): Promise<AxiosResponse<any>> {
-    const formattedAnswers = Object.entries(answers).map(([questionId, answer]) => ({
-      questionId,
-      answer
-    }))
+  async submitResponse(
+    surveyId: string,
+    answers: Record<string, any>
+  ): Promise<AxiosResponse<any>> {
+    const formattedAnswers = Object.entries(answers).map(
+      ([questionId, answer]) => ({
+        questionId,
+        answer,
+      })
+    );
 
     const payload = {
       surveyId,
-      answers: formattedAnswers
-    }
+      answers: formattedAnswers,
+    };
 
-    return api.post<any>('/api/responses/submit', payload)
+    return api.post<any>("/api/responses/submit", payload);
   }
 
   /**
@@ -144,11 +159,16 @@ class SurveyService {
    * @returns Nueva encuesta duplicada
    */
   async duplicateSurvey(id: string): Promise<AxiosResponse<Survey>> {
-    return api.post<Survey>(`${this.baseURL}/${id}/duplicate`)
+    return api.post<Survey>(`${this.baseURL}/${id}/duplicate`);
+  }
+  /**
+   * Obtiene análisis estadísticos de una encuesta
+   * @param id - ID de la encuesta
+   * @returns Análisis completo de la encuesta con estadísticas por pregunta
+   */
+  async getSurveyAnalysis(id: string): Promise<AxiosResponse<any>> {
+    return api.get<any>(`${this.baseURL}/${id}/analysis`);
   }
 }
 
-/**
- * Instancia singleton del servicio de encuestas
- */
-export const surveyService = new SurveyService()
+export const surveyService = new SurveyService();

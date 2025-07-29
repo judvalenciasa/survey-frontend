@@ -19,13 +19,23 @@
         </header>
 
         <div class="home-cards">
-          <HomeCard title="Acceso Administrativo"
-            description="Ingresa para gestionar encuestas, ver estadísticas y administrar el sistema" icon="🔐"
-            button-text="Iniciar Sesión" button-color="primary" @click="goToLogin" />
+          <HomeCard
+            title="Acceso Administrativo"
+            description="Ingresa para gestionar encuestas, ver estadísticas y administrar el sistema"
+            icon="🔐"
+            button-text="Iniciar Sesión"
+            button-color="primary"
+            @click="goToLogin"
+          />
 
-          <HomeCard title="Presentar Encuesta"
-            description="¿Tienes un código de encuesta? Úsalo aquí para acceder y responder" icon="📝"
-            button-text="Ingresar Código" button-color="secondary" @click="goToSurvey" />
+          <HomeCard
+            title="Presentar Encuesta"
+            description="¿Tienes un código de encuesta? Úsalo aquí para acceder y responder"
+            icon="📝"
+            button-text="Ingresar Código"
+            button-color="secondary"
+            @click="goToSurvey"
+          />
         </div>
       </div>
     </main>

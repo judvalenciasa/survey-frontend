@@ -10,10 +10,27 @@
     <div class="thank-you-container">
       <div class="success-animation">
         <div class="checkmark">
-          <svg viewBox="0 0 100 100" class="checkmark-svg">
-            <circle cx="50" cy="50" r="45" fill="none" stroke="#10b981" stroke-width="3" class="checkmark-circle" />
-            <path d="M25 50 L40 65 L75 30" fill="none" stroke="#10b981" stroke-width="4" stroke-linecap="round"
-              class="checkmark-check" />
+          <svg
+            viewBox="0 0 100 100"
+            class="checkmark-svg"
+          >
+            <circle
+              cx="50"
+              cy="50"
+              r="45"
+              fill="none"
+              stroke="#10b981"
+              stroke-width="3"
+              class="checkmark-circle"
+            />
+            <path
+              d="M25 50 L40 65 L75 30"
+              fill="none"
+              stroke="#10b981"
+              stroke-width="4"
+              stroke-linecap="round"
+              class="checkmark-check"
+            />
           </svg>
         </div>
       </div>
@@ -26,10 +43,16 @@
       </p>
 
       <div class="thank-you-actions">
-        <button class="btn-primary" @click="goHome">
+        <button
+          class="btn-primary"
+          @click="goHome"
+        >
           Volver al inicio
         </button>
-        <button class="btn-secondary" @click="goToSurveyAccess">
+        <button
+          class="btn-secondary"
+          @click="goToSurveyAccess"
+        >
           Responder otra encuesta
         </button>
       </div>

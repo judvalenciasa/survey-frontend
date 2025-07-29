@@ -10,57 +10,119 @@
     <div class="question-header">
       <h3 class="question-title">
         {{ question.text }}
-        <span v-if="question.required" class="required">*</span>
+        <span
+          v-if="question.required"
+          class="required"
+        >*</span>
       </h3>
     </div>
 
     <div class="question-content">
       <!-- Texto libre -->
-      <div v-if="question.type === 'TEXT'" class="text-input">
-        <textarea v-model="answer" class="form-textarea" :placeholder="'Escribe tu respuesta aquí...'" rows="4"
-          @input="updateAnswer" />
+      <div
+        v-if="question.type === 'TEXT'"
+        class="text-input"
+      >
+        <textarea
+          v-model="answer"
+          class="form-textarea"
+          :placeholder="'Escribe tu respuesta aquí...'"
+          rows="4"
+          @input="updateAnswer"
+        />
       </div>
 
       <!-- ✅ NUEVO: Pregunta numérica -->
-      <div v-else-if="question.type === 'NUMBER'" class="number-input">
-        <input v-model.number="answer" type="number" class="form-input number-field" :min="numberOptions.min"
+      <div
+        v-else-if="question.type === 'NUMBER'"
+        class="number-input"
+      >
+        <input
+          v-model.number="answer"
+          type="number"
+          class="form-input number-field"
+          :min="numberOptions.min"
           :max="numberOptions.max" 
-          @input="updateAnswer">
+          @input="updateAnswer"
+        >
         <div class="number-hint">
           Rango válido: {{ numberOptions.min }} - {{ numberOptions.max }}
         </div>
       </div>
 
       <!-- Sí/No -->
-      <div v-else-if="question.type === 'YES_NO'" class="yes-no-options">
+      <div
+        v-else-if="question.type === 'YES_NO'"
+        class="yes-no-options"
+      >
         <label class="radio-option">
-          <input v-model="answer" type="radio" value="true" name="`question-${question.id}`" @change="updateAnswer">
+          <input
+            v-model="answer"
+            type="radio"
+            value="true"
+            name="`question-${question.id}`"
+            @change="updateAnswer"
+          >
           <span class="radio-text">Sí</span>
         </label>
         <label class="radio-option">
-          <input v-model="answer" type="radio" value="false" name="`question-${question.id}`" @change="updateAnswer">
+          <input
+            v-model="answer"
+            type="radio"
+            value="false"
+            name="`question-${question.id}`"
+            @change="updateAnswer"
+          >
           <span class="radio-text">No</span>
         </label>
       </div>
 
       <!-- Opción única -->
-      <div v-else-if="question.type === 'SINGLE_CHOICE'" class="single-choice-options">
-        <label v-for="(option, index) in stringOptions" :key="index" class="radio-option">
-          <input v-model="answer" type="radio" :value="option" :name="`question-${question.id}`" @change="updateAnswer">
+      <div
+        v-else-if="question.type === 'SINGLE_CHOICE'"
+        class="single-choice-options"
+      >
+        <label
+          v-for="(option, index) in stringOptions"
+          :key="index"
+          class="radio-option"
+        >
+          <input
+            v-model="answer"
+            type="radio"
+            :value="option"
+            :name="`question-${question.id}`"
+            @change="updateAnswer"
+          >
           <span class="radio-text">{{ option }}</span>
         </label>
       </div>
 
       <!-- Múltiple selección -->
-      <div v-else-if="question.type === 'MULTIPLE_CHOICE'" class="multiple-choice-options">
-        <label v-for="(option, index) in stringOptions" :key="index" class="checkbox-option">
-          <input v-model="multipleAnswer" type="checkbox" :value="option" @change="updateMultipleAnswer">
+      <div
+        v-else-if="question.type === 'MULTIPLE_CHOICE'"
+        class="multiple-choice-options"
+      >
+        <label
+          v-for="(option, index) in stringOptions"
+          :key="index"
+          class="checkbox-option"
+        >
+          <input
+            v-model="multipleAnswer"
+            type="checkbox"
+            :value="option"
+            @change="updateMultipleAnswer"
+          >
           <span class="checkbox-text">{{ option }}</span>
         </label>
       </div>
 
       <!-- Escala -->
-      <div v-else-if="question.type === 'SCALE'" class="scale-options">
+      <div
+        v-else-if="question.type === 'SCALE'"
+        class="scale-options"
+      >
         <div class="scale-container">
           <div class="scale-labels">
             <span class="scale-label-min">
@@ -72,9 +134,18 @@
           </div>
 
           <div class="scale-values">
-            <label v-for="value in scaleRange" :key="value" class="scale-value">
-              <input v-model.number="answer" type="radio" :value="value" :name="`question-${question.id}`"
-                @change="updateAnswer">
+            <label
+              v-for="value in scaleRange"
+              :key="value"
+              class="scale-value"
+            >
+              <input
+                v-model.number="answer"
+                type="radio"
+                :value="value"
+                :name="`question-${question.id}`"
+                @change="updateAnswer"
+              >
               <span class="scale-number">{{ value }}</span>
             </label>
           </div>

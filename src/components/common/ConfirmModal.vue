@@ -6,8 +6,14 @@
  */
 -->
 <template>
-  <div class="modal-overlay" @click="$emit('cancel')">
-    <div class="modal-content" @click.stop>
+  <div
+    class="modal-overlay"
+    @click="$emit('cancel')"
+  >
+    <div
+      class="modal-content"
+      @click.stop
+    >
       <h3 class="modal-title">
         {{ title }}
       </h3>
@@ -16,10 +22,16 @@
       </p>
 
       <div class="modal-actions">
-        <button class="btn btn-secondary" @click="$emit('cancel')">
+        <button
+          class="btn btn-secondary"
+          @click="$emit('cancel')"
+        >
           Cancelar
         </button>
-        <button class="btn btn-danger" @click="$emit('confirm')">
+        <button
+          class="btn btn-danger"
+          @click="$emit('confirm')"
+        >
           Confirmar
         </button>
       </div>

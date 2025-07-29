@@ -10,39 +10,73 @@
     <!-- Header -->
     <header class="edit-header">
       <div class="header-content">
-        <button class="back-btn" @click="goBack">
+        <button
+          class="back-btn"
+          @click="goBack"
+        >
           ← Volver
         </button>
         <div class="header-info">
           <h1>Editar Encuesta</h1>
-          <p v-if="currentSurvey" class="survey-name">{{ currentSurvey.name }}</p>
+          <p
+            v-if="currentSurvey"
+            class="survey-name"
+          >
+            {{ currentSurvey.name }}
+          </p>
         </div>
       </div>
     </header>
 
     <!-- Loading state -->
-    <div v-if="surveyStore.loading" class="loading-state">
-      <div class="loading-spinner"></div>
+    <div
+      v-if="surveyStore.loading"
+      class="loading-state"
+    >
+      <div class="loading-spinner" />
       <p>Cargando encuesta...</p>
     </div>
 
     <!-- Error state -->
-    <div v-else-if="error" class="error-state">
-      <div class="error-icon">❌</div>
+    <div
+      v-else-if="error"
+      class="error-state"
+    >
+      <div class="error-icon">
+        ❌
+      </div>
       <h3>Error al cargar la encuesta</h3>
       <p>{{ error }}</p>
-      <button class="retry-btn" @click="loadSurvey">
+      <button
+        class="retry-btn"
+        @click="loadSurvey"
+      >
         Reintentar
       </button>
     </div>
 
     <!-- Edit form -->
-    <div v-else-if="currentSurvey" class="edit-content">
-      <SurveyEditForm :survey="currentSurvey" :loading="surveyStore.loading" @submit="updateSurvey" @cancel="goBack" />
+    <div
+      v-else-if="currentSurvey"
+      class="edit-content"
+    >
+      <SurveyEditForm
+        :survey="currentSurvey"
+        :loading="surveyStore.loading"
+        @submit="updateSurvey"
+        @cancel="goBack"
+      />
 
       <!-- Modal de éxito -->
-      <div v-if="showSuccessModal" class="modal-overlay" @click="closeSuccessModal">
-        <div class="modal success-modal" @click.stop>
+      <div
+        v-if="showSuccessModal"
+        class="modal-overlay"
+        @click="closeSuccessModal"
+      >
+        <div
+          class="modal success-modal"
+          @click.stop
+        >
           <div class="modal-header">
             <h3>¡Encuesta Actualizada!</h3>
             <span class="success-icon">✅</span>
@@ -51,10 +85,16 @@
             <p>Los cambios se han guardado exitosamente.</p>
           </div>
           <div class="modal-actions">
-            <button class="btn-primary" @click="goToSurveyList">
+            <button
+              class="btn-primary"
+              @click="goToSurveyList"
+            >
               Ver Lista de Encuestas
             </button>
-            <button class="btn-secondary" @click="closeSuccessModal">
+            <button
+              class="btn-secondary"
+              @click="closeSuccessModal"
+            >
               Continuar Editando
             </button>
           </div>

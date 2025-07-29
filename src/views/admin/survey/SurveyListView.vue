@@ -9,15 +9,26 @@
   <div class="survey-list">
     <header class="list-header">
       <h1>Mis Encuestas</h1>
-      <router-link to="/admin/surveys/create" class="create-btn">
+      <router-link
+        to="/admin/surveys/create"
+        class="create-btn"
+      >
         Crear Nueva Encuesta
       </router-link>
     </header>
 
     <div class="list-filters">
       <div class="filter-group">
-        <input v-model="searchQuery" type="text" placeholder="Buscar encuestas..." class="search-input">
-        <select v-model="statusFilter" class="status-filter">
+        <input
+          v-model="searchQuery"
+          type="text"
+          placeholder="Buscar encuestas..."
+          class="search-input"
+        >
+        <select
+          v-model="statusFilter"
+          class="status-filter"
+        >
           <option value="">
             Todas
           </option>
@@ -31,45 +42,79 @@
       </div>
     </div>
 
-    <div v-if="surveyStore.loading" class="loading">
+    <div
+      v-if="surveyStore.loading"
+      class="loading"
+    >
       Cargando encuestas...
     </div>
 
-    <div v-else-if="surveyStore.error" class="error">
+    <div
+      v-else-if="surveyStore.error"
+      class="error"
+    >
       {{ surveyStore.error }}
     </div>
 
-    <div v-else-if="filteredSurveys.length === 0" class="empty-state">
+    <div
+      v-else-if="filteredSurveys.length === 0"
+      class="empty-state"
+    >
       <div class="empty-icon">
         📊
       </div>
       <h3>No tienes encuestas aún</h3>
       <p>Crea tu primera encuesta para comenzar</p>
-      <router-link to="/admin/surveys/create" class="create-btn">
+      <router-link
+        to="/admin/surveys/create"
+        class="create-btn"
+      >
         Crear Primera Encuesta
       </router-link>
     </div>
 
-    <div v-else class="surveys-grid">
-      <SurveyCard v-for="survey in filteredSurveys" :key="survey.id" :survey="survey" 
-        @edit="editSurvey" @responses="viewResponses" @delete="confirmDelete" @publish="confirmPublish"
-        @close="confirmClose" />
+    <div
+      v-else
+      class="surveys-grid"
+    >
+      <SurveyCard
+        v-for="survey in filteredSurveys"
+        :key="survey.id"
+        :survey="survey" 
+        @edit="editSurvey"
+        @responses="viewResponses"
+        @delete="confirmDelete"
+        @publish="confirmPublish"
+        @close="confirmClose"
+      />
     </div>
 
     <!-- Modal de confirmación -->
-    <ConfirmModal v-if="showDeleteModal" title="Eliminar Encuesta"
+    <ConfirmModal
+      v-if="showDeleteModal"
+      title="Eliminar Encuesta"
       message="¿Estás seguro de que quieres eliminar esta encuesta? Esta acción no se puede deshacer."
-      @confirm="deleteSurvey" @cancel="showDeleteModal = false" />
+      @confirm="deleteSurvey"
+      @cancel="showDeleteModal = false"
+    />
 
     <!-- ✨ NUEVO: Modal de confirmación para publicar -->
-    <ConfirmModal v-if="showPublishModal" title="Publicar Encuesta"
+    <ConfirmModal
+      v-if="showPublishModal"
+      title="Publicar Encuesta"
       message="¿Estás seguro de que quieres publicar esta encuesta? Una vez publicada, estará disponible para recibir respuestas."
-      @confirm="publishSurvey" @cancel="showPublishModal = false" />
+      @confirm="publishSurvey"
+      @cancel="showPublishModal = false"
+    />
 
     <!-- ✨ NUEVO: Modal de confirmación para cerrar -->
-    <ConfirmModal v-if="showCloseModal" title="Cerrar Encuesta"
+    <ConfirmModal
+      v-if="showCloseModal"
+      title="Cerrar Encuesta"
       message="¿Estás seguro de que quieres cerrar esta encuesta? Ya no se podrán enviar más respuestas."
-      @confirm="closeSurvey" @cancel="showCloseModal = false" />
+      @confirm="closeSurvey"
+      @cancel="showCloseModal = false"
+    />
   </div>
 </template>
 

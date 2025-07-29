@@ -6,7 +6,10 @@
  */
 -->
 <template>
-  <div class="home-card" @click="$emit('click')">
+  <div
+    class="home-card"
+    @click="$emit('click')"
+  >
     <div class="card-header">
       <div class="card-icon">
         {{ icon }}
@@ -20,7 +23,10 @@
       {{ description }}
     </p>
 
-    <button class="card-button" :class="`button-${buttonColor}`">
+    <button
+      class="card-button"
+      :class="`button-${buttonColor}`"
+    >
       {{ buttonText }}
     </button>
   </div>

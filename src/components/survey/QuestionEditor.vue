@@ -9,75 +9,146 @@
   <div class="question-editor">
     <div class="question-header">
       <h4>Pregunta {{ question.order }}</h4>
-      <button class="remove-btn" type="button" @click="$emit('remove')">
+      <button
+        class="remove-btn"
+        type="button"
+        @click="$emit('remove')"
+      >
         ❌
       </button>
     </div>
 
     <div class="form-group">
       <label class="form-label">Texto de la pregunta *</label>
-      <textarea v-model="question.text" class="form-textarea" placeholder="Escribe aquí el texto de tu pregunta..."
-        rows="3" required />
-      <ValidationMessage v-if="errors?.text" :message="errors.text" />
+      <textarea
+        v-model="question.text"
+        class="form-textarea"
+        placeholder="Escribe aquí el texto de tu pregunta..."
+        rows="3"
+        required
+      />
+      <ValidationMessage
+        v-if="errors?.text"
+        :message="errors.text"
+      />
     </div>
 
     <div class="form-group">
       <label class="form-label">Tipo de pregunta *</label>
-      <select v-model="question.type" class="form-select" @change="onTypeChange">
+      <select
+        v-model="question.type"
+        class="form-select"
+        @change="onTypeChange"
+      >
         <option value="">
           Selecciona un tipo
         </option>
-        <option v-for="type in QuestionType" :key="type.value" :value="type.value">
+        <option
+          v-for="type in QuestionType"
+          :key="type.value"
+          :value="type.value"
+        >
           {{ type.label }}
         </option>
       </select>
-      <ValidationMessage v-if="errors?.type" :message="errors.type" />
+      <ValidationMessage
+        v-if="errors?.type"
+        :message="errors.type"
+      />
     </div>
 
 
-    <div v-if="question.type && needsOptions" class="form-group">
+    <div
+      v-if="question.type && needsOptions"
+      class="form-group"
+    >
       <label class="form-label">Opciones</label>
 
       <div v-if="question.type === 'SINGLE_CHOICE' || question.type === 'MULTIPLE_CHOICE'">
-        <div v-for="(_, index) in stringOptions" :key="index" class="option-row">
-          <input v-model="stringOptions[index]" type="text" class="form-input" :placeholder="`Opción ${index + 1}`">
-          <button type="button" class="remove-option-btn" @click="removeOption(index)">
+        <div
+          v-for="(_, index) in stringOptions"
+          :key="index"
+          class="option-row"
+        >
+          <input
+            v-model="stringOptions[index]"
+            type="text"
+            class="form-input"
+            :placeholder="`Opción ${index + 1}`"
+          >
+          <button
+            type="button"
+            class="remove-option-btn"
+            @click="removeOption(index)"
+          >
             ❌
           </button>
         </div>
-        <button type="button" class="add-option-btn" @click="addOption">
+        <button
+          type="button"
+          class="add-option-btn"
+          @click="addOption"
+        >
           + Agregar opción
         </button>
       </div>
 
       <!-- Configuración para SCALE -->
-      <div v-if="question.type === 'SCALE'" class="scale-config">
+      <div
+        v-if="question.type === 'SCALE'"
+        class="scale-config"
+      >
         <div class="scale-row">
           <div class="form-group">
             <label class="form-label">Mínimo</label>
-            <input v-model.number="scaleOptions.min" type="number" class="form-input" min="1" max="10">
+            <input
+              v-model.number="scaleOptions.min"
+              type="number"
+              class="form-input"
+              min="1"
+              max="10"
+            >
           </div>
           <div class="form-group">
             <label class="form-label">Máximo</label>
-            <input v-model.number="scaleOptions.max" type="number" class="form-input" min="2" max="10">
+            <input
+              v-model.number="scaleOptions.max"
+              type="number"
+              class="form-input"
+              min="2"
+              max="10"
+            >
           </div>
           <div class="form-group">
             <label class="form-label">Paso</label>
-            <input v-model.number="scaleOptions.step" type="number" class="form-input" min="1"
-              :max="scaleOptions.max - scaleOptions.min">
+            <input
+              v-model.number="scaleOptions.step"
+              type="number"
+              class="form-input"
+              min="1"
+              :max="scaleOptions.max - scaleOptions.min"
+            >
           </div>
         </div>
 
         <div class="scale-labels">
           <div class="form-group">
             <label class="form-label">Etiqueta mínima</label>
-            <input v-model="scaleLabels[scaleOptions.min.toString()]" type="text" class="form-input"
-              placeholder="Ej: Muy malo">
+            <input
+              v-model="scaleLabels[scaleOptions.min.toString()]"
+              type="text"
+              class="form-input"
+              placeholder="Ej: Muy malo"
+            >
           </div>
           <div class="form-group">
             <label class="form-label">Etiqueta máxima</label>
-            <input v-model="scaleLabels[scaleOptions.max.toString()]" type="text" class="form-input"
-              placeholder="Ej: Excelente">
+            <input
+              v-model="scaleLabels[scaleOptions.max.toString()]"
+              type="text"
+              class="form-input"
+              placeholder="Ej: Excelente"
+            >
           </div>
         </div>
       </div>
@@ -86,7 +157,11 @@
     <!-- Pregunta obligatoria -->
     <div class="form-group">
       <label class="checkbox-label">
-        <input v-model="question.required" type="checkbox" class="form-checkbox">
+        <input
+          v-model="question.required"
+          type="checkbox"
+          class="form-checkbox"
+        >
         <span class="checkbox-text">Pregunta obligatoria</span>
       </label>
     </div>

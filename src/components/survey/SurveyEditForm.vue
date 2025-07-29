@@ -6,7 +6,10 @@
  */
 -->
 <template>
-  <form class="survey-edit-form" @submit.prevent="handleSubmit">
+  <form
+    class="survey-edit-form"
+    @submit.prevent="handleSubmit"
+  >
     <div class="form-section">
       <h3>Información General</h3>
 
@@ -20,7 +23,10 @@
           placeholder="Ej: Encuesta de Satisfacción Laboral 2025" 
           required
         >
-        <ValidationMessage v-if="errors.name" :message="errors.name" />
+        <ValidationMessage
+          v-if="errors.name"
+          :message="errors.name"
+        />
       </div>
 
       <div class="form-group">
@@ -33,7 +39,10 @@
           rows="4" 
           required 
         />
-        <ValidationMessage v-if="errors.description" :message="errors.description" />
+        <ValidationMessage
+          v-if="errors.description"
+          :message="errors.description"
+        />
       </div>
 
       <div class="date-row">
@@ -60,27 +69,48 @@
       <!-- Estado de la encuesta -->
       <div class="form-group">
         <label class="form-label">Estado de la encuesta</label>
-        <select v-model="formData.status" class="form-input">
-          <option value="CREADA">Creada</option>
-          <option value="PUBLICADA">Publicada</option>
-          <option value="FINALIZADA">Finalizada</option>
+        <select
+          v-model="formData.status"
+          class="form-input"
+        >
+          <option value="CREADA">
+            Creada
+          </option>
+          <option value="PUBLICADA">
+            Publicada
+          </option>
+          <option value="FINALIZADA">
+            Finalizada
+          </option>
         </select>
       </div>
     </div>
 
     <!-- Sección de preguntas -->
     <div class="form-section">
-      <div v-if="questions.length === 0" class="empty-questions">
-        <div class="empty-icon">❓</div>
+      <div
+        v-if="questions.length === 0"
+        class="empty-questions"
+      >
+        <div class="empty-icon">
+          ❓
+        </div>
         <p>No hay preguntas aún. Agrega la primera pregunta para comenzar.</p>
-        <button type="button" class="add-question-btn" @click="addQuestion">
+        <button
+          type="button"
+          class="add-question-btn"
+          @click="addQuestion"
+        >
           Agregar Primera Pregunta
         </button>
       </div>
 
       
 
-      <div v-if="questions.length > 0" class="questions-list">
+      <div
+        v-if="questions.length > 0"
+        class="questions-list"
+      >
         <div 
           v-for="(question, index) in questions" 
           :key="question.id || `question-${index}`"
@@ -115,12 +145,24 @@
               class="form-input"
               @change="onQuestionTypeChange(question, index)"
             >
-              <option value="TEXT">📝 Texto libre</option>
-              <option value="SINGLE_CHOICE">🔘 Opción única</option>
-              <option value="MULTIPLE_CHOICE">☑️ Múltiple selección</option>
-              <option value="YES_NO">✅ Sí/No</option>
-              <option value="SCALE">📊 Escala</option>
-              <option value="NUMBER">🔢 Número</option>
+              <option value="TEXT">
+                📝 Texto libre
+              </option>
+              <option value="SINGLE_CHOICE">
+                🔘 Opción única
+              </option>
+              <option value="MULTIPLE_CHOICE">
+                ☑️ Múltiple selección
+              </option>
+              <option value="YES_NO">
+                ✅ Sí/No
+              </option>
+              <option value="SCALE">
+                📊 Escala
+              </option>
+              <option value="NUMBER">
+                🔢 Número
+              </option>
             </select>
           </div>
 
@@ -172,30 +214,30 @@
                   <label class="form-label-small">Mínimo:</label>
                   <input 
                     :value="getScaleOptions(question)?.min || 1"
-                    @input="updateScaleConfig(question, 'min', $event)"
-                    type="number" 
-                    class="form-input"
+                    type="number"
+                    class="form-input" 
                     min="1"
+                    @input="updateScaleConfig(question, 'min', $event)"
                   >
                 </div>
                 <div class="scale-field">
                   <label class="form-label-small">Máximo:</label>
                   <input 
                     :value="getScaleOptions(question)?.max || 5"
-                    @input="updateScaleConfig(question, 'max', $event)"
-                    type="number" 
-                    class="form-input"
+                    type="number"
+                    class="form-input" 
                     min="2"
+                    @input="updateScaleConfig(question, 'max', $event)"
                   >
                 </div>
                 <div class="scale-field">
                   <label class="form-label-small">Paso:</label>
                   <input 
                     :value="getScaleOptions(question)?.step || 1"
-                    @input="updateScaleConfig(question, 'step', $event)"
-                    type="number" 
-                    class="form-input"
+                    type="number"
+                    class="form-input" 
                     min="1"
+                    @input="updateScaleConfig(question, 'step', $event)"
                   >
                 </div>
               </div>
@@ -205,20 +247,20 @@
                   <label class="form-label-small">Etiqueta mínima:</label>
                   <input 
                     :value="getScaleOptions(question)?.labels?.[getScaleOptions(question)?.min || 1] || ''"
-                    @input="updateScaleLabel(question, 'min', $event)"
                     type="text"
                     class="form-input"
                     placeholder="Ej: Muy malo"
+                    @input="updateScaleLabel(question, 'min', $event)"
                   >
                 </div>
                 <div class="scale-field">
                   <label class="form-label-small">Etiqueta máxima:</label>
                   <input 
                     :value="getScaleOptions(question)?.labels?.[getScaleOptions(question)?.max || 5] || ''"
-                    @input="updateScaleLabel(question, 'max', $event)"
                     type="text"
                     class="form-input"
                     placeholder="Ej: Excelente"
+                    @input="updateScaleLabel(question, 'max', $event)"
                   >
                 </div>
               </div>
@@ -236,18 +278,18 @@
                 <label class="form-label-small">Valor mínimo:</label>
                 <input 
                   :value="getNumberOptions(question)?.min || 0"
+                  type="number"
+                  class="form-input" 
                   @input="updateNumberConfig(question, 'min', $event)"
-                  type="number" 
-                  class="form-input"
                 >
               </div>
               <div class="scale-field">
                 <label class="form-label-small">Valor máximo:</label>
                 <input 
                   :value="getNumberOptions(question)?.max || 100"
+                  type="number"
+                  class="form-input" 
                   @input="updateNumberConfig(question, 'max', $event)"
-                  type="number" 
-                  class="form-input"
                 >
               </div>
             </div>
@@ -256,7 +298,11 @@
           <!-- Pregunta obligatoria -->
           <div class="form-group">
             <label class="checkbox-label">
-              <input v-model="question.required" type="checkbox" class="form-checkbox">
+              <input
+                v-model="question.required"
+                type="checkbox"
+                class="form-checkbox"
+              >
               <span class="checkbox-text">Pregunta obligatoria</span>
             </label>
           </div>
@@ -265,23 +311,38 @@
 
       <div class="questions-header">
         <h3>Preguntas ({{ questions.length }})</h3>
-        <button type="button" class="add-question-btn" @click="addQuestion">
+        <button
+          type="button"
+          class="add-question-btn"
+          @click="addQuestion"
+        >
           + Agregar Pregunta
         </button>
       </div>
     </div>
 
     <!-- Error general -->
-    <div v-if="generalError" class="form-error">
+    <div
+      v-if="generalError"
+      class="form-error"
+    >
       {{ generalError }}
     </div>
 
     <!-- Botones de acción -->
     <div class="form-actions">
-      <button type="button" class="btn-secondary" @click="emit('cancel')">
+      <button
+        type="button"
+        class="btn-secondary"
+        @click="emit('cancel')"
+      >
         Cancelar
       </button>
-      <button type="submit" class="btn-primary" :disabled="loading">
+      <button
+        type="submit"
+        class="btn-primary"
+        :disabled="loading"
+      >
         <span v-if="loading">Actualizando...</span>
         <span v-else>Actualizar Encuesta</span>
       </button>
@@ -588,6 +649,12 @@ watch(() => props.survey, (newSurvey) => {
 }, { immediate: true })
 </script>
 
+<script lang="ts">
+export default {
+  name: 'SurveyEditForm'
+}
+</script>
+
 <style scoped>
 .survey-edit-form {
   max-width: 800px;
@@ -876,9 +943,3 @@ watch(() => props.survey, (newSurvey) => {
   }
 }
 </style>
-
-<script lang="ts">
-export default {
-  name: 'SurveyEditForm'
-}
-</script>

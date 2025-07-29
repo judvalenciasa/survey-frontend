@@ -17,17 +17,41 @@
         </h1>
       </div>
 
-      <form class="survey-form" @submit.prevent="accessSurvey">
-        <input v-model="surveyId" type="text" placeholder="Número de encuesta" class="survey-input"
-          :class="{ error: error }" :disabled="loading" @input="clearError" 
-          autocomplete="off" spellcheck="false" maxlength="70">
+      <form
+        class="survey-form"
+        @submit.prevent="accessSurvey"
+      >
+        <input
+          v-model="surveyId"
+          type="text"
+          placeholder="Número de encuesta"
+          class="survey-input"
+          :class="{ error: error }"
+          :disabled="loading"
+          autocomplete="off" 
+          spellcheck="false"
+          maxlength="70"
+          @input="clearError"
+        >
 
-        <div v-if="error" class="error-message" :class="getErrorClass(error)">
-          <div class="error-icon">{{ getErrorIcon(error) }}</div>
-          <div class="error-text">{{ error }}</div>
+        <div
+          v-if="error"
+          class="error-message"
+          :class="getErrorClass(error)"
+        >
+          <div class="error-icon">
+            {{ getErrorIcon(error) }}
+          </div>
+          <div class="error-text">
+            {{ error }}
+          </div>
         </div>
 
-        <button type="submit" class="access-btn" :disabled="loading || !surveyId">
+        <button
+          type="submit"
+          class="access-btn"
+          :disabled="loading || !surveyId"
+        >
           {{ loading ? 'Verificando...' : 'Acceder' }}
         </button>
       </form>

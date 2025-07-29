@@ -12,7 +12,10 @@
         {{ survey.name }}
       </h3>
       <div class="survey-status">
-        <span class="status-badge" :class="getStatusClass(survey.status)">
+        <span
+          class="status-badge"
+          :class="getStatusClass(survey.status)"
+        >
           {{ getStatusLabel(survey.status) }}
         </span>
       </div>
@@ -27,7 +30,11 @@
       <div class="stat stat-id">
         <span class="stat-icon">🔢</span>
         <span class="stat-text">ID: {{ survey.id }}</span>
-        <button class="copy-btn" title="Copiar ID" @click="copyToClipboard(survey.id)">
+        <button
+          class="copy-btn"
+          title="Copiar ID"
+          @click="copyToClipboard(survey.id)"
+        >
           📋
         </button>
       </div>
@@ -40,7 +47,10 @@
         <span class="stat-icon">📊</span>
         <span class="stat-text">{{ survey.totalResponses || 0 }} respuestas</span>
       </div>
-      <div v-if="survey.code" class="stat">
+      <div
+        v-if="survey.code"
+        class="stat"
+      >
         <span class="stat-icon">🔑</span>
         <span class="stat-text">{{ survey.code }}</span>
       </div>
@@ -57,26 +67,44 @@
 
     <div class="survey-actions">
       <!-- Botones de estado según corresponda -->
-      <button v-if="survey.status === 'CREADA'" class="action-btn publish-btn"
-        title="Publicar encuesta para que sea visible al público" @click="$emit('publish', survey.id)">
+      <button
+        v-if="survey.status === 'CREADA'"
+        class="action-btn publish-btn"
+        title="Publicar encuesta para que sea visible al público"
+        @click="$emit('publish', survey.id)"
+      >
         📢 Publicar
       </button>
 
-      <button v-if="survey.status === 'PUBLICADA'" class="action-btn close-btn"
-        title="Cerrar encuesta - ya no se podrán enviar más respuestas" @click="$emit('close', survey.id)">
+      <button
+        v-if="survey.status === 'PUBLICADA'"
+        class="action-btn close-btn"
+        title="Cerrar encuesta - ya no se podrán enviar más respuestas"
+        @click="$emit('close', survey.id)"
+      >
         🔒 Cerrar
       </button>
 
       <!-- Botones de acción - REMOVIDO Ver Detalles -->
-      <button class="action-btn edit-btn" :disabled="survey.status === 'FINALIZADA'" @click="$emit('edit', survey.id)">
+      <button
+        class="action-btn edit-btn"
+        :disabled="survey.status === 'FINALIZADA'"
+        @click="$emit('edit', survey.id)"
+      >
         ✏️ Editar
       </button>
-      <button class="action-btn responses-btn" @click="$emit('responses', survey.id)">
+      <button
+        class="action-btn responses-btn"
+        @click="$emit('responses', survey.id)"
+      >
         📊 Respuestas
       </button>
-      <button class="action-btn delete-btn" :disabled="survey.status === 'PUBLICADA'"
+      <button
+        class="action-btn delete-btn"
+        :disabled="survey.status === 'PUBLICADA'"
         :title="survey.status === 'PUBLICADA' ? 'No se puede eliminar una encuesta publicada' : 'Eliminar encuesta'"
-        @click="$emit('delete', survey.id)">
+        @click="$emit('delete', survey.id)"
+      >
         🗑️ Eliminar
       </button>
     </div>

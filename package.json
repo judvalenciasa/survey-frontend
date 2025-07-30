@@ -6,12 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
-    "preview": "vite preview",
-    "lint": "eslint . --ext .vue,.js,.ts --fix",
-    "lint:check": "eslint . --ext .vue,.js,.ts",
-    "lint:warn-only": "eslint . --ext .vue,.js,.ts --max-warnings 0",
-    "lint:vue": "eslint src/**/*.vue --fix",
-    "lint:ts": "eslint src/**/*.ts --fix"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@vueuse/core": "^13.5.0",

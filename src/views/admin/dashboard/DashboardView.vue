@@ -10,8 +10,9 @@
     <header class="dashboard-header">
       <div class="dashboard-stats">
         <StatsCard title="Total Encuestas" :value="surveyStore.totalSurveys" icon="📊" color="primary" />
-        <StatsCard title="Encuestas Activas" :value="surveyStore.activeSurveys.length" icon="✅" color="success" />
-        <StatsCard title="Total Respuestas" :value="surveyStore.totalResponses" icon="📝" color="info" />
+        <StatsCard title="Encuestas Activas" :value="surveyStore.activeSurveys.length" icon="✅" color="primary" />
+        <StatsCard title="Vencen Hoy" :value="surveyStore.surveysExpiringToday" icon="⏰" color="primary" />
+        <StatsCard title="Encuestas Cerradas" :value="surveyStore.closedSurveys" icon="🔒" color="primary" />
       </div>
     </header>
 
@@ -189,7 +190,7 @@ onMounted(() => {
   max-width: 1200px;
   margin: 0px auto auto auto;
   width: 100%;
-  background-color: #0056b3;
+  background-color: var(--primary-fond);
 }
 
 .dashboard-header {
@@ -208,10 +209,23 @@ onMounted(() => {
 }
 
 .dashboard-stats {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: var(--spacing-lg);
-  margin-bottom: var(--spacing-2xl);
-  justify-content: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+/* Para pantallas pequeñas */
+@media (max-width: 768px) {
+  .dashboard-stats {
+    grid-template-columns: repeat(2, 1fr); /* 2 columnas en móvil */
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-stats {
+    grid-template-columns: 1fr; /* 1 columna en pantallas muy pequeñas */
+  }
 }
 
 .dashboard-actions {
@@ -251,6 +265,13 @@ onMounted(() => {
 .action-button.secondary:hover {
   background: var(--secondary-dark, #5a6268);
   transform: translateY(-2px);
+}
+
+.dashboard-recent {
+  background-color: var(--bg-secondary);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
 }
 
 .dashboard-recent h2 {

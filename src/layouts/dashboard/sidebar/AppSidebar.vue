@@ -104,19 +104,6 @@
           </router-link>
         </li>
 
-        <li class="nav-item">
-          <router-link
-            to="/admin/users"
-            class="nav-link"
-            active-class="nav-link--active"
-          >
-            <span class="nav-icon">👥</span>
-            <span
-              v-show="!isCollapsed"
-              class="nav-text"
-            >Usuarios</span>
-          </router-link>
-        </li>
       </ul>
     </nav>
 

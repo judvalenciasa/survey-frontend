@@ -4,7 +4,6 @@
  * @module Auth Routes
  */
 import type { RouteRecordRaw } from "vue-router";
-import FullLayout from "@/layouts/full/FullLayout.vue";
 
 /**
  * Configuración de rutas de autenticación
@@ -13,7 +12,7 @@ import FullLayout from "@/layouts/full/FullLayout.vue";
 const authRoutes: RouteRecordRaw[] = [
   {
     path: "/auth",
-    component: FullLayout,
+    component: () => import("@/layouts/full/FullLayout.vue"),
     children: [
       {
         path: "login",

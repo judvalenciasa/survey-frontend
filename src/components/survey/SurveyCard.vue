@@ -12,10 +12,7 @@
         {{ survey.name }}
       </h3>
       <div class="survey-status">
-        <span
-          class="status-badge"
-          :class="getStatusClass(survey.status)"
-        >
+        <span class="status-badge" :class="getStatusClass(survey.status)">
           {{ getStatusLabel(survey.status) }}
         </span>
       </div>
@@ -26,15 +23,9 @@
     </p>
 
     <div class="survey-stats">
-      <!-- ✨ NUEVO: Mostrar ID de la encuesta -->
       <div class="stat stat-id">
-        <span class="stat-icon">🔢</span>
-        <span class="stat-text">ID: {{ survey.id }}</span>
-        <button
-          class="copy-btn"
-          title="Copiar ID"
-          @click="copyToClipboard(survey.id)"
-        >
+        <span class="stat-text">Codigo: {{ survey.id }}</span>
+        <button class="copy-btn" title="Copiar ID" @click="copyToClipboard(survey.id)">
           📋
         </button>
       </div>
@@ -43,14 +34,7 @@
         <span class="stat-icon">📝</span>
         <span class="stat-text">{{ survey.questions.length }} preguntas</span>
       </div>
-      <div class="stat">
-        <span class="stat-icon">📊</span>
-        <span class="stat-text">{{ survey.totalResponses || 0 }} respuestas</span>
-      </div>
-      <div
-        v-if="survey.code"
-        class="stat"
-      >
+      <div v-if="survey.code" class="stat">
         <span class="stat-icon">🔑</span>
         <span class="stat-text">{{ survey.code }}</span>
       </div>
@@ -67,44 +51,26 @@
 
     <div class="survey-actions">
       <!-- Botones de estado según corresponda -->
-      <button
-        v-if="survey.status === 'CREADA'"
-        class="action-btn publish-btn"
-        title="Publicar encuesta para que sea visible al público"
-        @click="$emit('publish', survey.id)"
-      >
+      <button v-if="survey.status === 'CREADA'" class="action-btn publish-btn"
+        title="Publicar encuesta para que sea visible al público" @click="$emit('publish', survey.id)">
         📢 Publicar
       </button>
 
-      <button
-        v-if="survey.status === 'PUBLICADA'"
-        class="action-btn close-btn"
-        title="Cerrar encuesta - ya no se podrán enviar más respuestas"
-        @click="$emit('close', survey.id)"
-      >
+      <button v-if="survey.status === 'PUBLICADA'" class="action-btn close-btn"
+        title="Cerrar encuesta - ya no se podrán enviar más respuestas" @click="$emit('close', survey.id)">
         🔒 Cerrar
       </button>
 
       <!-- Botones de acción - REMOVIDO Ver Detalles -->
-      <button
-        class="action-btn edit-btn"
-        :disabled="survey.status === 'FINALIZADA'"
-        @click="$emit('edit', survey.id)"
-      >
+      <button class="action-btn edit-btn" :disabled="survey.status === 'FINALIZADA'" @click="$emit('edit', survey.id)">
         ✏️ Editar
       </button>
-      <button
-        class="action-btn responses-btn"
-        @click="$emit('responses', survey.id)"
-      >
+      <button class="action-btn responses-btn" @click="$emit('responses', survey.id)">
         📊 Respuestas
       </button>
-      <button
-        class="action-btn delete-btn"
-        :disabled="survey.status === 'PUBLICADA'"
+      <button class="action-btn delete-btn" :disabled="survey.status === 'PUBLICADA'"
         :title="survey.status === 'PUBLICADA' ? 'No se puede eliminar una encuesta publicada' : 'Eliminar encuesta'"
-        @click="$emit('delete', survey.id)"
-      >
+        @click="$emit('delete', survey.id)">
         🗑️ Eliminar
       </button>
     </div>
@@ -200,8 +166,7 @@ const copyToClipboard = async (id: string) => {
 }
 
 .survey-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-5px);
 }
 
 .survey-header {
@@ -210,7 +175,8 @@ const copyToClipboard = async (id: string) => {
   align-items: flex-start;
   margin-bottom: var(--spacing-md);
   gap: var(--spacing-sm);
-  min-height: 40px; /* ✅ AGREGADO: Altura mínima para consistencia */
+  min-height: 40px;
+  /* ✅ AGREGADO: Altura mínima para consistencia */
 }
 
 .survey-title {
@@ -220,14 +186,16 @@ const copyToClipboard = async (id: string) => {
   margin: 0;
   flex: 1;
   line-height: 1.3;
-  
+
   /* ✅ AGREGADO: Truncar títulos largos */
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* Máximo 2 líneas */
+  -webkit-line-clamp: 2;
+  /* Máximo 2 líneas */
   -webkit-box-orient: vertical;
-  max-width: calc(100% - 80px); /* Dejar espacio para el badge */
+  max-width: calc(100% - 80px);
+  /* Dejar espacio para el badge */
   word-wrap: break-word;
 }
 
@@ -238,9 +206,12 @@ const copyToClipboard = async (id: string) => {
   font-weight: 600;
   text-transform: uppercase;
   white-space: nowrap;
-  flex-shrink: 0; /* ✅ IMPORTANTE: No se reduzca nunca */
-  align-self: flex-start; /* ✅ AGREGADO: Alineación superior */
-  min-width: 70px; /* ✅ AGREGADO: Ancho mínimo garantizado */
+  flex-shrink: 0;
+  /* ✅ IMPORTANTE: No se reduzca nunca */
+  align-self: flex-start;
+  /* ✅ AGREGADO: Alineación superior */
+  min-width: 70px;
+  /* ✅ AGREGADO: Ancho mínimo garantizado */
 }
 
 .status-created {
@@ -272,7 +243,8 @@ const copyToClipboard = async (id: string) => {
   color: var(--text-secondary);
   margin-bottom: var(--spacing-lg);
   line-height: 1.5;
-  word-wrap: break-word; /* ✅ AGREGADO */
+  word-wrap: break-word;
+  /* ✅ AGREGADO */
 }
 
 .survey-stats {
@@ -280,6 +252,8 @@ const copyToClipboard = async (id: string) => {
   grid-template-columns: 1fr;
   gap: var(--spacing-xs);
   margin: var(--spacing-md) 0;
+  justify-items: center;
+  align-items: center;
 }
 
 .stat {
@@ -290,13 +264,15 @@ const copyToClipboard = async (id: string) => {
 
 .stat-icon {
   font-size: 0.9rem;
-  flex-shrink: 0; /* ✅ AGREGADO */
+  flex-shrink: 0;
+  /* ✅ AGREGADO */
 }
 
 .stat-text {
   font-size: 0.85rem;
   color: var(--text-secondary);
-  word-wrap: break-word; /* ✅ AGREGADO */
+  word-wrap: break-word;
+  /* ✅ AGREGADO */
 }
 
 .survey-dates {
@@ -312,7 +288,9 @@ const copyToClipboard = async (id: string) => {
 .survey-actions {
   display: flex;
   gap: var(--spacing-sm);
-  flex-wrap: wrap; /* ✅ YA EXISTE - Está bien */
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
 }
 
 .action-btn {
@@ -323,8 +301,10 @@ const copyToClipboard = async (id: string) => {
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  white-space: nowrap; /* ✅ AGREGADO: Evitar que el texto se rompa */
-  flex-shrink: 0; /* ✅ AGREGADO: Mantener tamaño */
+  white-space: nowrap;
+  /* ✅ AGREGADO: Evitar que el texto se rompa */
+  flex-shrink: 0;
+  /* ✅ AGREGADO: Mantener tamaño */
 }
 
 .view-btn {
@@ -414,9 +394,11 @@ const copyToClipboard = async (id: string) => {
 }
 
 .stat-id .stat-text {
-  font-size: 0.75rem; /* ✅ REDUCIDO para móviles */
+  font-size: 0.75rem;
+  /* ✅ REDUCIDO para móviles */
   color: var(--text-secondary);
-  word-break: break-all; /* ✅ AGREGADO: Permitir partir IDs largos */
+  word-break: break-all;
+  /* ✅ AGREGADO: Permitir partir IDs largos */
 }
 
 .copy-btn {
@@ -429,7 +411,8 @@ const copyToClipboard = async (id: string) => {
   font-size: 0.8rem;
   opacity: 0.7;
   transition: all 0.2s ease;
-  flex-shrink: 0; /* ✅ AGREGADO */
+  flex-shrink: 0;
+  /* ✅ AGREGADO */
 }
 
 .copy-btn:hover {
@@ -480,7 +463,8 @@ const copyToClipboard = async (id: string) => {
 /* ✅ AGREGADO: Media queries para responsive design */
 @media (max-width: 768px) {
   .survey-card {
-    padding: var(--spacing-md); /* Menos padding en móviles */
+    padding: var(--spacing-md);
+    /* Menos padding en móviles */
   }
 
   .survey-header {
@@ -490,14 +474,18 @@ const copyToClipboard = async (id: string) => {
   }
 
   .survey-title {
-    font-size: 1.1rem; /* Título más pequeño */
+    font-size: 1.1rem;
+    /* Título más pequeño */
     margin-bottom: var(--spacing-xs);
-    max-width: 100%; /* En móvil puede usar todo el ancho */
-    -webkit-line-clamp: 3; /* Más líneas en móvil */
+    max-width: 100%;
+    /* En móvil puede usar todo el ancho */
+    -webkit-line-clamp: 3;
+    /* Más líneas en móvil */
   }
 
   .status-badge {
-    align-self: flex-start; /* Alinear a la izquierda */
+    align-self: flex-start;
+    /* Alinear a la izquierda */
     font-size: 0.7rem;
   }
 
@@ -510,18 +498,21 @@ const copyToClipboard = async (id: string) => {
   }
 
   .stat-id .stat-text {
-    font-size: 0.7rem; /* ID aún más pequeño en móviles */
+    font-size: 0.7rem;
+    /* ID aún más pequeño en móviles */
   }
 
   .survey-actions {
-    justify-content: center; /* Centrar botones en móviles */
+    justify-content: center;
+    /* Centrar botones en móviles */
     gap: var(--spacing-xs);
   }
 
   .action-btn {
     font-size: 0.8rem;
     padding: var(--spacing-xs);
-    min-width: 80px; /* Ancho mínimo para botones */
+    min-width: 80px;
+    /* Ancho mínimo para botones */
   }
 }
 
@@ -532,15 +523,18 @@ const copyToClipboard = async (id: string) => {
 
   .survey-title {
     font-size: 1rem;
-    -webkit-line-clamp: 2; /* Limitar a 2 líneas en móviles pequeños */
+    -webkit-line-clamp: 2;
+    /* Limitar a 2 líneas en móviles pequeños */
   }
 
   .survey-actions {
-    flex-direction: column; /* Botones en columna en pantallas muy pequeñas */
+    flex-direction: column;
+    /* Botones en columna en pantallas muy pequeñas */
   }
 
   .action-btn {
-    width: 100%; /* Botones de ancho completo */
+    width: 100%;
+    /* Botones de ancho completo */
     justify-content: center;
     text-align: center;
   }
@@ -571,10 +565,7 @@ const copyToClipboard = async (id: string) => {
 
 /* ✅ AGREGADO: Mejoras para desktop grandes */
 @media (min-width: 1200px) {
-  .survey-actions {
-    justify-content: flex-start;
-  }
-  
+
   .action-btn {
     min-width: auto;
   }

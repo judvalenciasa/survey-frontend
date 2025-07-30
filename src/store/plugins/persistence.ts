@@ -11,7 +11,7 @@ import type { PiniaPluginContext } from "pinia";
  * @description Define qué campos de cada store se guardan en localStorage
  */
 const persistenceConfig = {
-  auth: ["token"],
+  auth: ["token", "user"],
   survey: [],
 };
 

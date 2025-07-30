@@ -106,7 +106,7 @@ const userInitials = computed(() => {
 
 <style scoped>
 .admin-header {
-  background: white;
+  background: var(--primary-color);
   border-bottom: 1px solid var(--border-color, #e1e5e9);
   padding: 0 var(--content-padding);
   height: var(--header-height);
@@ -178,7 +178,7 @@ const userInitials = computed(() => {
   height: clamp(32px, 6vw, 40px);
   border-radius: 50%;
   background: var(--primary-color, #3498db);
-  color: white;
+  color: var(--primary-color);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -186,6 +186,7 @@ const userInitials = computed(() => {
   font-size: clamp(0.7rem, 1.5vw, 0.9rem);
   flex-shrink: 0;
   transition: transform 0.2s ease;
+  background-color: var(--primary-fondo);
 }
 
 .user-avatar:hover {

@@ -124,12 +124,10 @@ surveyStore.clearError()
 .survey-create-view {
   min-height: 100vh;
   background: var(--bg-secondary);
-  padding: var(--spacing-xl);
 }
 
 .page-header {
   text-align: center;
-  margin-bottom: var(--spacing-2xl);
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;

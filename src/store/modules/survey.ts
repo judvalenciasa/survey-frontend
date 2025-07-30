@@ -47,8 +47,38 @@ export const useSurveyStore = defineStore('survey', {
      * @returns Array de encuestas con el estado especificado
      */
     getSurveysByStatus: (state) => (status: SurveyStatus) =>
-      state.surveys.filter(survey => survey.status === status)
+      state.surveys.filter(survey => survey.status === status),
+
+    /**
+     * Encuestas que vencen en menos de 24 horas
+     * @returns Número de encuestas próximas a vencer
+     */
+    surveysExpiringToday: (state) => {
+      const now = new Date()
+      const twentyFourHoursFromNow = new Date(now.getTime() + 24 * 60 * 60 * 1000)
+      
+      return state.surveys.filter(survey => {
+        // Solo considerar encuestas publicadas con fecha de cierre
+        if (survey.status !== 'PUBLICADA' || !survey.scheduledClose) {
+          return false
+        }
+        
+        const closeDate = new Date(survey.scheduledClose)
+        
+        // Verificar que esté en el rango de las próximas 24 horas
+        return closeDate <= twentyFourHoursFromNow && closeDate >= now
+      }).length
+    },
+
+    /**
+     * Encuestas finalizadas/cerradas
+     * @returns Número de encuestas con estado FINALIZADA
+     */
+    closedSurveys: (state) => 
+      state.surveys.filter(survey => survey.status === 'FINALIZADA').length
   },
+
+  
 
   actions: {
     /**
@@ -162,6 +192,7 @@ export const useSurveyStore = defineStore('survey', {
         this.loading = false
       }
     },
+    
 
     /**
      * Cambia el estado de una encuesta
@@ -231,6 +262,8 @@ export const useSurveyStore = defineStore('survey', {
         this.loading = false
       }
     },
+
+    
 
     /**
      * Limpia el mensaje de error actual

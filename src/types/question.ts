@@ -66,3 +66,26 @@ export interface CreateQuestionRequest {
   options: QuestionOptions
   order: number
 }
+
+/**
+ * Datos para el análisis de una pregunta
+ * @interface QuestionAnalysis
+ */
+export interface QuestionAnalysis {
+  questionId: string
+  questionText: string
+  questionType: 'TEXT' | 'SINGLE_CHOICE' | 'MULTIPLE_CHOICE' | 'YES_NO' | 'SCALE' | 'NUMBER'
+  totalAnswers: number
+  analysis: {
+    topWords?: Array<{ word: string; count: number }>
+    optionCounts?: Record<string, number>
+    average?: number
+    median?: number
+    mode?: number
+    minimum?: number
+    maximum?: number
+    standardDeviation?: number
+    q1?: number
+    q3?: number
+  }
+}

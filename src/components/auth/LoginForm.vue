@@ -6,75 +6,37 @@
  */
 -->
 <template>
-  <div
-    class="card"
-    style="max-width: 400px; margin: 0 auto;"
-  >
+  <div class="card" style="max-width: 400px; margin: 0 auto;">
     <h2 class="text-center mb-md">
       Iniciar Sesión
     </h2>
 
-    <form
-      class="flex flex-col gap-md"
-      @submit.prevent="handleSubmit"
-    >
+    <form class="flex flex-col gap-md" @submit.prevent="handleSubmit">
       <div class="form-group">
-        <label
-          for="username"
-          class="form-label"
-        >Usuario</label>
-        <input
-          id="username"
-          v-model="form.username"
-          type="text"
-          class="form-input"
-          :class="{ error: errors.username }"
-          placeholder="Ingresa tu usuario"
-          required
-        >
-        <span
-          v-if="errors.username"
-          class="form-error"
-        >
+        <label for="username" class="form-label">Usuario</label>
+        <input id="username" v-model="form.username" type="text" class="form-input" :class="{ error: errors.username }"
+          placeholder="Ingresa tu usuario" autocomplete="username" required>
+        <span v-if="errors.username" class="form-error">
           {{ errors.username }}
         </span>
       </div>
 
       <div class="form-group">
-        <label
-          for="password"
-          class="form-label"
-        >Contraseña</label>
-        <input
-          id="password"
-          v-model="form.password"
-          type="password"
-          class="form-input"
-          :class="{ error: errors.password }"
-          placeholder="Ingresa tu contraseña"
-          required
-        >
-        <span
-          v-if="errors.password"
-          class="form-error"
-        >
+        <label for="password" class="form-label">Contraseña</label>
+        <input id="password" v-model="form.password" type="password" class="form-input"
+          :class="{ error: errors.password }" placeholder="Ingresa tu contraseña" autocomplete="current-password"
+          required>
+        <span v-if="errors.password" class="form-error">
           {{ errors.password }}
         </span>
       </div>
 
       <!-- Error general -->
-      <div
-        v-if="authError"
-        class="form-error text-center"
-      >
+      <div v-if="authError" class="form-error text-center">
         {{ authError }}
       </div>
 
-      <button
-        type="submit"
-        class="btn btn-primary"
-        :disabled="loading"
-      >
+      <button type="submit" class="btn btn-primary" :disabled="loading">
         <span v-if="loading">Cargando...</span>
         <span v-else>Iniciar Sesión</span>
       </button>

@@ -17,5 +17,16 @@ export default defineConfig({
       '@utils': resolve(__dirname, 'src/utils'),
       '@assets': resolve(__dirname, 'src/assets')
     }
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor': ['vue', 'vue-router', 'pinia'],
+          'charts': ['apexcharts', 'vue3-apexcharts'],
+          'utils': ['axios', '@vueuse/core']
+        }
+      }
+    }
   }
 })

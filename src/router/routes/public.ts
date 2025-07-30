@@ -4,7 +4,6 @@
  * @module Public Routes
  */
 import type { RouteRecordRaw } from 'vue-router'
-import FullLayout from '@/layouts/full/FullLayout.vue'
 
 /**
  * Configuración de rutas públicas
@@ -13,7 +12,7 @@ import FullLayout from '@/layouts/full/FullLayout.vue'
 const publicRoutes: RouteRecordRaw[] = [
   {
     path: '/',
-    component: FullLayout,
+    component: () => import('@/layouts/full/FullLayout.vue'),
     children: [
       {
         path: '',

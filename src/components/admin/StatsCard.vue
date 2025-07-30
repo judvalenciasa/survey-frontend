@@ -6,10 +6,7 @@
  */
 -->
 <template>
-  <div
-    class="stats-card"
-    :class="`stats-card--${color}`"
-  >
+  <div class="stats-card" :class="`stats-card--${color}`">
     <div class="stats-icon">
       {{ icon }}
     </div>
@@ -47,7 +44,7 @@ defineProps<Props>()
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
-  box-shadow: var(--shadow);
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
   border-left: 4px solid;
   transition: transform 0.2s ease;
 }

@@ -31,9 +31,17 @@ const api: AxiosInstance = axios.create({
  * Interceptor SOLO para requests autenticadas (admin)
  */
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('auth-token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
+  const persistedAuth = localStorage.getItem('pinia-auth')
+  if (persistedAuth) {
+    try {
+      const authData = JSON.parse(persistedAuth)
+      const token = authData.token
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`
+      }
+    } catch (error) {
+      console.warn('Error al leer token desde persistencia:', error)
+    }
   }
   return config
 })

@@ -4,7 +4,6 @@
  * @module Admin Routes
  */
 import type { RouteRecordRaw } from 'vue-router'
-import AdminLayout from '@/layouts/dashboard/AdminLayout.vue'
 
 /**
  * Configuración de rutas administrativas
@@ -18,7 +17,7 @@ const adminRoutes: RouteRecordRaw[] = [
   },
   {
     path: '/admin',
-    component: AdminLayout,
+    component: () => import('@/layouts/dashboard/AdminLayout.vue'),
     children: [
       {
         path: 'dashboard',
@@ -65,14 +64,6 @@ const adminRoutes: RouteRecordRaw[] = [
         path: 'analytics',
         name: 'AnalyticsView',
         component: () => import('@/views/admin/analitycs/AnalyticsView.vue'),
-        meta: {
-          requiresAuth: true
-        }
-      },
-      {
-        path: 'users',
-        name: 'UserView',
-        component: () => import('@/views/admin/UserView.vue'),
         meta: {
           requiresAuth: true
         }

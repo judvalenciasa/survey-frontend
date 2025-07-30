@@ -7,12 +7,15 @@
 import { createPinia } from 'pinia'
 import { useAuthStore } from './modules/auth'
 import { useSurveyStore } from './modules/survey'
+import { persistencePlugin } from './plugins/persistence'
 
 /**
  * Instancia principal de Pinia configurada para la aplicación
  * @constant pinia
  */
 export const pinia = createPinia()
+
+pinia.use(persistencePlugin)
 
 /**
  * Exportaciones de conveniencia para acceso a stores específicos

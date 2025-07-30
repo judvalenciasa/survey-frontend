@@ -15,25 +15,13 @@
         </h1>
 
         <div class="survey-selector-container">
-          <label
-            for="survey-select"
-            class="form-label"
-          >Seleccionar Encuesta:</label>
-          <select
-            id="survey-select"
-            v-model="selectedSurveyId"
-            class="form-input survey-select"
-            :disabled="loadingSurveys"
-            @change="loadAnalysis"
-          >
+          <label for="survey-select" class="form-label">Seleccionar Encuesta:</label>
+          <select id="survey-select" v-model="selectedSurveyId" class="form-input survey-select"
+            :disabled="loadingSurveys" @change="loadAnalysis">
             <option value="">
               -- Selecciona una encuesta --
             </option>
-            <option
-              v-for="survey in surveys"
-              :key="survey.id"
-              :value="survey.id"
-            >
+            <option v-for="survey in surveys" :key="survey.id" :value="survey.id">
               {{ survey.name }} ({{ survey.status }})
             </option>
           </select>
@@ -42,20 +30,14 @@
     </header>
 
     <!-- Estados de carga y error -->
-    <div
-      v-if="loadingSurveys"
-      class="loading-state card"
-    >
+    <div v-if="loadingSurveys" class="loading-state card">
       <div class="loading-spinner" />
       <p class="text-secondary">
         Cargando encuestas...
       </p>
     </div>
 
-    <div
-      v-else-if="errorMessage"
-      class="error-state card"
-    >
+    <div v-else-if="errorMessage" class="error-state card">
       <div class="error-icon">
         ❌
       </div>
@@ -65,10 +47,7 @@
       <p class="text-secondary">
         {{ errorMessage }}
       </p>
-      <button
-        class="btn btn-primary"
-        @click="loadSurveys"
-      >
+      <button class="btn btn-primary" @click="loadSurveys">
         Reintentar
       </button>
     </div>
@@ -76,10 +55,7 @@
     <!-- Área principal de análisis -->
     <main class="main-content">
       <!-- Sin encuesta seleccionada -->
-      <div
-        v-if="!selectedSurveyId"
-        class="empty-state card"
-      >
+      <div v-if="!selectedSurveyId" class="empty-state card">
         <div class="empty-icon">
           📊
         </div>
@@ -92,10 +68,7 @@
       </div>
 
       <!-- Cargando análisis -->
-      <div
-        v-else-if="loadingAnalysis"
-        class="loading-state card"
-      >
+      <div v-else-if="loadingAnalysis" class="loading-state card">
         <div class="loading-spinner" />
         <p class="text-secondary">
           Cargando análisis...
@@ -103,10 +76,7 @@
       </div>
 
       <!-- Error al cargar análisis -->
-      <div
-        v-else-if="analysisError"
-        class="error-state card"
-      >
+      <div v-else-if="analysisError" class="error-state card">
         <div class="error-icon">
           ❌
         </div>
@@ -116,28 +86,21 @@
         <p class="text-secondary">
           {{ analysisError }}
         </p>
-        <button
-          class="btn btn-primary"
-          @click="loadAnalysis"
-        >
+        <button class="btn btn-primary" @click="loadAnalysis">
           Reintentar
         </button>
       </div>
 
       <!-- Análisis cargado -->
 
-      <div
-        v-else-if="analysisData"
-        class="analysis-container"
-      >
-        <BarChart :data="analysisData" />
+      <div v-else-if="analysisData" class="analysis-container">
+        <div v-for="question in analysisData.questionsAnalysis" :key="question.questionId">
+          <ChartRenderer :question-data="question" />
+        </div>
       </div>
 
       <!-- Sin análisis disponible -->
-      <div
-        v-else-if="selectedSurveyId && !loadingAnalysis"
-        class="empty-state card"
-      >
+      <div v-else-if="selectedSurveyId && !loadingAnalysis" class="empty-state card">
         <div class="empty-icon">
           📈
         </div>
@@ -156,7 +119,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useSurveyStore } from '../../../store/modules/survey'
 import { surveyService } from '../../../services/survey.service'
-import BarChart from '../../../components/common/BarChart.vue'
+import ChartRenderer from '../../../components/common/ChartRenderer.vue'
 
 // Store y estado reactivo
 const surveyStore = useSurveyStore()
@@ -577,6 +540,20 @@ onMounted(async () => {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+.analysis-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-top: 1rem;
+}
+
+/* Responsive para análisis */
+@media (max-width: 768px) {
+  .analysis-container {
+    gap: 1rem;
   }
 }
 </style>

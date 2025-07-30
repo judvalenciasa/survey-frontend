@@ -165,6 +165,13 @@
             <h2 class="section-title">
               Respuestas ({{ responses.length }})
             </h2>
+            <button 
+              v-if="responses.length > 0"
+              @click="exportToCSV"
+              class="btn btn-secondary export-btn"
+            >
+              📊 Exportar CSV
+            </button>
           </div>
 
           <div class="responses-grid">
@@ -226,14 +233,18 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { useSurveyStore } from '../../../store/modules/survey'
 import { responseService } from '../../../services/response.service'
 import { surveyService } from '../../../services/survey.service'
 import type { Survey } from '../../../types/survey'
 import type { SurveyResponse } from '../../../types/response'
 
-// Store y estado reactivo
+// Route y store
+const route = useRoute()
 const surveyStore = useSurveyStore()
+
+// Estado reactivo
 const selectedSurveyId = ref<string>('')
 const responses = ref<SurveyResponse[]>([])
 const selectedSurveyData = ref<Survey | null>(null)
@@ -344,10 +355,72 @@ const formatAnswer = (answer: any): string => {
     return String(answer)
 }
 
+/**
+ * Exporta las respuestas a CSV
+ */
+const exportToCSV = () => {
+    if (!responses.value.length || !selectedSurveyData.value) {
+        alert('No hay datos para exportar')
+        return
+    }
+
+    // Crear headers del CSV
+    const headers = ['Respuesta #', 'Fecha de Envío']
+    
+    // Agregar preguntas como headers
+    selectedSurveyData.value.questions.forEach(question => {
+        headers.push(`"${question.text}"`)
+    })
+
+    // Crear filas de datos
+    const csvData = [headers.join(',')]
+    
+    responses.value.forEach((response, index) => {
+        const row = [
+            `#${index + 1}`,
+            `"${formatDate(response.submittedAt)}"`
+        ]
+        
+        // Agregar respuestas para cada pregunta
+        selectedSurveyData.value!.questions.forEach(question => {
+            const answer = response.answers.find(a => a.questionId === question.id)
+            const formattedAnswer = answer ? formatAnswer(answer.answer) : 'Sin respuesta'
+            row.push(`"${formattedAnswer.replace(/"/g, '""')}"`) // Escapar comillas
+        })
+        
+        csvData.push(row.join(','))
+    })
+
+    // Crear y descargar archivo
+    const csvContent = csvData.join('\n')
+    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' }) // UTF-8 BOM
+    const link = document.createElement('a')
+    
+    if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob)
+        link.setAttribute('href', url)
+        link.setAttribute('download', `respuestas_${selectedSurveyData.value.name}_${new Date().toISOString().split('T')[0]}.csv`)
+        link.style.visibility = 'hidden'
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        
+        console.log('✅ CSV exportado exitosamente')
+    }
+}
+
 // Lifecycle
 onMounted(async () => {
     console.log('🚀 Iniciando ResponseView...')
     await loadSurveys()
+    
+    // Auto-seleccionar encuesta si viene por parámetro
+    const surveyParam = route.query.survey as string
+    if (surveyParam) {
+        console.log(`🎯 Auto-seleccionando encuesta: ${surveyParam}`)
+        selectedSurveyId.value = surveyParam
+        await loadResponses()
+    }
 })
 </script>
 
@@ -579,6 +652,29 @@ onMounted(async () => {
     padding: var(--spacing-md);
     border-radius: var(--border-radius);
     border: 1px solid var(--border-color);
+}
+
+.export-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  background: var(--secondary-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.export-btn:hover {
+  background: var(--primary-color);
+  transform: translateY(-1px);
+}
+
+.export-btn:active {
+  transform: translateY(0);
 }
 
 /* Responsive Design */

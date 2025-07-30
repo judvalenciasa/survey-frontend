@@ -15,8 +15,7 @@ export const useAuthStore = defineStore('auth', {
  
   state: (): AuthState => ({
     user: null,
-    token: localStorage.getItem('auth-token'),
-    isAuthenticated: false, 
+    token: null,
     loading: false,
     error: null
   }),
@@ -49,8 +48,6 @@ export const useAuthStore = defineStore('auth', {
         this.token = response.data.token
         this.user = response.data.user
         
-        localStorage.setItem('auth-token', response.data.token)
-        
         return { success: true }
       } catch (err: any) {
         this.error = err.response?.data?.message || 'Error de autenticación'
@@ -67,7 +64,6 @@ export const useAuthStore = defineStore('auth', {
     logout() {
       this.user = null
       this.token = null
-      localStorage.removeItem('auth-token')
       this.error = null
     },
 
@@ -76,7 +72,7 @@ export const useAuthStore = defineStore('auth', {
      * @description Verifica si existe un token válido y restaura la sesión
      */
     async initAuth() {
-      if (this.token) {
+      if (this.token && !this.user) {
         try {
           const response = await authService.getCurrentUser()
           this.user = response.data

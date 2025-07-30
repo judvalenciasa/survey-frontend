@@ -23,8 +23,8 @@
  * Layout principal para páginas públicas y de autenticación
  * @description Combina navbar, contenido y footer en un diseño completo
  */
-import AppNavbar from '@/layouts/defaulLayouts/AppNavbar.vue' 
-import AppFooter from '@/layouts/defaulLayouts/AppFooter.vue'
+import AppNavbar from '../defaulLayouts/AppNavbar.vue' 
+import AppFooter from '../defaulLayouts/AppFooter.vue'
 </script>
   
 <style scoped>

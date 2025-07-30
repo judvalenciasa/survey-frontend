@@ -20,7 +20,8 @@
     "pinia": "^3.0.3",
     "vue": "^3.5.17",
     "vue-router": "^4.5.1",
-    "vue3-apexcharts": "^1.8.0"
+    "vue3-apexcharts": "^1.8.0",
+    "vue-tsc": "^1.x.x"
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",

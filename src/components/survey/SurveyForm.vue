@@ -29,13 +29,22 @@
 
       <div class="date-row">
         <div class="form-group">
-          <label class="form-label">Fecha de apertura</label>
-          <input v-model="formData.scheduledOpen" type="datetime-local" class="form-input" :min="minDate">
+          <div class="label-with-badge">
+            <label class="form-label">Fecha de apertura</label>
+          </div>
+          <input v-model="formData.scheduledOpen" type="datetime-local" class="form-input"
+            :class="{ error: errors.scheduledOpen }" :min="minDate" required>
+
+          <ValidationMessage v-if="errors.scheduledOpen" :message="errors.scheduledOpen" />
         </div>
         <div class="form-group">
-          <label class="form-label">Fecha de cierre</label>
+          <div class="label-with-badge">
+            <label class="form-label">Fecha de cierre</label>
+          </div>
           <input v-model="formData.scheduledClose" type="datetime-local" class="form-input"
-            :min="formData.scheduledOpen || minDate">
+            :class="{ error: errors.scheduledClose }" :min="formData.scheduledOpen || minDate" required>
+
+          <ValidationMessage v-if="errors.scheduledClose" :message="errors.scheduledClose" />
         </div>
       </div>
     </div>

@@ -6,73 +6,51 @@
  */
 -->
 <template>
-  <form
-    class="survey-edit-form"
-    @submit.prevent="handleSubmit"
-  >
+  <form class="survey-edit-form" @submit.prevent="handleSubmit">
     <div class="form-section">
       <h3>Información General</h3>
 
       <div class="form-group">
         <label class="form-label">Nombre de la encuesta *</label>
-        <input 
-          v-model="formData.name" 
-          type="text" 
-          class="form-input" 
-          :class="{ error: errors.name }"
-          placeholder="Ej: Encuesta de Satisfacción Laboral 2025" 
-          required
-        >
-        <ValidationMessage
-          v-if="errors.name"
-          :message="errors.name"
-        />
+        <input v-model="formData.name" type="text" class="form-input" :class="{ error: errors.name }"
+          placeholder="Ej: Encuesta de Satisfacción Laboral 2025" required>
+        <ValidationMessage v-if="errors.name" :message="errors.name" />
       </div>
 
       <div class="form-group">
         <label class="form-label">Descripción *</label>
-        <textarea 
-          v-model="formData.description" 
-          class="form-textarea" 
-          :class="{ error: errors.description }"
-          placeholder="Describe el propósito y objetivos de esta encuesta..." 
-          rows="4" 
-          required 
-        />
-        <ValidationMessage
-          v-if="errors.description"
-          :message="errors.description"
-        />
+        <textarea v-model="formData.description" class="form-textarea" :class="{ error: errors.description }"
+          placeholder="Describe el propósito y objetivos de esta encuesta..." rows="4" required />
+        <ValidationMessage v-if="errors.description" :message="errors.description" />
       </div>
 
       <div class="date-row">
         <div class="form-group">
-          <label class="form-label">Fecha de apertura</label>
-          <input 
-            v-model="formData.scheduledOpen" 
-            type="datetime-local" 
-            class="form-input" 
-            :min="minDate"
-          >
+          <label class="form-label required-field">
+            📅 Fecha de apertura
+            <span class="required-badge">*Obligatorio</span>
+          </label>
+          <input v-model="formData.scheduledOpen" type="datetime-local" class="form-input"
+            :class="{ error: errors.scheduledOpen }" :min="minDate" required>
+          <small class="field-help">Selecciona cuándo se abrirá la encuesta para respuestas</small>
+          <ValidationMessage v-if="errors.scheduledOpen" :message="errors.scheduledOpen" />
         </div>
         <div class="form-group">
-          <label class="form-label">Fecha de cierre</label>
-          <input 
-            v-model="formData.scheduledClose" 
-            type="datetime-local" 
-            class="form-input"
-            :min="formData.scheduledOpen || minDate"
-          >
+          <label class="form-label required-field">
+            🔒 Fecha de cierre
+            <span class="required-badge">*Obligatorio</span>
+          </label>
+          <input v-model="formData.scheduledClose" type="datetime-local" class="form-input"
+            :class="{ error: errors.scheduledClose }" :min="formData.scheduledOpen || minDate" required>
+          <small class="field-help">Selecciona cuándo se cerrará la encuesta automáticamente</small>
+          <ValidationMessage v-if="errors.scheduledClose" :message="errors.scheduledClose" />
         </div>
       </div>
 
       <!-- Estado de la encuesta -->
       <div class="form-group">
         <label class="form-label">Estado de la encuesta</label>
-        <select
-          v-model="formData.status"
-          class="form-input"
-        >
+        <select v-model="formData.status" class="form-input">
           <option value="CREADA">
             Creada
           </option>
@@ -88,63 +66,37 @@
 
     <!-- Sección de preguntas -->
     <div class="form-section">
-      <div
-        v-if="questions.length === 0"
-        class="empty-questions"
-      >
+      <div v-if="questions.length === 0" class="empty-questions">
         <div class="empty-icon">
           ❓
         </div>
         <p>No hay preguntas aún. Agrega la primera pregunta para comenzar.</p>
-        <button
-          type="button"
-          class="add-question-btn"
-          @click="addQuestion"
-        >
+        <button type="button" class="add-question-btn" @click="addQuestion">
           Agregar Primera Pregunta
         </button>
       </div>
 
-      
 
-      <div
-        v-if="questions.length > 0"
-        class="questions-list"
-      >
-        <div 
-          v-for="(question, index) in questions" 
-          :key="question.id || `question-${index}`"
-          class="question-edit-card"
-        >
+
+      <div v-if="questions.length > 0" class="questions-list">
+        <div v-for="(question, index) in questions" :key="question.id || `question-${index}`"
+          class="question-edit-card">
           <div class="question-header">
             <h4>Pregunta {{ index + 1 }}</h4>
-            <button 
-              type="button" 
-              class="remove-btn" 
-              @click="removeQuestion(index)"
-            >
+            <button type="button" class="remove-btn" @click="removeQuestion(index)">
               🗑️ Eliminar
             </button>
           </div>
 
           <div class="form-group">
             <label class="form-label">Texto de la pregunta *</label>
-            <textarea 
-              v-model="question.text" 
-              class="form-textarea"
-              placeholder="Escribe aquí el texto de tu pregunta..."
-              rows="2"
-              required
-            />
+            <textarea v-model="question.text" class="form-textarea"
+              placeholder="Escribe aquí el texto de tu pregunta..." rows="2" required />
           </div>
 
           <div class="form-group">
             <label class="form-label">Tipo de pregunta *</label>
-            <select 
-              v-model="question.type" 
-              class="form-input"
-              @change="onQuestionTypeChange(question, index)"
-            >
+            <select v-model="question.type" class="form-input" @change="onQuestionTypeChange(question, index)">
               <option value="TEXT">
                 📝 Texto libre
               </option>
@@ -167,130 +119,74 @@
           </div>
 
           <!-- Opciones para SINGLE_CHOICE y MULTIPLE_CHOICE -->
-          <div 
-            v-if="question.type === 'SINGLE_CHOICE' || question.type === 'MULTIPLE_CHOICE'"
-            class="form-group"
-          >
+          <div v-if="question.type === 'SINGLE_CHOICE' || question.type === 'MULTIPLE_CHOICE'" class="form-group">
             <label class="form-label">Opciones de respuesta</label>
-            <div 
-              v-for="(_option, optIndex) in getQuestionOptions(question)" 
-              :key="optIndex"
-              class="option-row"
-            >
-              <input 
-                v-model="getQuestionOptions(question)[optIndex]" 
-                type="text"
-                :placeholder="`Opción ${optIndex + 1}`"
-                class="form-input"
-              >
-              <button 
-                v-if="getQuestionOptions(question).length > 1"
-                type="button" 
-                class="remove-option-btn"
-                @click="removeOption(question, optIndex)"
-              >
+            <div v-for="(_option, optIndex) in getQuestionOptions(question)" :key="optIndex" class="option-row">
+              <input v-model="getQuestionOptions(question)[optIndex]" type="text"
+                :placeholder="`Opción ${optIndex + 1}`" class="form-input">
+              <button v-if="getQuestionOptions(question).length > 1" type="button" class="remove-option-btn"
+                @click="removeOption(question, optIndex)">
                 ❌
               </button>
             </div>
-            <button 
-              type="button" 
-              class="add-option-btn"
-              @click="addOption(question)"
-            >
+            <button type="button" class="add-option-btn" @click="addOption(question)">
               + Agregar opción
             </button>
           </div>
 
           <!-- Configuración para SCALE -->
-          <div 
-            v-if="question.type === 'SCALE'"
-            class="form-group"
-          >
+          <div v-if="question.type === 'SCALE'" class="form-group">
             <label class="form-label">Configuración de escala</label>
-            
+
             <div class="scale-config">
               <div class="scale-row">
                 <div class="scale-field">
                   <label class="form-label-small">Mínimo:</label>
-                  <input 
-                    :value="getScaleOptions(question)?.min || 1"
-                    type="number"
-                    class="form-input" 
-                    min="1"
-                    @input="updateScaleConfig(question, 'min', $event)"
-                  >
+                  <input :value="getScaleOptions(question)?.min || 1" type="number" class="form-input" min="1"
+                    @input="updateScaleConfig(question, 'min', $event)">
                 </div>
                 <div class="scale-field">
                   <label class="form-label-small">Máximo:</label>
-                  <input 
-                    :value="getScaleOptions(question)?.max || 5"
-                    type="number"
-                    class="form-input" 
-                    min="2"
-                    @input="updateScaleConfig(question, 'max', $event)"
-                  >
+                  <input :value="getScaleOptions(question)?.max || 5" type="number" class="form-input" min="2"
+                    @input="updateScaleConfig(question, 'max', $event)">
                 </div>
                 <div class="scale-field">
                   <label class="form-label-small">Paso:</label>
-                  <input 
-                    :value="getScaleOptions(question)?.step || 1"
-                    type="number"
-                    class="form-input" 
-                    min="1"
-                    @input="updateScaleConfig(question, 'step', $event)"
-                  >
+                  <input :value="getScaleOptions(question)?.step || 1" type="number" class="form-input" min="1"
+                    @input="updateScaleConfig(question, 'step', $event)">
                 </div>
               </div>
-              
+
               <div class="scale-labels">
                 <div class="scale-field">
                   <label class="form-label-small">Etiqueta mínima:</label>
-                  <input 
-                    :value="getScaleOptions(question)?.labels?.[getScaleOptions(question)?.min || 1] || ''"
-                    type="text"
-                    class="form-input"
-                    placeholder="Ej: Muy malo"
-                    @input="updateScaleLabel(question, 'min', $event)"
-                  >
+                  <input :value="getScaleOptions(question)?.labels?.[getScaleOptions(question)?.min || 1] || ''"
+                    type="text" class="form-input" placeholder="Ej: Muy malo"
+                    @input="updateScaleLabel(question, 'min', $event)">
                 </div>
                 <div class="scale-field">
                   <label class="form-label-small">Etiqueta máxima:</label>
-                  <input 
-                    :value="getScaleOptions(question)?.labels?.[getScaleOptions(question)?.max || 5] || ''"
-                    type="text"
-                    class="form-input"
-                    placeholder="Ej: Excelente"
-                    @input="updateScaleLabel(question, 'max', $event)"
-                  >
+                  <input :value="getScaleOptions(question)?.labels?.[getScaleOptions(question)?.max || 5] || ''"
+                    type="text" class="form-input" placeholder="Ej: Excelente"
+                    @input="updateScaleLabel(question, 'max', $event)">
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Configuración para NUMBER -->
-          <div 
-            v-if="question.type === 'NUMBER'"
-            class="form-group"
-          >
+          <div v-if="question.type === 'NUMBER'" class="form-group">
             <label class="form-label">Configuración numérica</label>
             <div class="number-config">
               <div class="scale-field">
                 <label class="form-label-small">Valor mínimo:</label>
-                <input 
-                  :value="getNumberOptions(question)?.min || 0"
-                  type="number"
-                  class="form-input" 
-                  @input="updateNumberConfig(question, 'min', $event)"
-                >
+                <input :value="getNumberOptions(question)?.min || 0" type="number" class="form-input"
+                  @input="updateNumberConfig(question, 'min', $event)">
               </div>
               <div class="scale-field">
                 <label class="form-label-small">Valor máximo:</label>
-                <input 
-                  :value="getNumberOptions(question)?.max || 100"
-                  type="number"
-                  class="form-input" 
-                  @input="updateNumberConfig(question, 'max', $event)"
-                >
+                <input :value="getNumberOptions(question)?.max || 100" type="number" class="form-input"
+                  @input="updateNumberConfig(question, 'max', $event)">
               </div>
             </div>
           </div>
@@ -298,11 +194,7 @@
           <!-- Pregunta obligatoria -->
           <div class="form-group">
             <label class="checkbox-label">
-              <input
-                v-model="question.required"
-                type="checkbox"
-                class="form-checkbox"
-              >
+              <input v-model="question.required" type="checkbox" class="form-checkbox">
               <span class="checkbox-text">Pregunta obligatoria</span>
             </label>
           </div>
@@ -311,40 +203,25 @@
 
       <div class="questions-header">
         <h3>Preguntas ({{ questions.length }})</h3>
-        <button
-          type="button"
-          class="add-question-btn"
-          @click="addQuestion"
-        >
+        <button type="button" class="add-question-btn" @click="addQuestion">
           + Agregar Pregunta
         </button>
       </div>
     </div>
 
     <!-- Error general -->
-    <div
-      v-if="generalError"
-      class="form-error"
-    >
+    <div v-if="generalError" class="form-error">
       {{ generalError }}
     </div>
 
     <!-- Botones de acción -->
     <div class="form-actions">
-      <button
-        type="button"
-        class="btn-secondary"
-        @click="emit('cancel')"
-      >
+      <button type="button" class="btn-secondary" @click="emit('cancel')">
         Cancelar
       </button>
-      <button
-        type="submit"
-        class="btn-primary"
-        :disabled="loading"
-      >
+      <button type="submit" class="btn-primary" :disabled="loading">
         <span v-if="loading">Actualizando...</span>
-        <span v-else>Actualizar Encuesta</span>
+        <span v-else">Actualizar Encuesta</span>
       </button>
     </div>
   </form>
@@ -372,15 +249,24 @@ const emit = defineEmits<{
 }>()
 
 /**
+ * Obtiene la fecha actual en formato datetime-local
+ */
+const getCurrentDateTime = (): string => {
+  const now = new Date()
+  now.setMinutes(now.getMinutes() - now.getTimezoneOffset())
+  return now.toISOString().slice(0, 16)
+}
+
+/**
  * Datos del formulario inicializados con los valores de la encuesta
  */
 const formData = reactive({
   name: props.survey.name,
   description: props.survey.description,
   status: props.survey.status,
-  scheduledOpen: props.survey.scheduledOpen ? 
-    new Date(props.survey.scheduledOpen).toISOString().slice(0, 16) : '',
-  scheduledClose: props.survey.scheduledClose ? 
+  scheduledOpen: props.survey.scheduledOpen ?
+    new Date(props.survey.scheduledOpen).toISOString().slice(0, 16) : getCurrentDateTime(),
+  scheduledClose: props.survey.scheduledClose ?
     new Date(props.survey.scheduledClose).toISOString().slice(0, 16) : ''
 })
 
@@ -487,7 +373,7 @@ const getNumberOptions = (question: Question) => {
 const updateScaleConfig = (question: Question, field: 'min' | 'max' | 'step', event: Event) => {
   const target = event.target as HTMLInputElement
   if (!target) return
-  
+
   const value = target.value
   if (question.type === 'SCALE') {
     if (!question.options || typeof question.options !== 'object' || Array.isArray(question.options)) {
@@ -506,7 +392,7 @@ const updateScaleConfig = (question: Question, field: 'min' | 'max' | 'step', ev
 const updateScaleLabel = (question: Question, type: 'min' | 'max', event: Event) => {
   const target = event.target as HTMLInputElement
   if (!target) return
-  
+
   const value = target.value
   if (question.type === 'SCALE') {
     if (!question.options || typeof question.options !== 'object' || Array.isArray(question.options)) {
@@ -528,7 +414,7 @@ const updateScaleLabel = (question: Question, type: 'min' | 'max', event: Event)
 const updateNumberConfig = (question: Question, field: 'min' | 'max', event: Event) => {
   const target = event.target as HTMLInputElement
   if (!target) return
-  
+
   const value = target.value
   if (question.type === 'NUMBER') {
     if (!question.options || typeof question.options !== 'object' || Array.isArray(question.options)) {
@@ -574,7 +460,18 @@ const validateForm = (): boolean => {
     errors.value.description = 'La descripción es obligatoria'
   }
 
-  if (formData.scheduledOpen && formData.scheduledClose) {
+  // Validar fechas obligatorias
+  if (!formData.scheduledOpen || formData.scheduledOpen.trim() === '') {
+    errors.value.scheduledOpen = 'La fecha de apertura es obligatoria'
+  }
+
+  if (!formData.scheduledClose || formData.scheduledClose.trim() === '') {
+    errors.value.scheduledClose = 'La fecha de cierre es obligatoria'
+  }
+
+  // Validar orden de fechas (solo si ambas están presentes)
+  if (formData.scheduledOpen && formData.scheduledOpen.trim() !== '' &&
+    formData.scheduledClose && formData.scheduledClose.trim() !== '') {
     const openDate = new Date(formData.scheduledOpen)
     const closeDate = new Date(formData.scheduledClose)
 
@@ -592,9 +489,9 @@ const validateForm = (): boolean => {
   const invalidQuestions = questions.value.some(question => {
     if (!question.text.trim()) return true
     if (!question.type) return true
-    if ((question.type === 'SINGLE_CHOICE' || question.type === 'MULTIPLE_CHOICE') && 
-        (!Array.isArray(question.options) || question.options.length < 2 || 
-         question.options.some(opt => !opt.trim()))) {
+    if ((question.type === 'SINGLE_CHOICE' || question.type === 'MULTIPLE_CHOICE') &&
+      (!Array.isArray(question.options) || question.options.length < 2 ||
+        question.options.some(opt => !opt.trim()))) {
       return true
     }
     return false
@@ -612,7 +509,17 @@ const validateForm = (): boolean => {
  * Maneja el envío del formulario
  */
 const handleSubmit = () => {
-  if (!validateForm()) return
+  console.log('🔍 Validando formulario...', {
+    scheduledOpen: formData.scheduledOpen,
+    scheduledClose: formData.scheduledClose
+  })
+
+  if (!validateForm()) {
+    console.log('❌ Validación falló:', errors.value)
+    return
+  }
+
+  console.log('✅ Validación exitosa, enviando datos...')
 
   const updateData: UpdateSurveyRequest = {
     name: formData.name.trim(),
@@ -620,16 +527,17 @@ const handleSubmit = () => {
     status: formData.status,
     questions: questions.value.map(q => ({
       ...q,
-      options: q.options && Array.isArray(q.options) ? 
+      options: q.options && Array.isArray(q.options) ?
         q.options.filter(opt => opt.trim() !== '') : q.options
     }))
   }
 
-  if (formData.scheduledOpen) {
+  // Solo agregar fechas si están presentes y válidas
+  if (formData.scheduledOpen && formData.scheduledOpen.trim() !== '') {
     updateData.scheduledOpen = new Date(formData.scheduledOpen).toISOString()
   }
 
-  if (formData.scheduledClose) {
+  if (formData.scheduledClose && formData.scheduledClose.trim() !== '') {
     updateData.scheduledClose = new Date(formData.scheduledClose).toISOString()
   }
 
@@ -641,9 +549,9 @@ watch(() => props.survey, (newSurvey) => {
   formData.name = newSurvey.name
   formData.description = newSurvey.description
   formData.status = newSurvey.status
-  formData.scheduledOpen = newSurvey.scheduledOpen ? 
-    new Date(newSurvey.scheduledOpen).toISOString().slice(0, 16) : ''
-  formData.scheduledClose = newSurvey.scheduledClose ? 
+  formData.scheduledOpen = newSurvey.scheduledOpen ?
+    new Date(newSurvey.scheduledOpen).toISOString().slice(0, 16) : getCurrentDateTime()
+  formData.scheduledClose = newSurvey.scheduledClose ?
     new Date(newSurvey.scheduledClose).toISOString().slice(0, 16) : ''
   questions.value = [...newSurvey.questions]
 }, { immediate: true })
@@ -724,6 +632,49 @@ export default {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--spacing-md);
+}
+
+/* Estilos para campos obligatorios */
+.required-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
+.required-badge {
+  background: linear-gradient(135deg, var(--error-color), #dc2626);
+  color: white;
+  font-size: 0.7rem;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+  white-space: nowrap;
+  animation: pulse-required 2s infinite;
+}
+
+@keyframes pulse-required {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.field-help {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-top: var(--spacing-xs);
+  font-style: italic;
 }
 
 .questions-header {
@@ -916,21 +867,40 @@ export default {
   background: var(--bg-tertiary);
 }
 
+/* Mejorar el responsive para fechas obligatorias */
 @media (max-width: 768px) {
   .date-row {
     grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
   }
-  
+
+  .required-field {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+  }
+
+  .required-badge {
+    align-self: flex-end;
+    font-size: 0.65rem;
+    padding: 3px 6px;
+  }
+
+  .field-help {
+    font-size: 0.8rem;
+    margin-top: var(--spacing-sm);
+  }
+
   .questions-header {
     flex-direction: column;
     gap: var(--spacing-md);
     align-items: stretch;
   }
-  
+
   .form-actions {
     flex-direction: column;
   }
-  
+
   .option-row {
     flex-direction: column;
     align-items: stretch;
@@ -940,6 +910,17 @@ export default {
   .scale-labels,
   .number-config {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .required-field {
+    gap: var(--spacing-sm);
+  }
+
+  .field-help {
+    margin-top: var(--spacing-md);
+    line-height: 1.4;
   }
 }
 </style>

@@ -275,7 +275,10 @@ const statisticsBarOptions = computed(() => ({
     title: { text: 'Estadísticas' }
   },
   yaxis: {
-    title: { text: 'Valor' }
+    title: { text: 'Valor' },
+    labels: {
+      formatter: (val: number) => formatNumber(val)
+    }
   },
   tooltip: {
     y: {
@@ -300,7 +303,14 @@ const getQuestionTypeLabel = (type: string): string => {
 
 const formatNumber = (num: number | undefined): string => {
   if (num === undefined || num === null) return '0'
-  return num.toFixed(2)
+  
+  // Si es un número entero, mostrarlo sin decimales
+  if (Number.isInteger(num)) {
+    return num.toString()
+  }
+  
+  // Si tiene decimales, mostrar hasta 2 decimales pero sin ceros innecesarios
+  return parseFloat(num.toFixed(2)).toString()
 }
 </script>
 

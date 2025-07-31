@@ -321,11 +321,10 @@ const formatNumber = (num: number | undefined): string => {
 }
 
 .question-text {
-  font-size: 1.2rem;
+  font-size: 0.7rem;
   font-weight: 600;
   color: var(--text-primary, #1e293b);
-  margin: 0 0 0.5rem 0;
-  line-height: 1.4;
+  box-shadow: var(--shadow);
 }
 
 .question-meta {

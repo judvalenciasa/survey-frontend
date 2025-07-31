@@ -281,6 +281,7 @@ onMounted(() => {
 
 .question-content {
   width: 100%;
+  box-shadow: var(--shadow);
 }
 
 .form-textarea {
